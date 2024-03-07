@@ -1,5 +1,5 @@
 <?php
-    $user_id = $this->session->userdata('userid');
+    $user_id = $this->session->userdata('UserID');
     if($user_id != ''){
         echo "<script>location.replace('".base_url()."home');</script>";
     }
@@ -18,7 +18,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>AIS SYSTEM! | </title>
+    <title>GTI SYSTEM! | Management Gereja</title>
 
     <!-- Bootstrap -->
     <link href="<?php echo base_url();?>Assets/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -66,8 +66,8 @@
                 <br />
 
                 <div>
-                  <h1><i class="fa fa-paw"></i> AIS SYSTEM</h1>
-                  <p>©2020 All Rights Reserved. AIS SYSTEM!. Privacy and Terms</p>
+                  <h1><i class="fa fa-paw"></i> GTI SYSTEM</h1>
+                  <p>©2020 All Rights Reserved. GTI SYSTEM!. Privacy and Terms</p>
                 </div>
               </div>
             </form>
