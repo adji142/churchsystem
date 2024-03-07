@@ -67,7 +67,7 @@
 
                 <div>
                   <h1><i class="fa fa-paw"></i> GTI SYSTEM</h1>
-                  <p>©2020 All Rights Reserved. GTI SYSTEM!. Privacy and Terms</p>
+                  <p>Sistem Administrasi Management Gereja</p>
                 </div>
               </div>
             </form>
