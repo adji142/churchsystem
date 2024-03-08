@@ -15,6 +15,18 @@ class ModelsExecuteMaster extends CI_Model
         require APPPATH.'libraries/phpmailer/src/PHPMailer.php';
         require APPPATH.'libraries/phpmailer/src/SMTP.php';
 	}
+	public function GetCabang()
+	{
+		$CabangID = $this->session->userdata('CabangID');
+
+		$this->db->select('*');
+		$this->db->from('cabang');
+		if ($CabangID != 0) {
+			$this->db->where(array('CabangID'=> $CabangID));
+		}
+		$rs = $this->db->get();
+		return $rs;
+	}
 	function WriteLog($RecordOwnerID,$Event,$retValue)
 	{
 		$ip = '';

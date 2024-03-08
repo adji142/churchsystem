@@ -10,16 +10,22 @@
 
 		public function index()
 		{
-			$this->load->view('V_Master/Personel');
+			$this->db->select('*');
+			$this->db->from('dem_provinsi');
+			$provinsi = $this->db->get();
+
+			$data['prov'] = $provinsi->result();
+			$this->load->view('V_Master/Personel',$data);
 		}
 		public function Read()
 		{
-			$data = array('success'=>false, 'message'=>'', 'data'=>array());
+			$data = array('success'=>true, 'message'=>'', 'data'=>array());
 
 			$NIK = $this->input->post('NIK');
+			$CabangID = $this->input->post('NIK');
 
 			try {
-				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangNama,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat");
+				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP");
 				$this->db->from('personel');
 				$this->db->join('cabang','personel.CabangID=cabang.id','left');
 				$this->db->join('divisi','personel.DivisiID=divisi.id','left');
@@ -29,7 +35,7 @@
 				$this->db->join('dem_kota','personel.KotaID = dem_kota.city_id','left');
 				$this->db->join('dem_kelurahan','personel.KelID = dem_kelurahan.subdis_id','left');
 				$this->db->join('dem_kecamatan','personel.KecID = dem_kecamatan.dis_id','left');
-				$this->db->where(array("1"=>"1"));
+				$this->db->where(array("personel.StatusAnggota"=>1));
 
 				if ($NIK != "") {
 					$this->db->where(array("NIK"=>$NIK));
@@ -37,20 +43,61 @@
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
-				if ($this->session->userdata('CabangID') != "") {
-					$this->db->where(array("CabangID"=>$this->session->userdata('CabangID')));
+				if ($CabangID != 0) {
+					$this->db->where(array("personel.CabangID"=>$CabangID));
 				}
 
 				$rs = $this->db->get();
-				if ($rs->num_rows() > 0) {
-					$data['success'] = true;
-					$data['data'] = $rs->result();
-				}
+
+				$error = $this->db->error();
+				// var_dump($error);
+				if($error['code'] > 0) {
+		            $data['message'] =$error['code'] .' - ' .$error['message'];
+		        } else {
+		            if ($rs->num_rows() > 0) {
+						$data['success'] = true;
+						$data['data'] = $rs->result();
+					}
+		        }
+
 			} catch (\Exception $e) {
 				$data['message'] = $e->getMessage();
 			}
 			echo json_encode($data);
 		}
+
+		public function Find()
+		{
+			$data = array('success'=>false, 'message'=>'', 'data'=>array());
+
+			$NIK = $this->input->post('NIK');
+			$CabangID = $this->input->post('CabangID');
+
+			try {
+				$this->db->select("*");
+				$this->db->from('personel');
+				$this->db->where(array("NIK"=>$NIK));
+				$this->db->where(array("CabangID"=>$CabangID));
+
+				$rs = $this->db->get();
+
+				$error = $this->db->error();
+				// var_dump($error);
+				if($error['code'] > 0) {
+		            $data['message'] =$error['code'] .' - ' .$error['message'];
+		        } else {
+		            if ($rs->num_rows() > 0) {
+						$data['success'] = true;
+						$data['data'] = $rs->result();
+					}
+		        }
+
+			} catch (Exception $e) {
+				$data['message'] = $e->getMessage();
+			}
+			echo json_encode($data);
+		}
+
 		public function CRUD()
 		{
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());
@@ -76,7 +123,10 @@
 			$Alamat = $this->input->post('Alamat');
 			$StatusAnggota = $this->input->post('StatusAnggota');
 			$Foto = $this->input->post('Foto');
-			
+			$image_base64 = $this->input->post('image_base64');
+			$Email = $this->input->post('Email');
+			$NoHP = $this->input->post('NoHP');
+
 			$CreatedOn = date('Y-m-d h:i:s');
 			$UpdatedOn = date('Y-m-d h:i:s');
 			$CreatedBy = $this->session->userdata('NamaUser');
@@ -104,8 +154,10 @@
 					'KecID' => $KecID,
 					'KelID' => $KelID,
 					'Alamat' => $Alamat,
-					'StatusAnggota' => $StatusAnggota,
-					'Foto' => $Foto
+					'StatusAnggota' => 1,
+					'Foto' => $image_base64,
+					'NoHP' => $NoHP,
+					'Email' => $Email
 				);
 
 				if ($formtype == "add") {
@@ -116,10 +168,24 @@
 				elseif ($formtype == "edit") {
 					$oObject['UpdatedOn'] = $UpdatedOn;
 					$oObject['UpdatedBy'] = $UpdatedBy;
-					$this->db->update('personel', $oObject, array('id'=>$id));
+					$oWhere = array(
+						'NIK'=>$NIK,
+						'CabangID'=>$CabangID
+					);
+					$this->db->update('personel', $oObject, $oWhere);
 				}
 				elseif ($formtype == "delete") {
-					# code...
+					$oObject = array(
+						'UpdatedOn' => $UpdatedOn,
+						'UpdatedBy' => $UpdatedBy,
+						'StatusAnggota' => '0'
+					);
+
+					$oWhere = array(
+						'NIK'=>$NIK,
+						'CabangID'=>$CabangID
+					);
+					$this->db->update('personel', $oObject, $oWhere);
 				}
 				else{
 					$data['message'] = "invalid Form Type";

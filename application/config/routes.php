@@ -74,6 +74,9 @@ $route['profile'] = 'Home/profile';
 // Master Data
 $route['cabang'] = 'CabangController';
 $route['divisi'] = 'DivisiController';
-$route['jabatan/(:any)'] = 'JabatanController/index/$1';
+$route['jabatan/(:any)/(:any)'] = 'JabatanController/index/$1/$2';
 $route['ratepk'] = 'RatePKController';
 $route['personel'] = 'PersonelController';
+$route['jenisibadah'] = 'JenisIbadahController';
+$route['jenisevent'] = 'JenisEventController';
+$route['jadwalibadah'] = 'JadwalIbadahController';

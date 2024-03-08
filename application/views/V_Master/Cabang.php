@@ -4,120 +4,120 @@
     $active = 'dashboard';
 ?>
 <!-- page content -->
-        <div class="right_col" role="main">
-          <div class="">
+<div class="right_col" role="main">
+  <div class="">
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12  ">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Cabang</h2>
             <div class="clearfix"></div>
-            <div class="row">
-              <div class="col-md-12 col-sm-12  ">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <h2>Cabang</h2>
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
-                      <div class="dx-viewport demo-container">
-                        <div id="data-grid-demo">
-                          <div id="gridContainer">
-                          </div>
-                        </div>
-                      </div>
+          </div>
+          <div class="x_content">
+              <div class="dx-viewport demo-container">
+                <div id="data-grid-demo">
+                  <div id="gridContainer">
                   </div>
                 </div>
               </div>
-            </div>
           </div>
         </div>
-        <!-- /page content -->
-        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modal_">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Modal Cabang</h4>
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <form id="post_" data-parsley-validate class="form-horizontal form-label-left">
-                  <div class="item form-group">
-                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Nama Cabang <span class="required">*</span>
-                    </label>
-                    <div class="col-md-9 col-sm-9 ">
-                      <input type="text" name="CabangName" id="CabangName" required="" placeholder="Nama Cabang" class="form-control ">
-                      <input type="hidden" name="id" id="id">
-                      <input type="hidden" name="formtype" id="formtype" value="add">
-                    </div>
-                  </div>
-
-                  <div class="item form-group">
-                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Provinsi <span class="required">*</span>
-                    </label>
-                    <div class="col-md-9 col-sm-9 ">
-                      <select id="ProvID" name="ProvID" class="form-control">
-                        <?php 
-                          $data = $this->ModelsExecuteMaster->GetData("dem_provinsi");
-                          foreach ($data->result() as $key) {
-                            echo "<option value = '".$key->prov_id."' >".$key->prov_name."</option>";
-                          }
-                        ?>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="item form-group">
-                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kota <span class="required">*</span>
-                    </label>
-                    <div class="col-md-9 col-sm-9 ">
-                      <select id="KotaID" name="KotaID" class="form-control">
-                        <option value="">Pilih Kota</option>
-                        <?php 
-                          $data = $this->ModelsExecuteMaster->GetData("dem_kota");
-                          foreach ($data->result() as $key) {
-                            echo "<option value = '".$key->city_id."' >".$key->city_name."</option>";
-                          }
-                        ?>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="item form-group">
-                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kecamatan <span class="required">*</span>
-                    </label>
-                    <div class="col-md-9 col-sm-9 ">
-                      <select id="KecID" name="KecID" class="form-control">
-                        <!-- <option value="-1">Pilih Kecamatan</option> -->
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="item form-group">
-                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kelurahan <span class="required">*</span>
-                    </label>
-                    <div class="col-md-9 col-sm-9 ">
-                      <select id="KelID" name="KelID" class="form-control">
-                        <!-- <option value="-1">Pilih Kelurahan</option> -->
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="item form-group">
-                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Alamat Saksi <span class="required">*</span>
-                    </label>
-                    <div class="col-md-6 col-sm-6 ">
-                      <textarea id="Alamat" name="Alamat" class="resizable_textarea form-control" placeholder="Alamat Saksi"></textarea>
-                    </div>
-                  </div>
-
-                  <div class="item" form-group>
-                    <button class="btn btn-primary" id="btn_Save">Save</button>
-                  </div>
-                </form>
-              </div>
-              <!-- <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /page content -->
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modal_">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Modal Cabang</h4>
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="post_" data-parsley-validate class="form-horizontal form-label-left">
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Nama Cabang <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <input type="text" name="CabangName" id="CabangName" required="" placeholder="Nama Cabang" class="form-control ">
+              <input type="hidden" name="id" id="id">
+              <input type="hidden" name="formtype" id="formtype" value="add">
             </div>
           </div>
-        </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Provinsi <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select id="ProvID" name="ProvID" class="form-control">
+                <?php 
+                  $data = $this->ModelsExecuteMaster->GetData("dem_provinsi");
+                  foreach ($data->result() as $key) {
+                    echo "<option value = '".$key->prov_id."' >".$key->prov_name."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kota <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select id="KotaID" name="KotaID" class="form-control">
+                <option value="">Pilih Kota</option>
+                <?php 
+                  $data = $this->ModelsExecuteMaster->GetData("dem_kota");
+                  foreach ($data->result() as $key) {
+                    echo "<option value = '".$key->city_id."' >".$key->city_name."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kecamatan <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select id="KecID" name="KecID" class="form-control">
+                <!-- <option value="-1">Pilih Kecamatan</option> -->
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kelurahan <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select id="KelID" name="KelID" class="form-control">
+                <!-- <option value="-1">Pilih Kelurahan</option> -->
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Alamat Saksi <span class="required">*</span>
+            </label>
+            <div class="col-md-6 col-sm-6 ">
+              <textarea id="Alamat" name="Alamat" class="resizable_textarea form-control" placeholder="Alamat Saksi"></textarea>
+            </div>
+          </div>
+
+          <div class="item" form-group>
+            <button class="btn btn-primary" id="btn_Save">Save</button>
+          </div>
+        </form>
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div> -->
+    </div>
+  </div>
+</div>
 <?php
   require_once(APPPATH."views/parts/Footer.php");
 ?>
@@ -354,6 +354,12 @@
             },
             columns: [
                 {
+                    dataField: "id",
+                    caption: "id",
+                    allowEditing:false,
+                    visible: false
+                },
+                {
                     dataField: "CabangName",
                     caption: "Nama Cabang",
                     allowEditing:false
@@ -423,18 +429,18 @@
                   var value = id;
                   $.ajax({
                       type    :'post',
-                      url     : '<?=base_url()?>C_UserManagement/CRUDRole',
+                      url     : '<?=base_url()?>CabangController/CRUD',
                       data    : {'id':id,'formtype':'delete'},
                       dataType: 'json',
                       success : function (response) {
                         if(response.success == true){
                           Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                      ).then((result)=>{
-                            location.reload();
-                          });
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                          ).then((result)=>{
+                                location.reload();
+                              });
                         }
                         else{
                           Swal.fire({

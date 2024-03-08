@@ -17,6 +17,7 @@
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());
 
 			$id = $this->input->post('id');
+			$CabangID = $this->input->post('CabangID');
 
 			try {
 				$this->db->select('*');
@@ -29,8 +30,8 @@
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
-				if ($this->session->userdata('CabangID') != "") {
-					$this->db->where(array("CabangID"=>$this->session->userdata('CabangID')));
+				if ($CabangID != "") {
+					$this->db->where(array("CabangID"=>$CabangID));
 				}
 
 				$rs = $this->db->get();
@@ -38,7 +39,7 @@
 					$data['success'] = true;
 					$data['data'] = $rs->result();
 				}
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				$data['message'] = $e->getMessage();
 			}
 			echo json_encode($data);
@@ -74,7 +75,8 @@
 					$this->db->update('divisi', $oObject, array('id'=>$id));
 				}
 				elseif ($formtype == "delete") {
-					# code...
+					$this->db->where('id',$id);
+					$this->db->delete('divisi');
 				}
 				else{
 					$data['message'] = "invalid Form Type";

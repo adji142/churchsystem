@@ -45,7 +45,8 @@
 			} catch (\Exception $e) {
 				$data['message'] = $e->getMessage();
 			}
-			echo json_encode($data);
+			// echo json_encode($data);
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
 		}
 		public function CRUD()
 		{
@@ -86,14 +87,14 @@
 					$this->db->update('cabang', $oObject, array('id'=>$id));
 				}
 				elseif ($formtype == "delete") {
-					# code...
+					$this->db->where('id',$id);
+					$this->db->delete('cabang');
 				}
 				else{
 					$data['message'] = "invalid Form Type";
 				}
 
 				$error = $this->db->error();
-
 				if($error['code']) {
 		            // echo "Database error occurred: ".$error['message'];
 		            $data['message'] = $error['message'];
@@ -103,11 +104,12 @@
 						$data['message'] = "Data Cabang Berhasil disimpan";
 					}
 		        }
-			} catch (\Exception $e) {
+			} catch (Exception $e) {
 				$data['message'] = $e->message;
 			}
 
-			echo json_encode($data);
+			// echo json_encode($data);
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
 		}
 	}
 ?>

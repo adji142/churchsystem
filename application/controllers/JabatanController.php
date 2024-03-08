@@ -8,9 +8,10 @@
 			$this->load->model('LoginMod');
 		}
 
-		public function index($value)
+		public function index($value, $value2)
 		{
 			$data['DivisiID'] = $value;
+			$data['paramCabangID'] = $value2;
 			$this->load->view('V_Master/Jabatan', $data);
 		}
 		public function Read()
@@ -19,6 +20,7 @@
 
 			$id = $this->input->post('id');
 			$DivisiID = $this->input->post('DivisiID');
+			$CabangID = $this->input->post('CabangID');
 			try {
 				$this->db->select('*');
 				$this->db->from('jabatan');
@@ -33,8 +35,8 @@
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
-				if ($this->session->userdata('CabangID') != "") {
-					$this->db->where(array("CabangID"=>$this->session->userdata('CabangID')));
+				if ($CabangID != "") {
+					$this->db->where(array("CabangID"=>$CabangID));
 				}
 
 				$rs = $this->db->get();
@@ -82,7 +84,8 @@
 					$this->db->update('jabatan', $oObject, array('id'=>$id));
 				}
 				elseif ($formtype == "delete") {
-					# code...
+					$this->db->where('id',$id);
+					$this->db->delete('jabatan');
 				}
 				else{
 					$data['message'] = "invalid Form Type";

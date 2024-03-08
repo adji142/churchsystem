@@ -42,9 +42,10 @@
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Nama Jabatan <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
-              <input type="text" name="NamaJabatan" id="NamaJabatan" required="" placeholder="Nama Divisi" class="form-control ">
+              <input type="text" name="NamaJabatan" id="NamaJabatan" required="" placeholder="Nama Jabatan" class="form-control ">
               <input type="hidden" name="id" id="id">
               <input type="hidden" name="DivisiID" id="DivisiID" value="<?php echo $DivisiID ?>">
+              <input type="hidden" name="paramCabangID" id="paramCabangID" value="<?php echo $paramCabangID ?>">
               <input type="hidden" name="formtype" id="formtype" value="add">
             </div>
           </div>
@@ -94,12 +95,12 @@
 ?>
 <script type="text/javascript">
   $(function () {
+    var CabangID = "<?php echo $CabangID; ?>"
     $(document).ready(function () {
       $('#CabangID').select2({
         width: '200px'
       });
 
-      var CabangID = "<?php echo $CabangID; ?>"
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
@@ -109,7 +110,7 @@
       $.ajax({
         type: "post",
         url: "<?=base_url()?>JabatanController/Read",
-        data: {'id':'', DivisiID:DivisiID},
+        data: {'id':'',CabangID:CabangID, DivisiID:DivisiID},
         dataType: "json",
         success: function (response) {
           bindGrid(response.data);
@@ -120,6 +121,7 @@
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
       $('#btn_Save').attr('disabled',true);
+      $(this).find(':input:disabled').prop('disabled', false);
       e.preventDefault();
       var me = $(this);
       $.ajax({
@@ -234,6 +236,10 @@
             onInitNewRow: function(e) {
                 // logEvent("InitNewRow");
                 $('#modal_').modal('show');
+                var paramCabangID = "<?php echo $paramCabangID; ?>"
+                if (CabangID != 0) {
+                  $('#CabangID').val(paramCabangID).trigger('change');
+                }
             },
             onRowInserting: function(e) {
                 // logEvent("RowInserting");
@@ -267,7 +273,7 @@
                   var value = id;
                   $.ajax({
                       type    :'post',
-                      url     : '<?=base_url()?>DivisiController/CRUD',
+                      url     : '<?=base_url()?>JabatanController/CRUD',
                       data    : {'id':id,'formtype':'delete'},
                       dataType: 'json',
                       success : function (response) {

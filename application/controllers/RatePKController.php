@@ -17,6 +17,7 @@
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());
 
 			$id = $this->input->post('id');
+			$CabangID = $this->input->post('CabangID');
 
 			try {
 				$this->db->select('*');
@@ -29,8 +30,8 @@
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
-				if ($this->session->userdata('CabangID') != "") {
-					$this->db->where(array("CabangID"=>$this->session->userdata('CabangID')));
+				if ($CabangID != "") {
+					$this->db->where(array("CabangID"=>$CabangID));
 				}
 
 				$rs = $this->db->get();
@@ -90,7 +91,7 @@
 		        } else {
 		            if ($this->db->affected_rows() > 0) {
 						$data['success'] =true;
-						$data['message'] = "Data Divisi Berhasil disimpan";
+						$data['message'] = "Data Rate PK Berhasil disimpan";
 					}
 		        }
 			} catch (\Exception $e) {

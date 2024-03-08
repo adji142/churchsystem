@@ -89,12 +89,11 @@
 ?>
 <script type="text/javascript">
   $(function () {
+    var CabangID = "<?php echo $CabangID; ?>"
     $(document).ready(function () {
       $('#CabangID').select2({
         width: '200px'
       });
-
-      var CabangID = "<?php echo $CabangID; ?>"
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
@@ -103,7 +102,7 @@
       $.ajax({
         type: "post",
         url: "<?=base_url()?>RatePKController/Read",
-        data: {'id':''},
+        data: {'id':'', CabangID:CabangID},
         dataType: "json",
         success: function (response) {
           bindGrid(response.data);
@@ -114,6 +113,7 @@
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
       $('#btn_Save').attr('disabled',true);
+      $(this).find(':input:disabled').prop('disabled', false);
       e.preventDefault();
       var me = $(this);
       $.ajax({
