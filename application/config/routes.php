@@ -80,3 +80,10 @@ $route['personel'] = 'PersonelController';
 $route['jenisibadah'] = 'JenisIbadahController';
 $route['jenisevent'] = 'JenisEventController';
 $route['jadwalibadah'] = 'JadwalIbadahController';
+
+// Event
+$route['event'] = 'EventController/index';
+
+// Pelayanan
+$route['pelayanan/jadwal'] = 'JadwalPelayananController';
+$route['pelayanan/jadwal/(:any)/(:any)'] = 'JadwalPelayananController/form/$1/$2';
