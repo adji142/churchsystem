@@ -87,3 +87,5 @@ $route['event'] = 'EventController/index';
 // Pelayanan
 $route['pelayanan/jadwal'] = 'JadwalPelayananController';
 $route['pelayanan/jadwal/(:any)/(:any)'] = 'JadwalPelayananController/form/$1/$2';
+$route['pelayanan/konfirmasi/(:any)'] = 'JadwalPelayananController/Konfirmasi/$1';
+$route['pelayanan/absen'] = 'AbsensiController';

@@ -113,9 +113,9 @@
 
 			if ($NoTransaksi == "") {
 				 $NoTransaksi = "";
-				 $prefix = 'EVT'.substr(date('Ymd'),2,8);
+				 $prefix = 'EVT'.$CabangID.substr(date('Ymd'),2,8);
 				 $lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$CabangID), 'dataevent')->num_rows() +1;
-				 $NoTransaksi = $prefix.str_pad($lastNoTrx, 4, '0', STR_PAD_LEFT);
+				 $NoTransaksi = $prefix.str_pad($lastNoTrx, 6, '0', STR_PAD_LEFT);
 			}
 
 			try {

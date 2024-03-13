@@ -96,6 +96,7 @@ class Auth extends CI_Controller {
 		$canEdit = $this->input->post('canEdit');
 		$canDelete = $this->input->post('canDelete');
 		$CabangID = $this->input->post('CabangID');
+		$NIKPersonel = $this->input->post('NIKPersonel');
 
 		$id = $this->input->post('id');
 		$formtype = $this->input->post('formtype');
@@ -110,7 +111,8 @@ class Auth extends CI_Controller {
 			'CabangID'	=> $CabangID,
 			'canAdd'	=> $canAdd,
 			'canEdit'	=> $canEdit,
-			'canDelete'	=> $canDelete
+			'canDelete'	=> $canDelete,
+			'NIKPersonel' => $NIKPersonel
 		);
 		if ($formtype == 'add') {
 			$call = $this->ModelsExecuteMaster->ExecInsert($insert,'users');
@@ -147,15 +149,15 @@ class Auth extends CI_Controller {
 		}
 		elseif ($formtype == 'delete') {
 			try {
-				$oUser = $this->ModelsExecuteMaster->FindData(array('userid'=>$id,'roleid'=>3),'userrole');
+				// $oUser = $this->ModelsExecuteMaster->FindData(array('userid'=>$id),'userrole');
 
-				if ($oUser->num_rows() >0) {
-					$data['success'] = false;
-					$data['message'] = "User Security hanya bisa dihapus dari Menu Master Security";
-					goto jump;
-				}
+				// if ($oUser->num_rows() >0) {
+				// 	$data['success'] = false;
+				// 	$data['message'] = "User Security hanya bisa dihapus dari Menu Master Security";
+				// 	goto jump;
+				// }
 
-				$SQL = "DELETE FROM users WHERE id = ".$id." And RecordOwnerID = '".$this->session->userdata('RecordOwnerID')."'";
+				$SQL = "DELETE FROM users WHERE id = ".$id;
 				$rs = $this->db->query($SQL);
 				if ($rs) {
 					$data['success'] = true;
@@ -465,6 +467,7 @@ class Auth extends CI_Controller {
 			$sess_data['canAdd']=$oUser->row()->canAdd;
 			$sess_data['canEdit']=$oUser->row()->canEdit;
 			$sess_data['canDelete']=$oUser->row()->canDelete;
+			$sess_data['NIKPersonel']=$oUser->row()->NIKPersonel;
 
 			$this->session->set_userdata($sess_data);
 		}

@@ -22,7 +22,7 @@ class ModelsExecuteMaster extends CI_Model
 		$this->db->select('*');
 		$this->db->from('cabang');
 		if ($CabangID != 0) {
-			$this->db->where(array('CabangID'=> $CabangID));
+			$this->db->where(array('id'=> $CabangID));
 		}
 		$rs = $this->db->get();
 		return $rs;
@@ -136,47 +136,79 @@ class ModelsExecuteMaster extends CI_Model
 	{
 		return true;
 	}
+	public function SendEmail($objectData)
+	{
+		$message = '
+        	<h3><center><b>GTI System</b></center></h3><br>
+            <p>
+            	<b>Hallo '.$objectData['NamaLengkap'].'</b><br>
+            	Anda Mendapat Jadwal Pelayanan Pada :
+            </p>
+            <pre>
+            	Hari 		: '.$objectData['Hari'].' <br>
+            	Tanggal 	: '.$objectData['Tanggal'].'<br>
+            	Jam 		: '.$objectData['Jam'].'<br>
+            <p>
+            Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
+            <a href="'.base_url().'pelayanan/konfirmasi/'.$objectData['KonfirmasiID'].'">Klik disini</a>
+            Best Regards<br><br>
+            '.$objectData['CreatedBy'].'
+            </p>
+        ';
+        return $this->SendSpesificEmail($objectData['reciept'], $objectData['subject'],$message);
+	}
 	public function SendSpesificEmail($reciept,$subject,$body)
 	{
+		// var_dump($reciept);
 		$this->load->library('email');
 		$data = array('success' => false ,'message'=>array());
 		// Get Setting
 		$this->db->where(array('id'=>2));
 		$rs = $this->db->get('temailsetting');
 		// End Get Setting
-		$config = array(
-		    'protocol' 		=> $rs->row()->protocol, // 'mail', 'sendmail', or 'smtp'
-		    'smtp_host' 	=> $rs->row()->smtp_host, 
-		    'smtp_port' 	=> $rs->row()->smtp_port,
-		    'smtp_user' 	=> $rs->row()->smtp_user,
-		    'smtp_pass' 	=> $rs->row()->smtp_pass,
-		    'smtp_crypto' 	=> $rs->row()->smtp_crypto, //can be 'ssl' or 'tls' for example
-		    'mailtype' 		=> $rs->row()->mailtype, //plaintext 'text' mails or 'html'
-		    'smtp_timeout' 	=> $rs->row()->smtp_timeout, //in seconds
-		    'charset' 		=> $rs->row()->charset,
-		    'wordwrap' 		=> $rs->row()->wordwrap,
-		    'crlf'    		=> "\r\n",
-            'newline' 		=> "\r\n"
+
+		// smpt options
+
+		$mail = new PHPMailer();
+		// $mail->SMTPDebug = 3;
+		$mail->SMTPOptions = array(
+		    'ssl' => array(
+		        'verify_peer' => false,
+		        'verify_peer_name' => false,
+		        'allow_self_signed' => true,
+		        'debug' => true // Enable SSL/TLS debugging
+		    )
 		);
-        $this->email->initialize($config);
+		$mail->isSMTP();
+		$mail->Host = 'mail.aissystem.org';
+		$mail->SMTPAuth = true;
+		$mail->Username = $rs->row()->smtp_user;
+		$mail->Password = $rs->row()->smtp_pass;
+		$mail->SMTPSecure = 'ssl';
+		$mail->Port     = '465';
+		$mail->Timeout = 60;
+		$mail->SMTPKeepAlive = true;
+
+		$mail->setFrom($rs->row()->smtp_user, '');
+
+		$mail->addAddress($reciept);
 
         $from = $rs->row()->smtp_user;
-        $to = $reciept;
         $subject = '[No-Replay]'.$subject.'[No-Replay]';
         $message = $body;
 
-        $this->email->set_newline("\r\n");
-        $this->email->from($from,'AIS System Information');
-        $this->email->to($to);
-        $this->email->subject($subject);
-        $this->email->message($message);
+        $mail->Subject = $subject;
+        $mail->isHTML(true);
 
-        if($this->email->send()){
-        	$data['success'] = true;
+        $mail->Body = $message;
+        if(!$mail->send()){
+        	$data['success'] = false;
+        	$data['message']=$mail->ErrorInfo;
+        	// var_dump('true');
         }
         else{
-        	$data['success'] = false;
-        	$data['message']=show_error($this->email->print_debugger());
+        	$data['success'] = true;
+        	// var_dump($mail->ErrorInfo);
         }
         return $data;
 	}

@@ -12,16 +12,18 @@
         <div class="x_panel">
           <div class="x_title">
             <?php 
+            // var_dump($header);
               if ($header) {
                 echo "<h2>Edit Jadwal Pelayanan</h2>";
+                echo "<input type='hidden' id='formtype' value = 'edit'>";
+                echo '<textarea  id="headerData" style ="display:none;">'.json_encode($header).'</textarea>';
               }
               else{
                 echo "<h2>Tambah Jadwal Pelayanan</h2>";
+                echo "<input type='hidden' id='formtype' value = 'add'>";
+                echo '<textarea  id="headerData" style ="display:none;"></textarea>';
               }
             ?>
-            <?php if ($header): ?>
-              
-            <?php endif ?>
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
@@ -31,14 +33,14 @@
                     <label class="col-form-label col-md-2 col-sm-2" for="first-name">No. Register <span class="required">*</span>
                     </label>
                     <div class="col-md-4 col-sm-4 ">
-                      <input type="text" name="NoTransaksi" id="NoTransaksi" required="" placeholder="<AUTO>" readonly="" class="form-control ">
+                      <input type="text" name="NoTransaksi" id="NoTransaksi" required="" placeholder="<AUTO>" readonly="" class="form-control" value = "<?php echo ($header) ? $header[0]->NoTransaksi : '' ?>">
                       <input type="hidden" name="formtype" id="formtype" value="add">
                     </div>
 
                     <label class="col-form-label col-md-2 col-sm-2" for="first-name">Tanggal <span class="required">*</span>
                     </label>
                     <div class="col-md-4 col-sm-4 ">
-                      <input type="date" name="TglTransaksi" id="TglTransaksi" required="" class="form-control ">
+                      <input type="date" name="TglTransaksi" id="TglTransaksi" required="" class="form-control " value = "<?php echo ($header) ? $header[0]->TglTransaksi : '' ?>">
                     </div>
                   </div>
 
@@ -51,7 +53,12 @@
                         <?php
 
                           foreach ($Cabang as $key) {
-                            echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
+                            if ($key->id == $header[0]->CabangID) {
+                              echo "<option value = '".$key->id."' selected>".$key->CabangName."</option>";
+                            }
+                            else{
+                              echo "<option value = '".$key->id."' >".$key->CabangName."</option>";
+                            }
                           }
                         ?>
                       </select>
@@ -189,7 +196,52 @@
 
       $('#TglTransaksi').val(lastDayofYear);
 
-      bindGridPersonel([]);
+      // edit mode
+      if ($('#headerData').val() != "") {
+        var headerData = $.parseJSON($('#headerData').val());
+        // console.log(headerData);
+        if (headerData.length > 0) {
+          $('#CabangID').val(headerData[0].CabangID).trigger('change');
+          $('#JenisTransaksi').val(headerData[0].JenisTransaksi).trigger('change');
+          $('#JadwalIbadahID').val(headerData[0].JadwalIbadahID).trigger('change');
+          $('#EventID').val(headerData[0].EventID).trigger('change');
+          $('#NamaJadwal').val(headerData[0].NamaJadwal);
+          $('#DeskripsiJadwal').val(headerData[0].DeskripsiJadwal);
+
+          $.ajax({
+            async:false,
+            type: "post",
+            url: "<?=base_url()?>JadwalPelayananController/ReadDetail",
+            data: {'NoTransaksi':$('#NoTransaksi').val(), 'CabangID': $('#CabangID').val() },
+            dataType: "json",
+            success: function (response) {
+              // console.log(response)
+              if (response.success == true) {
+                $.each(response.data,function (k,v) {
+                  var item = {
+                    NIK : v.PIC,
+                    Nama : v.NamaLengkap,
+                    DivisiID : v.DivisiID,
+                    NamaDivisi : v.NamaDivisi,
+                    JabatanID : v.JabatanID,
+                    NamaJabatan : v.NamaJabatan,
+                    NoHP : v.NoHP,
+                    Email : v.Email
+                  }
+                  jsonObject.push(item);
+                });
+                // console.log(jsonObject)
+                bindGridPersonel(jsonObject);
+              }
+            }
+          });
+
+        }
+      }
+      else{
+        bindGridPersonel([]);
+      }
+
     });
     $('#btn_Select').click(function () {
         var dataGridInstance = $('#gridContainerLookup').dxDataGrid('instance');
@@ -253,8 +305,57 @@
       });
     });
 
-    $('#btn_Save').click(function () {
-      
+    $('#btn_save').click(function () {
+      $('#btn_save').text('Tunggu Sebentar.....');
+      $('#btn_save').attr('disabled',true);
+
+      var dataParam = {
+          'NoTransaksi' : $('#NoTransaksi').val(),
+          'TglTransaksi' : $('#TglTransaksi').val(),
+          'CabangID' : $('#CabangID').val(),
+          'JenisTransaksi' : $('#JenisTransaksi').val(),
+          'JadwalIbadahID' : $('#JadwalIbadahID').val(),
+          'EventID' : $('#EventID').val(),
+          'NamaJadwal' : $('#NamaJadwal').val(),
+          'DeskripsiJadwal' : $('#DeskripsiJadwal').val(),
+          'formtype' : $('#formtype').val(),
+          'detail' : jsonObject
+      };
+      console.log(dataParam);
+
+      $.ajax({
+          url: "<?=base_url()?>JadwalPelayananController/CRUD",
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(dataParam),
+          success: function(response) {
+              // Handle the response from the controller
+              // console.log('Response from controller:', response);
+              if (response.success == true) {
+                  Swal.fire({
+                    icon: "success",
+                    title: "Horray...",
+                    text: "Data berhasil disimpan!",
+                  }).then((result)=>{
+                    // location.reload();
+                    window.location.href = '<?=base_url()?>pelayanan/jadwal';
+                  });
+              }
+              else{
+                  Swal.fire({
+                    icon: "error",
+                    title: "Opps...",
+                    text: response.message,
+                  });
+                  $('#btn_save').text('Save');
+                  $('#btn_save').attr('disabled',false);
+              }
+          },
+          error: function(xhr, status, error) {
+              // Handle errors
+              console.error('Error:', error);
+          }
+      });
     })
 
     function AppendItem(data) {
@@ -313,46 +414,6 @@
         }
         return duplicate;
     }
-
-    $('#post_').submit(function (e) {
-      $('#btn_Save').text('Tunggu Sebentar.....');
-      $('#btn_Save').attr('disabled',true);
-      $(this).find(':input:disabled').prop('disabled', false);
-      e.preventDefault();
-      var me = $(this);
-      $.ajax({
-        type    :'post',
-        url     : '<?=base_url()?>DivisiController/CRUD',
-        data    : me.serialize(),
-        dataType: 'json',
-        success : function (response) {
-          if(response.success == true){
-            $('#modal_').modal('toggle');
-            Swal.fire({
-              type: 'success',
-              title: 'Horay..',
-              text: 'Data Berhasil disimpan!',
-              // footer: '<a href>Why do I have this issue?</a>'
-            }).then((result)=>{
-              location.reload();
-            });
-          }
-          else{
-            $('#modal_').modal('toggle');
-            Swal.fire({
-              type: 'error',
-              title: 'Woops...',
-              text: response.message,
-              // footer: '<a href>Why do I have this issue?</a>'
-            }).then((result)=>{
-              $('#modal_').modal('show');
-              $('#btn_Save').text('Save');
-              $('#btn_Save').attr('disabled',false);
-            });
-          }
-        }
-      });
-    });
 
     $('#JenisTransaksi').change(function () {
       console.log($('#JenisTransaksi').val())
@@ -466,6 +527,7 @@
     }
 
     function bindGridPersonel(data) {
+      console.log(data);
         var oldData = {};
         var dataGridInstance = $("#gridContainerPelayan").dxDataGrid({
             allowColumnResizing: true,

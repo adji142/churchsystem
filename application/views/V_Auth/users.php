@@ -138,6 +138,16 @@
                     </div>
                   </div>
 
+                  <div class="item form-group">
+                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">NIK Personel <span class="required">*</span>
+                    </label>
+                    <div class="col-md-12 col-sm-12 ">
+                      <select class="form-control col-md-6" id="NIKPersonel" name="NIKPersonel" >
+                        <option value="">Pilih Personel</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div class="item" form-group>
                     <button class="btn btn-primary" id="btn_Save">Save</button>
                   </div>
@@ -158,11 +168,15 @@
   $(function () {
     $(document).ready(function () {
       $('#roles').select2({
-        width : '200px'
+        width : '100%'
       });
 
       $('#CabangID').select2({
-        width : '200px'
+        width : '100%'
+      });
+
+      $('#NIKPersonel').select2({
+        width : '100%'
       });
 
       var CabangID = "<?php echo $CabangID;?>"
@@ -247,6 +261,30 @@
           })
         }
       });
+
+      // NIK
+
+      $.ajax({
+        type: "post",
+        url: "<?=base_url()?>PersonelController/Read",
+        data: {'NIK':'','CabangID':$('#CabangID').val()},
+        dataType: "json",
+        success: function (response) {
+          // bindGrid(response.data);
+          $('#NIKPersonel').empty();
+          $('#NIKPersonel').append($('<option>', {
+                value: "",
+                text: "Pilih Personel"
+            }));
+
+          $.each(response.data,function (k,v) {
+            $('#NIKPersonel').append($('<option>', {
+                value: v.NIK,
+                text: v.Nama
+            }));
+          })
+        }
+      });
     })
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
@@ -317,6 +355,7 @@
             $('#canAdd').val(v.canAdd);
             $('#canEdit').val(v.canEdit);
             $('#canDelete').val(v.canDelete);
+            $('#NIKPersonel').val(v.NIKPersonel);
             // $('#Nilai').val(v.Nilai);
 
             if (v.canAdd == 1) {

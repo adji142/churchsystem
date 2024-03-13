@@ -307,7 +307,7 @@
       var canEdit = "<?php echo $canEdit; ?>";
       var canDelete = "<?php echo $canDelete; ?>";
 
-      $("#gridContainerHeader").dxDataGrid({
+      var dataGridInstance = $("#gridContainerHeader").dxDataGrid({
         allowColumnResizing: true,
         dataSource: data,
         keyExpr: "NoTransaksi",
@@ -335,6 +335,9 @@
         export: {
             enabled: true,
             fileName: "Daftar Role"
+        },
+        selection:{
+            mode: "single"
         },
         columns: [
             {
@@ -384,8 +387,13 @@
                 allowEditing:false,
             },
             {
-                dataField: "JumlahKonfirmasi",
-                caption: "Terkonfirmasi",
+                dataField: "JumlahKonfirmasiHadir",
+                caption: "Bisa Hadir",
+                allowEditing:false,
+            },
+            {
+                dataField: "JumlahKonfirmasiTidakHadir",
+                caption: "Tidak Bisa Hadir",
                 allowEditing:false,
             },
             {
@@ -395,7 +403,8 @@
             },
         ],
         onEditingStart: function(e) {
-            GetData(e.data.id);
+            // GetData(e.data.id);
+            window.location.href = '<?Php echo base_url(); ?>pelayanan/jadwal/'+e.data.NoTransaksi+'/'+CabangID;
         },
         onRowRemoving: function(e) {
           id = e.data.id;
@@ -445,10 +454,12 @@
             }
           })
         },
-        onEditorPrepared: function (e) {
-          // console.log(e);
-        }
-        });
+      }).dxDataGrid('instance');
+
+      dataGridInstance.on('selectionChanged', function(e) {
+        var selectedRows = e.selectedRowsData;
+        getDetail(selectedRows[0].NoTransaksi,selectedRows[0].CabangID)
+      });
         // add dx-toolbar-after
         // $('.dx-toolbar-after').append('Tambah Alat untuk di pinjam ');
     }
@@ -481,7 +492,7 @@
         },
         columns: [
             {
-                dataField: "LineNumber",
+                dataField: "LineNum",
                 caption: "#",
                 allowEditing:false
             },
@@ -507,8 +518,13 @@
                 allowEditing:false,
             },
             {
-                dataField: "Konfirmasi",
-                caption: "Konfirmasi (Y/N)",
+                dataField: "diKonfirmasi",
+                caption: "Bisa Hadir (Y/N)",
+                allowEditing:false,
+            },
+            {
+                dataField: "KonfirmasiKeterangan",
+                caption: "Keterangan",
                 allowEditing:false,
             },
         ],

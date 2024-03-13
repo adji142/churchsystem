@@ -5,6 +5,7 @@
   $canEdit = $this->session->userdata('canEdit');
   $canDelete = $this->session->userdata('canDelete');
   $CabangID = $this->session->userdata('CabangID');
+  $NIKPersonel = $this->session->userdata('NIKPersonel');
   // var_dump($user_id);
   if($user_id == ''){
     echo "<script>location.replace('".base_url()."home');</script>";

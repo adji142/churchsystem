@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-// use PHPMailer\PHPMailer\PHPMailer;
-// use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class home extends CI_Controller {
 
@@ -30,6 +30,56 @@ class home extends CI_Controller {
 		// require APPPATH.'libraries/phpmailer/src/Exception.php';
   //       require APPPATH.'libraries/phpmailer/src/PHPMailer.php';
   //       require APPPATH.'libraries/phpmailer/src/SMTP.php';
+	}
+	public function testEmail()
+	{
+		 $response = false;
+         $mail = new PHPMailer();
+      
+        // SMTP configuration
+        // $mail->SMTPDebug = 3;
+        $mail->SMTPOptions = array(
+		    'ssl' => array(
+		        'verify_peer' => false,
+		        'verify_peer_name' => false,
+		        'allow_self_signed' => true,
+		        'debug' => true // Enable SSL/TLS debugging
+		    )
+		);
+        $mail->isSMTP();
+        $mail->Host     = 'mail.aissystem.org'; //sesuaikan sesuai nama domain hosting yang digunakan
+        $mail->SMTPAuth = true;
+        $mail->Username = 'konfirmasi@aissystem.org'; // user email
+        $mail->Password = 'konf123KONF'; // password email
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port     = 465;
+        $mail->Timeout = 60; 
+        $mail->SMTPKeepAlive = true;
+
+        $mail->setFrom('konfirmasi@aissystem.org', ''); // user email
+        // $mail->addReplyTo('xxx@hostdomain.com', ''); //user email
+
+        // Add a recipient
+        $mail->addAddress('prasetyoajiw@gmail.com'); //email tujuan pengiriman email
+
+        // Email subject
+        $mail->Subject = 'SMTP Codeigniter'; //subject email
+
+        // Set email format to HTML
+        $mail->isHTML(true);
+
+        // Email body content
+        $mailContent = "<h1>SMTP Codeigniterr</h1>
+            <p>Laporan email SMTP Codeigniter.</p>"; // isi email
+        $mail->Body = $mailContent;
+
+        // Send email
+        if(!$mail->send()){
+            echo 'Message could not be sent.';
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        }else{
+            echo 'Message has been sent';
+        }
 	}
 	public function test()
 	{
