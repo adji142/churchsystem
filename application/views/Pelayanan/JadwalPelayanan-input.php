@@ -109,25 +109,49 @@
                   </div>
 
                 </div>
-
-                <div class="col-md-12 col-sm-12">
-                  <h2>Petugas Pelayanan</h2>
-                  <hr>
-                  <div class="dx-viewport demo-container">
-                    <div id="data-grid-demo">
-                      <div id="gridContainerPelayan">
-                      </div>
-                    </div>
-                  </div>
-                </div>
                 <label></label>
-                <div class="col-md-12 col-sm-12">
-                  <h2></h2>
-                  <button class="btn btn-primary" id="btn_save">Simpan</button>
-                </div>
               </div>
           </div>
         </div>
+      </div>
+      <div class="col-md-12 col-sm-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <div class="col-md-12 col-sm-12">
+              <h2>Petugas Pelayanan</h2><br>
+            </div>
+            <div class="col-md-12 col-sm-12">
+              <button class="btn btn-primary" id="btn_add_pelayan" disabled="">Tambah Pelayan</button>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <table class="table table-hover" id="PelayanTable">
+              <thead>
+                <tr>
+                  <th>Divisi</th>
+                  <th>Jabatan</th>
+                  <th>Cabang</th>
+                  <th>Personil</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 col-sm-12">
+        <h2></h2>
+        <button class="btn btn-primary" id="btn_save">Simpan</button>
       </div>
     </div>
   </div>
@@ -142,12 +166,36 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="dx-viewport demo-container">
-          <div id="data-grid-demo">
-            <div id="gridContainerLookup">
-            </div>
+        <div class="item form-group">
+          <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Divisi <span class="required">*</span>
+          </label>
+          <div class="col-md-9 col-sm-9 ">
+            <select class="form-control col-md-6" id="DivisiID" name="DivisiID" >
+              <option value="0">Pilih Divisi</option>
+            </select>
           </div>
         </div>
+
+        <div class="item form-group">
+          <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Jabatan <span class="required">*</span>
+          </label>
+          <div class="col-md-9 col-sm-9 ">
+            <select class="form-control col-md-6" id="JabatanID" name="JabatanID" >
+              <option value="0">Pilih Jabatan</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="item form-group">
+          <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Personel <span class="required">*</span>
+          </label>
+          <div class="col-md-9 col-sm-9 ">
+            <select class="form-control col-md-6" id="NIK" name="NIK" >
+              <option value="0">Pilih Personel</option>
+            </select>
+          </div>
+        </div>
+
 
         <div class="item" form-group>
           <button class="btn btn-primary" id="btn_Select">Pilih</button>
@@ -166,6 +214,13 @@
   $(function () {
     var CabangID = "<?php echo $CabangID; ?>";
     var jsonObject = [];
+
+    var CabangFill = [];
+    var DepartementFill = [];
+    var JabatanFill = [];
+    var PersonelFill = [];
+
+    var hakUbahCabang = false;
     $(document).ready(function () {
       $('#CabangID').select2({
         width: '100%'
@@ -180,6 +235,18 @@
       });
 
       $('#EventID').select2({
+        width: '100%'
+      });
+
+      $('#DivisiID').select2({
+        width: '100%'
+      });
+
+      $('#JabatanID').select2({
+        width: '100%'
+      });
+
+      $('#NIK').select2({
         width: '100%'
       });
 
@@ -281,7 +348,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>EventController/Read",
-        data: {'TglAwal':$('#TglTransaksi').val(),'TglAkhir':'2999-01-01', 'CabangIDFilter': $('#CabangID').val(),'JenisEventIDFilter':'' },
+        data: {'TglAwal':$('#TglTransaksi').val(),'TglAkhir':'2999-01-01', 'CabangIDFilter': $('#CabangID').val(),'JenisEventIDFilter':'0' },
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
@@ -300,6 +367,102 @@
             });
 
             $('#EventID').append(newOption);
+          });
+        }
+      });
+
+      // Departement
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>DivisiController/Read",
+        data: {'id':'', 'CabangID': $('#CabangID').val() },
+        dataType: "json",
+        success: function (response) {
+          DepartementFill = response.data;
+
+          $('#DivisiID').empty();
+          var newOption = $('<option>', {
+            value: -1,
+            text: "Pilih Divisi"
+          });
+
+          $('#DivisiID').append(newOption); 
+          $.each(response.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.id,
+              text: v.NamaDivisi
+            });
+
+            $('#DivisiID').append(newOption);
+          });
+        }
+      });
+
+      // Jabatan
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>JabatanController/Read",
+        data: {'DivisiID':'', 'CabangID': $('#CabangID').val() },
+        dataType: "json",
+        success: function (response) {
+          JabatanFill = response.data;
+        }
+      });
+
+      // Personil
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>PersonelController/Read",
+        data: {'NIK':'', 'CabangID': $('#CabangID').val() },
+        dataType: "json",
+        success: function (response) {
+          PersonelFill = response.data;
+          $('#NIK').empty();
+          var newOption = $('<option>', {
+            value: -1,
+            text: "Pilih Personel"
+          });
+
+          $('#NIK').append(newOption); 
+          $.each(response.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.NIK,
+              text: v.Nama
+            });
+
+            $('#NIK').append(newOption);
+          });
+        }
+      });
+    });
+
+    $('#DivisiID').change(function () {
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>JabatanController/Read",
+        data: {'DivisiID':$('#DivisiID').val(), 'CabangID': $('#CabangID').val() },
+        dataType: "json",
+        success: function (response) {
+          // bindGrid(response.data);
+          // console.log(response);
+          $('#JabatanID').empty();
+          var newOption = $('<option>', {
+            value: -1,
+            text: "Pilih Jabatan"
+          });
+
+          $('#JabatanID').append(newOption); 
+          $.each(response.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.id,
+              text: v.NamaJabatan
+            });
+
+            $('#JabatanID').append(newOption);
           });
         }
       });
@@ -356,6 +519,10 @@
               console.error('Error:', error);
           }
       });
+    });
+
+    $('#btn_add_pelayan').click(function () {
+      $('#modal_').modal('show');
     })
 
     function AppendItem(data) {
@@ -453,6 +620,168 @@
           });
         }
       });
+    }
+    $('#JadwalIbadahID').change(function() {
+      // console.log(CabangFill);
+      // console.log(DepartementFill);
+      // console.log(JabatanFill);
+      console.log($('#JadwalIbadahID').val());
+      if ($('#JadwalIbadahID').val() != "") {
+        $('#btn_add_pelayan').prop('disabled', false);
+      }
+      $.ajax({
+        type: "post",
+        url: "<?=base_url()?>TemplatePetugasController/find",
+        data: {'CabangID':$('#CabangID').val(),'BaseReff':$('#JadwalIbadahID').val(),'BaseType':'JADWALIBADAH'},
+        dataType: "json",
+        success: function (response) {
+          // console.log(response)
+          // elementContainer
+          var xrow = 1;
+          var table = document.getElementById('PelayanTable');
+          $.each(response.data,function (k,v) {
+            var idText = generateRandomText(5)
+
+            var selectDivisi = document.createElement('select');
+            var selectJabatan = document.createElement('select');
+            var selectCabang = document.createElement('select');
+            var selectPersonil = document.createElement('select');
+
+            selectDivisi.id = 'divisi'+idText;
+            selectJabatan.id = 'jabatan'+idText;
+            selectCabang.id = 'cabang'+idText;
+            selectPersonil.id = 'personel'+idText;
+
+            // Divisi
+            for (var i = 0; i < DepartementFill.length; i++) {
+              // Things[i]
+              var option = document.createElement('option');
+              option.value = DepartementFill[i]['id']; // Set option value
+              option.text = DepartementFill[i]['NamaDivisi']; // Set option text
+              selectDivisi.appendChild(option);
+            }
+
+            var newRow = document.createElement('tr');
+
+            var cell1 = document.createElement('td');
+            newRow.appendChild(cell1);
+
+            var cell2 = document.createElement('td');
+            newRow.appendChild(cell2);
+
+            var cell3 = document.createElement('td');
+            newRow.appendChild(cell3);
+
+            var cell4 = document.createElement('td');
+            newRow.appendChild(cell4);
+
+            var cell5 = document.createElement('td');
+            newRow.appendChild(cell5);
+
+            table.appendChild(newRow);
+
+            var row = table.rows[xrow];
+            var cell = row.cells[0];
+            cell.appendChild(selectDivisi);
+
+            $('#divisi'+idText).val(v.DivisiID);
+            $('#divisi'+idText).prop('disabled', true);
+            $('#divisi'+idText).select2({
+              width: '100%'
+            });
+            // Divisi
+
+            // Jabatan
+
+            for (var i = 0; i < JabatanFill.length; i++) {
+              // Things[i]
+              var option = document.createElement('option');
+              option.value = JabatanFill[i]['id']; // Set option value
+              option.text = JabatanFill[i]['NamaJabatan']; // Set option text
+              selectJabatan.appendChild(option);
+            }
+            var rowjabatan = table.rows[xrow];
+            var celljabatan = rowjabatan.cells[1];
+            celljabatan.appendChild(selectJabatan);
+
+            $('#jabatan'+idText).val(v.JabatanID);
+            $('#jabatan'+idText).prop('disabled', true);
+            $('#jabatan'+idText).select2({
+              width: '100%'
+            });
+            // Jabatan
+
+            // Cabang
+            var sourceSelect = document.getElementById('CabangID');
+
+            for (var i = 0; i < sourceSelect.options.length; i++) {
+
+                var option = sourceSelect.options[i];
+                var newOption = document.createElement('option');
+                newOption.value = option.value;
+                newOption.textContent = option.textContent;
+                selectCabang.appendChild(newOption);
+            }
+
+            var rowcabang = table.rows[xrow];
+            var cellcabang = rowcabang.cells[2];
+            cellcabang.appendChild(selectCabang);
+
+            $('#cabang'+idText).val(v.CabangID).trigger('change');
+            $('#cabang'+idText).prop('disabled', !hakUbahCabang);
+            $('#cabang'+idText).select2({
+              width: '70%'
+            });
+            // Cabang
+
+            $.ajax({
+              type: "post",
+              url: "<?=base_url()?>PersonelController/Read",
+              data: {
+                'NIK':'',
+                'CabangID':$('#cabang'+idText).val(),
+                'DivisiID': $('#divisi'+idText).val(),
+                'JabatanID':$('jabatan'+idText).val()
+              },
+              dataType: "json",
+              success: function (xResponse) {
+                // console.log(response);
+                for (var i = 0; i < xResponse.data.length; i++) {
+                  // Things[i]
+                  // console.log(xResponse.data[i]['Nama'])
+                  var option = document.createElement('option');
+                  option.value = xResponse.data[i]['NIK']; // Set option value
+                  option.text = xResponse.data[i]['Nama']; // Set option text
+                  selectPersonil.appendChild(option);
+                }
+              }
+            });
+
+            var rowpersonel = table.rows[xrow];
+            var cellpersonel = rowpersonel.cells[3];
+            cellpersonel.appendChild(selectPersonil);
+            // console.log(xrow)
+
+            // $('#personel'+v.id).val(xResponse.data[i]['Nama']);
+            // $('#personel'+v.id).prop('disabled', true);
+            $('#personel'+idText).select2({
+              width: '100%'
+            });
+
+            xrow +=1;
+          })
+        }
+      });
+    });
+
+    function generateRandomText(length) {
+      var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      var result = '';
+      for (var i = 0; i < length; i++) {
+          var randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters.charAt(randomIndex);
+      }
+      return result;
     }
     
     function bindGridPersonelLookup(data) {

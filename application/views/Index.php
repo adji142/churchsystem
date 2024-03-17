@@ -69,7 +69,7 @@
                   <h1>
                     <!-- <i class="fa fa-paw"></i>  -->
                     <img src="<?php echo base_url() ?>Assets/images/logoblack.png" width = "20%">
-                    <br>
+                    <br><br>
                     GTI SYSTEM
                   </h1>
                   <p>Sistem Administrasi Management Gereja</p>

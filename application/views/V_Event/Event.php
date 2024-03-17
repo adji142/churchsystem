@@ -38,9 +38,10 @@
                 <option value="0">Pilih Jenis Event</option>
               </select>
             </div>
-            <div class="col-md-3 col-sm-3 ">
+            <div class="col-md-6 col-sm-6 ">
               <br>
               <button class="btn btn-primary" id="btn_Search">Cari Data</button>
+              <button class="btn btn-danger" id="btn_Add">Tambah Data</button>
             </div>
             <div class="clearfix"></div>
           </div>
@@ -195,7 +196,11 @@
 ?>
 <script type="text/javascript">
   $(function () {
-    var CabangID = "<?php echo $CabangID; ?>"
+    var CabangID = "<?php echo $CabangID; ?>";
+    var canAdd = "<?php echo $canAdd; ?>";
+    var canEdit = "<?php echo $canEdit; ?>";
+    var canDelete = "<?php echo $canDelete; ?>";
+
     $(document).ready(function () {
       $('#CabangID').select2({
         width: '100%'
@@ -229,6 +234,8 @@
       $('#TglAwal').val(today);
       $('#TglAkhir').val(lastDayofYear);
 
+      $('#btn_Add').attr('disabled',!canAdd);
+
       GetRecordData();
     });
 
@@ -236,7 +243,7 @@
       $.ajax({
         type: "post",
         url: "<?=base_url()?>EventController/Read",
-        data: {'TglAwal':$('#TglAwal').val(),'TglAkhir' : $('#TglAkhir').val(),CabangID:CabangID, 'JenisEventID' : $('#JenisEventIDFilter').val()},
+        data: {'TglAwal':$('#TglAwal').val(),'TglAkhir' : $('#TglAkhir').val(),'CabangIDFilter':$('#CabangIDFilter').val(), 'JenisEventIDFilter' : $('#JenisEventIDFilter').val()},
         dataType: "json",
         success: function (response) {
           if (response.success == true) {
@@ -362,7 +369,11 @@
 
     $('#btn_Search').click(function () {
       GetRecordData();
-    })
+    });
+    $('#btn_Add').click(function () {
+      var id = "0";
+      window.location.href = '<?Php echo base_url(); ?>event/input/-/'+CabangID;
+    });
     $('.close').click(function() {
       location.reload();
     });
@@ -400,9 +411,6 @@
       });
     }
     function bindGrid(data) {
-      var canAdd = "<?php echo $canAdd; ?>";
-      var canEdit = "<?php echo $canEdit; ?>";
-      var canDelete = "<?php echo $canDelete; ?>";
 
       $("#gridContainer").dxDataGrid({
         allowColumnResizing: true,
@@ -418,7 +426,7 @@
             },
             editing: {
                 mode: "row",
-                allowAdding:canAdd,
+                // allowAdding:canAdd,
                 allowUpdating: canEdit,
                 allowDeleting: canDelete,
                 texts: {
@@ -456,8 +464,13 @@
                     allowEditing:false
                 },
                 {
-                    dataField: "JamEventFormted",
-                    caption: "Jam",
+                    dataField: "JamMulaiFormated",
+                    caption: "Jam Mulai",
+                    allowEditing:false
+                },
+                {
+                    dataField: "JamSelesaiFormated",
+                    caption: "Jam Selesai",
                     allowEditing:false
                 },
                 {
@@ -478,11 +491,12 @@
                 },
             ],
             onEditingStart: function(e) {
-                GetData(e.data.NoTransaksi, e.data.CabangID);
+                // GetData(e.data.NoTransaksi, e.data.CabangID);
+                window.location.href = '<?Php echo base_url(); ?>event/input/'+e.data.NoTransaksi+'/'+e.data.CabangID;
             },
             onInitNewRow: function(e) {
                 // logEvent("InitNewRow");
-                $('#modal_').modal('show');
+                // $('#modal_').modal('show');
             },
             onRowInserting: function(e) {
                 // logEvent("RowInserting");

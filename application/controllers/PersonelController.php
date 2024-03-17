@@ -23,13 +23,15 @@
 
 			$NIK = $this->input->post('NIK');
 			$CabangID = $this->input->post('CabangID');
+			$DivisiID = $this->input->post('DivisiID');
+			$JabatanID = $this->input->post('JabatanID');
 
 			try {
-				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID");
+				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'Y' ELSE 'N' END AS selectedPersonel " );
 				$this->db->from('personel');
 				$this->db->join('cabang','personel.CabangID=cabang.id','left');
-				$this->db->join('divisi','personel.DivisiID=divisi.id','left');
-				$this->db->join('jabatan','personel.JabatanID=jabatan.id','left');
+				$this->db->join('divisi','personel.DivisiID=divisi.id AND personel.CabangID = divisi.CabangID','left');
+				$this->db->join('jabatan','personel.JabatanID=jabatan.id AND personel.JabatanID = jabatan.CabangID','left');
 				$this->db->join('ratepk','personel.RatePKCode=ratepk.id','left');
 				$this->db->join('dem_provinsi','personel.ProvID = dem_provinsi.prov_id','left');
 				$this->db->join('dem_kota','personel.KotaID = dem_kota.city_id','left');

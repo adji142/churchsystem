@@ -13,6 +13,10 @@
           <div class="x_title">
             <h2>Jadwal Ibadah</h2>
             <div class="clearfix"></div>
+            <div class="col-md-3 col-sm-3 ">
+              <br>
+              <button class="btn btn-danger" id="btn_Add">Tambah Data</button>
+            </div>
           </div>
           <div class="x_content">
               <div class="dx-viewport demo-container">
@@ -120,6 +124,9 @@
 <script type="text/javascript">
   $(function () {
     var CabangID = "<?php echo $CabangID; ?>"
+    var canAdd = "<?php echo $canAdd; ?>";
+    var canEdit = "<?php echo $canEdit; ?>";
+    var canDelete = "<?php echo $canDelete; ?>";
     $(document).ready(function () {
       $('#CabangID').select2({
         width: '200px'
@@ -129,6 +136,8 @@
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
       }
+
+      $('#btn_Add').attr('disabled',!canAdd);
 
       $.ajax({
         type: "post",
@@ -158,6 +167,11 @@
         }
       });
     });
+
+    $('#btn_Add').click(function () {
+      var id = "0";
+      window.location.href = '<?Php echo base_url(); ?>jadwalibadah/input/'+id+'/'+CabangID;
+    })
 
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
@@ -227,10 +241,6 @@
       });
     }
     function bindGrid(data) {
-      var canAdd = "<?php echo $canAdd; ?>";
-      var canEdit = "<?php echo $canEdit; ?>";
-      var canDelete = "<?php echo $canDelete; ?>";
-
       $("#gridContainer").dxDataGrid({
         allowColumnResizing: true,
             dataSource: data,
@@ -240,12 +250,13 @@
             allowColumnResizing: true,
             columnAutoWidth: true,
             showBorders: true,
+            remoteOperations: true,
             paging: {
                 enabled: false
             },
             editing: {
                 mode: "row",
-                allowAdding:canAdd,
+                // allowAdding:canAdd,
                 allowUpdating: canEdit,
                 allowDeleting: canDelete,
                 texts: {
@@ -260,6 +271,19 @@
             export: {
                 enabled: true,
                 fileName: "Daftar Role"
+            },
+            rowDragging: {
+              allowReordering: true,
+              onReorder(e) {
+                const visibleRows = e.component.getVisibleRows();
+                const toIndex = tasks.findIndex((item) => item.ID === visibleRows[e.toIndex].data.ID);
+                const fromIndex = tasks.findIndex((item) => item.ID === e.itemData.ID);
+
+                tasks.splice(fromIndex, 1);
+                tasks.splice(toIndex, 0, e.itemData);
+
+                e.component.refresh();
+              },
             },
             columns: [
                 {
@@ -295,7 +319,8 @@
                 },
             ],
             onEditingStart: function(e) {
-                GetData(e.data.id, e.data.CabangID);
+                // GetData(e.data.id, e.data.CabangID);
+                window.location.href = '<?Php echo base_url(); ?>jadwalibadah/input/'+e.data.id+'/'+e.data.CabangID;
             },
             onInitNewRow: function(e) {
                 // logEvent("InitNewRow");
