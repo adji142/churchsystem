@@ -28,13 +28,13 @@
 						->group_by('penugasanjadwalpelayanan.NoTransaksi,penugasanjadwalpelayanan.CabangID')->get_compiled_select();
 
 			try {
-				$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.TglEvent,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),'SELESAI') AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasiHadir,sub.JumlahKonfirmasiTidakHadir, sub.BelumKonfirmasi");
+				$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.JamMulai,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),DATE_FORMAT(dataevent.JamSelesai,'%T')) AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasiHadir,sub.JumlahKonfirmasiTidakHadir, sub.BelumKonfirmasi");
 				$this->db->from('jadwalpelayanan');
 				$this->db->join('jadwalibadah','jadwalpelayanan.JadwalIbadahID=jadwalibadah.id AND jadwalpelayanan.CabangID = jadwalibadah.CabangID','left');
-				$this->db->join('dataevent','jadwalpelayanan.JadwalIbadahID=dataevent.NoTransaksi AND jadwalpelayanan.CabangID = dataevent.CabangID','left');
+				$this->db->join('dataevent','jadwalpelayanan.EventID=dataevent.NoTransaksi AND jadwalpelayanan.CabangID = dataevent.CabangID','left');
 				$this->db->join('cabang','jadwalpelayanan.CabangID = cabang.id','left');
 				$this->db->join("($subquery) as sub","jadwalpelayanan.NoTransaksi = sub.NoTransaksi and jadwalpelayanan.CabangID = sub.CabangID",'left');
-				$this->db->join('defaulthari','defaulthari.KodeHari = COALESCE(jadwalibadah.Hari,dayname(dataevent.TglEvent))');
+				$this->db->join('defaulthari','defaulthari.KodeHari = COALESCE(jadwalibadah.Hari,dayname(dataevent.TglEvent))','left');
 				// $this->db->where_between('jadwalpelayanan.TglTransaksi', $TglAwal, $TglAkhir);
 				$this->db->where('jadwalpelayanan.TglTransaksi >=', $TglAwal);
 				$this->db->where('jadwalpelayanan.TglTransaksi <=', $TglAkhir);
@@ -196,7 +196,7 @@
 
 				$NoTransaksi = "";
 				if ($formtype == "add") {
-					$prefix = 'JDW'.$CabangID.substr(date('Ymd'),2,8);
+					$prefix = 'JDW'.$json_data['CabangID'].substr(date('Ymd'),2,8);
 					$lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$json_data['CabangID']), 'jadwalpelayanan')->num_rows() +1;
 					$NoTransaksi = $prefix.str_pad($lastNoTrx, 6, '0', STR_PAD_LEFT);
 				}
@@ -210,6 +210,7 @@
 					'EventID' => $json_data['EventID'],
 					'NamaJadwal' => $json_data['NamaJadwal'],
 					'DeskripsiJadwal' => $json_data['DeskripsiJadwal'],
+					'PICKegiatan' => $json_data['PICKegiatan']
 				);
 
 				if ($formtype == "add") {
@@ -341,10 +342,10 @@
 						->join('cabang','penugasanjadwalpelayanan.CabangID = cabang.id','left')
 						->group_by('penugasanjadwalpelayanan.NoTransaksi,penugasanjadwalpelayanan.CabangID')->get_compiled_select();
 
-					$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.TglEvent,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),'SELESAI') AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasi, sub.BelumKonfirmasi,personel.NoHP, personel.Email, defaulthari.NamaHari,personel.NamaLengkap,penugasanjadwalpelayanan.KonfirmasiID");
+					$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.JamMulai,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),DATE_FORMAT(dataevent.JamSelesai,'%T')) AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasi, sub.BelumKonfirmasi,personel.NoHP, personel.Email, defaulthari.NamaHari,personel.NamaLengkap,penugasanjadwalpelayanan.KonfirmasiID,jadwalpelayanan.CreatedBy");
 					$this->db->from('jadwalpelayanan');
 					$this->db->join('jadwalibadah','jadwalpelayanan.JadwalIbadahID=jadwalibadah.id AND jadwalpelayanan.CabangID = jadwalibadah.CabangID','left');
-					$this->db->join('dataevent','jadwalpelayanan.JadwalIbadahID=dataevent.NoTransaksi AND jadwalpelayanan.CabangID = dataevent.CabangID','left');
+					$this->db->join('dataevent','jadwalpelayanan.EventID=dataevent.NoTransaksi AND jadwalpelayanan.CabangID = dataevent.CabangID','left');
 					$this->db->join('cabang','jadwalpelayanan.CabangID = cabang.id','left');
 					$this->db->join("($subquery) as sub","jadwalpelayanan.NoTransaksi = sub.NoTransaksi and jadwalpelayanan.CabangID = sub.CabangID",'left');
 					$this->db->join('defaulthari','defaulthari.KodeHari = COALESCE(jadwalibadah.Hari,dayname(dataevent.TglEvent))');
@@ -356,25 +357,26 @@
 
 					$saved = $this->db->get();
 
-					foreach ($saved->result() as $key) {
-						$oParamEmail = array(
-	                		"NamaLengkap" => $key->NamaLengkap,
-	                		"Hari" => $key->NamaHari,
-	                		"Tanggal" => $key->TglTransaksi,
-	                		"Jam" => $key->JamMulai. ' Sampai '.$key->JamSelesai,
-	                		"CreatedBy" => $CreatedBy,
-	                		"KonfirmasiID" => $key->KonfirmasiID,
-	                		"reciept" => $key->Email,
-	                		"subject" => "Email Konfirmasi Kehadiran"
-	                	);
+					$data = $this->ModelsExecuteMaster->SendEmail($saved->result());
+					// foreach ($saved->result() as $key) {
+					// 	$oParamEmail = array(
+	    //             		"NamaLengkap" => $key->NamaLengkap,
+	    //             		"Hari" => $key->NamaHari,
+	    //             		"Tanggal" => $key->TglTransaksi,
+	    //             		"Jam" => $key->JamMulai. ' Sampai '.$key->JamSelesai,
+	    //             		"CreatedBy" => $CreatedBy,
+	    //             		"KonfirmasiID" => $key->KonfirmasiID,
+	    //             		"reciept" => $key->Email,
+	    //             		"subject" => "Email Konfirmasi Kehadiran"
+	    //             	);
 
-	                	// var_dump($oParamEmail["NamaLengkap"]);
+	    //             	// var_dump($oParamEmail["NamaLengkap"]);
 
-	                	$data = $this->ModelsExecuteMaster->SendEmail($oParamEmail);
-	                	// var_dump($x);
+	    //             	$data = $this->ModelsExecuteMaster->SendEmail($oParamEmail);
+	    //             	// var_dump($x);
 	                	
 
-					}
+					// }
 				}
 
 

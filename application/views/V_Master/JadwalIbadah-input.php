@@ -283,7 +283,7 @@
       $.ajax({
         type: "post",
         url: "<?=base_url()?>JadwalIbadahController/ReadTemplate",
-        data: {'CabangID':$('#CabangID').val(),,'BaseType':'JADWALIBADAH'},
+        data: {'CabangID':$('#CabangID').val(),'BaseType':'JADWALIBADAH'},
         dataType: "json",
         success: function (response) {
           // console.log(template);

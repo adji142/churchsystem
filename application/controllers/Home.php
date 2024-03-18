@@ -47,39 +47,79 @@ class home extends CI_Controller {
 		    )
 		);
         $mail->isSMTP();
-        $mail->Host     = 'mail.aissystem.org'; //sesuaikan sesuai nama domain hosting yang digunakan
+        $mail->Host     = 'smtp.gmail.com'; //sesuaikan sesuai nama domain hosting yang digunakan
         $mail->SMTPAuth = true;
-        $mail->Username = 'konfirmasi@aissystem.org'; // user email
-        $mail->Password = 'konf123KONF'; // password email
+        $mail->Username = 'aissystemsolo@gmail.com'; // user email
+        $mail->Password = 'dpydlswynftsmgme'; // password email
         $mail->SMTPSecure = 'ssl';
         $mail->Port     = 465;
         $mail->Timeout = 60; 
         $mail->SMTPKeepAlive = true;
 
-        $mail->setFrom('konfirmasi@aissystem.org', ''); // user email
+        $mail->setFrom('aissystemsolo@gmail.com', ''); // user email
         // $mail->addReplyTo('xxx@hostdomain.com', ''); //user email
 
-        // Add a recipient
-        $mail->addAddress('prasetyoajiw@gmail.com'); //email tujuan pengiriman email
+        // Dynamic Section
 
-        // Email subject
-        $mail->Subject = 'SMTP Codeigniter'; //subject email
+        $lastTRX = 'JDW1240318000003';
+		// $CabangID = $json_data['CabangID'];
 
-        // Set email format to HTML
-        $mail->isHTML(true);
+		$subquery = $this->db->select("penugasanjadwalpelayanan.NoTransaksi,penugasanjadwalpelayanan.CabangID, Count(*) JumlahPelayan, COUNT(CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 1 THEN 1 ELSE NULL END) JumlahKonfirmasi, COUNT(CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 0 THEN 1 ELSE NULL END) BelumKonfirmasi")
+			->from('penugasanjadwalpelayanan')
+			->join('cabang','penugasanjadwalpelayanan.CabangID = cabang.id','left')
+			->group_by('penugasanjadwalpelayanan.NoTransaksi,penugasanjadwalpelayanan.CabangID')->get_compiled_select();
 
-        // Email body content
-        $mailContent = "<h1>SMTP Codeigniterr</h1>
-            <p>Laporan email SMTP Codeigniter.</p>"; // isi email
-        $mail->Body = $mailContent;
+		$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.TglEvent,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),'SELESAI') AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasi, sub.BelumKonfirmasi,personel.NoHP, personel.Email, defaulthari.NamaHari,personel.NamaLengkap,penugasanjadwalpelayanan.KonfirmasiID");
+		$this->db->from('jadwalpelayanan');
+		$this->db->join('jadwalibadah','jadwalpelayanan.JadwalIbadahID=jadwalibadah.id AND jadwalpelayanan.CabangID = jadwalibadah.CabangID','left');
+		$this->db->join('dataevent','jadwalpelayanan.EventID=dataevent.NoTransaksi AND jadwalpelayanan.CabangID = dataevent.CabangID','left');
+		$this->db->join('cabang','jadwalpelayanan.CabangID = cabang.id','left');
+		$this->db->join("($subquery) as sub","jadwalpelayanan.NoTransaksi = sub.NoTransaksi and jadwalpelayanan.CabangID = sub.CabangID",'left');
+		$this->db->join('defaulthari','defaulthari.KodeHari = COALESCE(jadwalibadah.Hari,dayname(dataevent.TglEvent))','left');
+		$this->db->join('penugasanjadwalpelayanan', 'jadwalpelayanan.NoTransaksi = penugasanjadwalpelayanan.NoTransaksi AND jadwalpelayanan.CabangID = penugasanjadwalpelayanan.CabangID','left');
+		$this->db->join('personel','personel.NIK = penugasanjadwalpelayanan.PIC and personel.CabangID = penugasanjadwalpelayanan.CabangID','left');
+
+		$this->db->where('jadwalpelayanan.NoTransaksi', $lastTRX);
+		// $this->db->where('jadwalpelayanan.CabangID', $CabangID);
+
+		$saved = $this->db->get();
+
+		// var_dump($saved->result());
+
+		foreach ($saved->result() as $key) {
+			// var_dump($key);
+			$mail->addAddress($key->Email);
+	        $mail->Subject = 'Email Konfirmasi Kehadiran';
+	        $mail->isHTML(true);
+	        
+	        $mailContent = '
+	        	<h3><center><b>GTI System</b></center></h3><br>
+	            <p>
+	            	<b>Hallo '.$key->NamaLengkap.'</b><br>
+	            	Anda Mendapat Jadwal Pelayanan Pada :
+	            </p>
+	            <pre>
+	            	Hari 		: '.$key->NamaHari.' <br>
+	            	Tanggal 	: '.$key->TglTransaksi.'<br>
+	            	Jam 		: '.$key->JamMulai. ' Sampai '.$key->JamSelesai.'<br>
+	            <p>
+	            Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
+	            <a href="'.base_url().'pelayanan/konfirmasi/'.$key->KonfirmasiID.'">Klik disini</a>
+	            Best Regards<br><br>
+	            </p>
+	        ';
+	        $mail->Body = $mailContent;
+
+	        if(!$mail->send()){
+	            echo 'Message could not be sent.';
+	            echo 'Mailer Error: ' . $mail->ErrorInfo;
+	        }else{
+	            echo 'Message has been sent to '.$key->Email.'<br>' ;
+	        }
+		}
 
         // Send email
-        if(!$mail->send()){
-            echo 'Message could not be sent.';
-            echo 'Mailer Error: ' . $mail->ErrorInfo;
-        }else{
-            echo 'Message has been sent';
-        }
+        
 	}
 	public function test()
 	{

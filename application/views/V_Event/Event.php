@@ -281,7 +281,7 @@
           // console.log(response);
           $('#JenisEventID').empty();
           var newOption = $('<option>', {
-            value: -1,
+            value: "0",
             text: "Pilih Jenis Event"
           });
 
@@ -310,7 +310,7 @@
           // console.log(response);
           $('#JenisEventIDFilter').empty();
           var newOption = $('<option>', {
-            value: -1,
+            value: "0",
             text: "Pilih Jenis Event"
           });
 

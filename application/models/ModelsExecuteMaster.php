@@ -138,24 +138,63 @@ class ModelsExecuteMaster extends CI_Model
 	}
 	public function SendEmail($objectData)
 	{
-		$message = '
-        	<h3><center><b>GTI System</b></center></h3><br>
-            <p>
-            	<b>Hallo '.$objectData['NamaLengkap'].'</b><br>
-            	Anda Mendapat Jadwal Pelayanan Pada :
-            </p>
-            <pre>
-            	Hari 		: '.$objectData['Hari'].' <br>
-            	Tanggal 	: '.$objectData['Tanggal'].'<br>
-            	Jam 		: '.$objectData['Jam'].'<br>
-            <p>
-            Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
-            <a href="'.base_url().'pelayanan/konfirmasi/'.$objectData['KonfirmasiID'].'">Klik disini</a>
-            Best Regards<br><br>
-            '.$objectData['CreatedBy'].'
-            </p>
-        ';
-        return $this->SendSpesificEmail($objectData['reciept'], $objectData['subject'],$message);
+		$data = array('success' => false, 'message'=> '', 'data'=> array());
+        // return $this->SendSpesificEmail($objectData['reciept'], $objectData['subject'],$message);
+        $response = false;
+        $mail = new PHPMailer();
+        $mail->SMTPOptions = array(
+		    'ssl' => array(
+		        'verify_peer' => false,
+		        'verify_peer_name' => false,
+		        'allow_self_signed' => true,
+		        'debug' => true // Enable SSL/TLS debugging
+		    )
+		);
+        $mail->isSMTP();
+        $mail->Host     = 'smtp.gmail.com'; //sesuaikan sesuai nama domain hosting yang digunakan
+        $mail->SMTPAuth = true;
+        $mail->Username = 'aissystemsolo@gmail.com'; // user email
+        $mail->Password = 'dpydlswynftsmgme'; // password email
+        $mail->SMTPSecure = 'ssl';
+        $mail->Port     = 465;
+        $mail->Timeout = 60; 
+        $mail->SMTPKeepAlive = true;
+
+        $mail->setFrom('aissystemsolo@gmail.com', '');
+
+        foreach ($objectData as $key) {
+        	$mail->addAddress($key->Email);
+	        $mail->Subject = 'Email Konfirmasi Kehadiran';
+	        $mail->isHTML(true);
+
+	        $message = '
+	        	<h3><center><b>GTI System</b></center></h3><br>
+	            <p>
+	            	<b>Hallo '.$key->NamaLengkap.'</b><br>
+	            	Anda Mendapat Jadwal Pelayanan Pada :
+	            </p>
+	            <pre>
+	            	Hari 		: '.$key->NamaHari.' <br>
+	            	Tanggal 	: '.$key->TglTransaksi.'<br>
+	            	Jam 		: '.$key->JamMulai.' s/d '.$key->JamSelesai.'<br>
+	            <p>
+	            Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
+	            <a href="'.base_url().'pelayanan/konfirmasi/'.$key->KonfirmasiID.'">Klik disini</a>
+	            Best Regards<br><br>
+	            '.$key->CreatedBy.'
+	            </p>
+	        ';
+
+	        $mail->Body = $message;
+
+	        if(!$mail->send()){
+	            $data['message']= $mail->ErrorInfo;
+	        }else{
+	            $data['success'] = true;
+	        }
+        }
+
+        return $data;
 	}
 	public function SendSpesificEmail($reciept,$subject,$body)
 	{
@@ -163,7 +202,7 @@ class ModelsExecuteMaster extends CI_Model
 		$this->load->library('email');
 		$data = array('success' => false ,'message'=>array());
 		// Get Setting
-		$this->db->where(array('id'=>2));
+		$this->db->where(array('id'=>3));
 		$rs = $this->db->get('temailsetting');
 		// End Get Setting
 
