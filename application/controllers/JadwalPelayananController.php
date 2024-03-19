@@ -81,6 +81,14 @@
 			$this->load->view('Pelayanan/JadwalPelayanan-input',$data);
 		}
 
+		public function formKonfirmasi()
+		{
+			$cabang = $this->ModelsExecuteMaster->GetCabang();
+
+			$data['Cabang'] = $cabang->result();
+			$this->load->view('Pelayanan/KonfirmasiList',$data);
+		}
+
 		public function ReadDetail()
 		{
 			$data = array('success'=>true, 'message'=>'', 'data'=>array());
@@ -114,6 +122,64 @@
 				$data['message'] = $e->getMessage();
 			}
 			$this->output->set_content_type('application/json')->set_output(json_encode($data));
+		}
+
+		public function ReadKonfirmasiList()
+		{
+			$data = array('success'=>false, 'message'=>'', 'data'=>array());
+
+			$TglAwal = $this->input->post('TglAwal');
+			$TglAkhir = $this->input->post('TglAkhir');
+			$NoTransaksi = $this->input->post('NoTransaksi');
+			$CabangID = $this->input->post('CabangID');
+			$NikPersonel = $this->input->post('NikPersonel');
+			$NoReff = $this->input->post('NoReff');
+
+			try {
+				$subquery = $this->db->select("penugasanjadwalpelayanan.NoTransaksi,penugasanjadwalpelayanan.CabangID, Count(*) JumlahPelayan, COUNT(CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 1 THEN 1 ELSE NULL END) JumlahKonfirmasi, COUNT(CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 0 THEN 1 ELSE NULL END) BelumKonfirmasi")
+						->from('penugasanjadwalpelayanan')
+						->join('cabang','penugasanjadwalpelayanan.CabangID = cabang.id','left')
+						->group_by('penugasanjadwalpelayanan.NoTransaksi,penugasanjadwalpelayanan.CabangID')->get_compiled_select();
+
+				$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.JamMulai,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),DATE_FORMAT(dataevent.JamSelesai,'%T')) AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasi, sub.BelumKonfirmasi,personel.NoHP, personel.Email, defaulthari.NamaHari,personel.NamaLengkap,penugasanjadwalpelayanan.KonfirmasiID, penugasanjadwalpelayanan.PIC, personel.NamaLengkap, personel.DivisiID, personel.JabatanID, COALESCE(absensi.NoTransaksi,'') NoAbsen, DATE_FORMAT(absensi.TglAbsen,'%d-%m-%Y %T') TglAbsen,CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 1 THEN 'Y' ELSE 'N' END Konfirmasi, penugasanjadwalpelayanan.KonfirmasiKeterangan");
+				$this->db->from('jadwalpelayanan');
+				$this->db->join('jadwalibadah','jadwalpelayanan.JadwalIbadahID=jadwalibadah.id AND jadwalpelayanan.CabangID = jadwalibadah.CabangID','left');
+				$this->db->join('dataevent','jadwalpelayanan.EventID=dataevent.NoTransaksi AND jadwalpelayanan.CabangID = dataevent.CabangID','left');
+				$this->db->join('cabang','jadwalpelayanan.CabangID = cabang.id','left');
+				$this->db->join("($subquery) as sub","jadwalpelayanan.NoTransaksi = sub.NoTransaksi and jadwalpelayanan.CabangID = sub.CabangID",'left');
+				$this->db->join('defaulthari','defaulthari.KodeHari = COALESCE(jadwalibadah.Hari,dayname(dataevent.TglEvent))');
+				$this->db->join('penugasanjadwalpelayanan', 'jadwalpelayanan.NoTransaksi = penugasanjadwalpelayanan.NoTransaksi AND jadwalpelayanan.CabangID = penugasanjadwalpelayanan.CabangID');
+				$this->db->join('personel','personel.NIK = penugasanjadwalpelayanan.PIC and personel.CabangID = penugasanjadwalpelayanan.CabangID');
+				$this->db->join('absensi','jadwalpelayanan.NoTransaksi = absensi.ReffJadwal AND penugasanjadwalpelayanan.PIC = absensi.NIK','left');
+				$this->db->where('penugasanjadwalpelayanan.Konfirmasi', "0");
+				$this->db->where('jadwalpelayanan.TglTransaksi >=', $TglAwal);
+				$this->db->where('jadwalpelayanan.TglTransaksi <=', $TglAkhir);
+
+				if ($NoTransaksi != "") {
+					$this->db->where(array("absensi.NoTransaksi"=>$NoTransaksi));
+				}
+
+				if ($CabangID != "") {
+					$this->db->where(array("jadwalpelayanan.CabangID"=>$CabangID));
+				}
+
+				if ($NoReff != "") {
+					$this->db->where(array("jadwalpelayanan.NoTransaksi"=>$NoReff));
+				}
+
+				if ($NikPersonel != "") {
+					$this->db->where(array("penugasanjadwalpelayanan.PIC"=>$NikPersonel));
+				}
+
+				$rs = $this->db->get();
+				if ($rs->num_rows() > 0) {
+					$data['success'] = true;
+					$data['data'] = $rs->result();
+				}
+			} catch (Exception $e) {
+				$data['message'] = $e->getMessage();
+			}
+			echo json_encode($data);
 		}
 
 		public function Konfirmasi($VerificationID)

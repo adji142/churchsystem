@@ -419,7 +419,11 @@ class Auth extends CI_Controller {
 					'NamaUser'		=> '',
 					'UserID'		=> '',
 					'CabangID'		=> 0,
-					'CabangName'	=> ''
+					'CabangName'	=> '',
+					'canAdd'		=> 0, 
+					'canEdit'		=> 0,
+					'canDelete'		=> 0,
+					'NIKPersonel'	=> ''
 				);
 		$Username = $this->input->post('username');
 		$password = $this->input->post('password');
@@ -452,7 +456,11 @@ class Auth extends CI_Controller {
 			if ($oCabang->num_rows() > 0) {
 				$data['CabangID'] = $oCabang->row()->id;
 				$data['CabangName'] = $oCabang->row()->CabangName;
-
+				$data['canAdd']=$oUser->row()->canAdd;
+				$data['canEdit']=$oUser->row()->canEdit;
+				$data['canDelete']=$oUser->row()->canDelete;
+				$data['NIKPersonel']=$oUser->row()->NIKPersonel;
+				
 				$sess_data['CabangID']=$oCabang->row()->id;
 				$sess_data['CabangName']=$oCabang->row()->CabangName;
 			}

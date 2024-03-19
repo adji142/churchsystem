@@ -91,3 +91,13 @@ $route['pelayanan/jadwal'] = 'JadwalPelayananController';
 $route['pelayanan/jadwal/(:any)/(:any)'] = 'JadwalPelayananController/form/$1/$2';
 $route['pelayanan/konfirmasi/(:any)'] = 'JadwalPelayananController/Konfirmasi/$1';
 $route['pelayanan/absen'] = 'AbsensiController';
+$route['pelayanan/konfirmasi'] = 'JadwalPelayananController/formKonfirmasi';
+
+// Finance
+$route['finance/akunkas'] = 'AkunKasController';
+$route['finance/kelompokpenerimaan'] = 'KelompokPenerimaanUangController';
+$route['finance/bank'] = 'BankController';
+$route['finance/mutasikas'] = 'TransaksiKasController';
+$route['finance/setortunai'] = 'SetorTunaiController';
+$route['finance/setortunai/add/(:any)'] = 'SetorTunaiController/Form/$1';
+$route['finance/tariktunai'] = 'TarikTunaiController';
