@@ -12,7 +12,27 @@
         <div class="x_panel">
           <div class="x_title">
             <h2>Divisi</h2>
+            <br>
+            <hr>
+            <div class="col-md-6 col-sm-6 ">
+              Cabang
+              <select class="form-control" id="CabangIDFilter" name="CabangIDFilter" >
+                <option value="0">Pilih Cabang</option>
+                <?php
+
+                  foreach ($Cabang as $key) {
+                    echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+            <div class="col-md-3 col-sm-3 ">
+              <br>
+              <button class="btn btn-primary" id="btn_Search">Cari Data</button>
+            </div>
             <div class="clearfix"></div>
+            <hr>
+
           </div>
           <div class="x_content">
               <div class="dx-viewport demo-container">
@@ -51,7 +71,7 @@
           <div class="item form-group">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Cabang <span class="required">*</span>
             </label>
-            <div class="col-md-12 col-sm-12 ">
+            <div class="col-md-9 col-sm-9 ">
               <select class="form-control col-md-6" id="CabangID" name="CabangID" >
                 <option value="0">Pilih Cabang</option>
                 <?php
@@ -84,23 +104,40 @@
     var CabangID = "<?php echo $CabangID; ?>"
     $(document).ready(function () {
       $('#CabangID').select2({
-        width: '200px'
+        width: '100%'
+      });
+
+      $('#CabangIDFilter').select2({
+        width: '100%'
       });
 
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
+
+        $('#CabangIDFilter').prop('disabled', true);
+        $('#CabangIDFilter').val(CabangID).trigger('change');
       }
+
+      fillData();
+      
+    });
+
+    function fillData() {
       $.ajax({
         type: "post",
         url: "<?=base_url()?>DivisiController/Read",
-        data: {'id':'',CabangID:CabangID},
+        data: {'id':'',CabangID:$('#CabangIDFilter').val()},
         dataType: "json",
         success: function (response) {
           bindGrid(response.data);
         }
       });
-    });
+    }
+
+    $('#btn_Search').click(function () {
+      fillData();
+    })
 
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
@@ -182,7 +219,7 @@
             columnAutoWidth: true,
             showBorders: true,
             paging: {
-                enabled: false
+                enabled: true
             },
             editing: {
                 mode: "row",
@@ -213,6 +250,11 @@
                     caption: "CabangID",
                     allowEditing:false,
                     visible:false
+                },
+                {
+                    dataField: "CabangName",
+                    caption: "Cabang",
+                    allowEditing:false,
                 },
                 {
                     dataField: "FileItem",

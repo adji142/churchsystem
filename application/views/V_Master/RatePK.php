@@ -159,7 +159,7 @@
       $.ajax({
         type: "post",
         url: "<?=base_url()?>RatePKController/Read",
-        data: {'id':id},
+        data: {'id':id,CabangID:CabangID},
         dataType: "json",
         success: function (response) {
           $.each(response.data,function (k,v) {

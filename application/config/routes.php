@@ -101,3 +101,6 @@ $route['finance/mutasikas'] = 'TransaksiKasController';
 $route['finance/setortunai'] = 'SetorTunaiController';
 $route['finance/setortunai/add/(:any)'] = 'SetorTunaiController/Form/$1';
 $route['finance/tariktunai'] = 'TarikTunaiController';
+$route['finance/persembahan'] = 'PersembahanController';
+$route['finance/persembahan/penerimaan/(:any)/(:any)'] = 'PersembahanController/penerimaan/$1/$2';
+$route['finance/persembahan/pengeluaran/(:any)/(:any)'] = 'PersembahanController/pengeluaran/$1/$2';

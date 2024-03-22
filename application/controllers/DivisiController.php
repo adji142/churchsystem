@@ -10,7 +10,9 @@
 
 		public function index()
 		{
-			$this->load->view('V_Master/Divisi');
+			$rs = $this->ModelsExecuteMaster->GetCabang();
+			$data['Cabang'] = $rs->result();
+			$this->load->view('V_Master/Divisi',$data);
 		}
 		public function Read()
 		{
@@ -20,18 +22,19 @@
 			$CabangID = $this->input->post('CabangID');
 
 			try {
-				$this->db->select('*');
+				$this->db->select('divisi.*, cabang.CabangName');
 				$this->db->from('divisi');
+				$this->db->join('cabang', 'divisi.CabangID = cabang.id', 'left');
 				$this->db->where(array("1"=>"1"));
 
 				if ($id != "") {
-					$this->db->where(array("id"=>$id));
+					$this->db->where(array("divisi.id"=>$id));
 				}
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
 				if ($CabangID != "0") {
-					$this->db->where(array("CabangID"=>$CabangID));
+					$this->db->where(array("divisi.CabangID"=>$CabangID));
 				}
 
 				$rs = $this->db->get();
