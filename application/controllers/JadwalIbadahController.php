@@ -26,15 +26,10 @@
 			$this->db->from('jadwalibadah');
 			$this->db->join('defaulthari','defaulthari.KodeHari=jadwalibadah.Hari','left');
 			$this->db->where(array("1"=>"1"));
+			$this->db->where(array("CabangID"=>$CabangID));
 
 			if ($id != "0") {
 				$this->db->where(array("id"=>$id));
-			}
-
-			// var_dump("cabangdong". $this->session->userdata('CabangID'));
-
-			if ($CabangID != "0") {
-				$this->db->where(array("CabangID"=>$CabangID));
 			}
 
 			$jadwalibadah = $this->db->get();

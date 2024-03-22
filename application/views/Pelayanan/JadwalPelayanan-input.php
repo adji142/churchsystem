@@ -141,7 +141,7 @@
                 <tr>
                   <th>Divisi</th>
                   <th>Jabatan</th>
-                  <th>Cabang</th>
+                  <!-- <th>Cabang</th> -->
                   <th>Personil</th>
                   <!-- <th>Action</th> -->
                 </tr>
@@ -150,7 +150,7 @@
                 <tr>
                   <td></td>
                   <td></td>
-                  <td></td>
+                  <!-- <td></td> -->
                   <td></td>
                   <!-- <td></td> -->
                 </tr>
@@ -235,6 +235,7 @@
     var PersonelFill = [];
 
     var hakUbahCabang = false;
+    var ProvID = -1;
     $(document).ready(function () {
       $('#CabangID').select2({
         width: '100%'
@@ -393,26 +394,26 @@
                   // Jabatan
 
                   // Cabang
-                  var sourceSelect = document.getElementById('CabangID');
+                  // var sourceSelect = document.getElementById('CabangID');
 
-                  for (var i = 0; i < sourceSelect.options.length; i++) {
+                  // for (var i = 0; i < sourceSelect.options.length; i++) {
 
-                      var option = sourceSelect.options[i];
-                      var newOption = document.createElement('option');
-                      newOption.value = option.value;
-                      newOption.textContent = option.textContent;
-                      selectCabang.appendChild(newOption);
-                  }
+                  //     var option = sourceSelect.options[i];
+                  //     var newOption = document.createElement('option');
+                  //     newOption.value = option.value;
+                  //     newOption.textContent = option.textContent;
+                  //     selectCabang.appendChild(newOption);
+                  // }
 
-                  var rowcabang = table.rows[xrow];
-                  var cellcabang = rowcabang.cells[2];
-                  cellcabang.appendChild(selectCabang);
+                  // var rowcabang = table.rows[xrow];
+                  // var cellcabang = rowcabang.cells[2];
+                  // cellcabang.appendChild(selectCabang);
 
-                  $('#cabang'+idText).val(v.CabangID).trigger('change');
-                  $('#cabang'+idText).prop('disabled', !hakUbahCabang);
-                  $('#cabang'+idText).select2({
-                    width: '70%'
-                  });
+                  // $('#cabang'+idText).val(v.CabangID).trigger('change');
+                  // $('#cabang'+idText).prop('disabled', !hakUbahCabang);
+                  // $('#cabang'+idText).select2({
+                  //   width: '70%'
+                  // });
                   // Cabang
 
                   $.ajax({
@@ -440,7 +441,7 @@
                   });
 
                   var rowpersonel = table.rows[xrow];
-                  var cellpersonel = rowpersonel.cells[3];
+                  var cellpersonel = rowpersonel.cells[2];
                   cellpersonel.appendChild(selectPersonil);
                   // console.log(xrow)
 
@@ -722,7 +723,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>PersonelController/Read",
-        data: {'NIK':'', 'CabangID': $('#CabangID').val() },
+        data: {'NIK':'', 'CabangID': '0','Provinsi': ProvID },
         dataType: "json",
         success: function (response) {
           PersonelFill = response.data;
@@ -760,6 +761,21 @@
 
             $('#PICKegiatan').append(newOption);
           });
+        }
+      });
+
+      // Cabang
+
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>CabangController/Read",
+        data: {'id':$('#CabangID').val()},
+        dataType: "json",
+        success: function (response) {
+          $.each(response.data,function (k,v) {
+            ProvID = v.ProvID
+          })
         }
       });
     });
@@ -1034,8 +1050,8 @@
               var cell3 = document.createElement('td');
               newRow.appendChild(cell3);
 
-              var cell4 = document.createElement('td');
-              newRow.appendChild(cell4);
+              // var cell4 = document.createElement('td');
+              // newRow.appendChild(cell4);
 
               // var cell5 = document.createElement('td');
               // newRow.appendChild(cell5);
@@ -1074,26 +1090,26 @@
               // Jabatan
 
               // Cabang
-              var sourceSelect = document.getElementById('CabangID');
+              // var sourceSelect = document.getElementById('CabangID');
 
-              for (var i = 0; i < sourceSelect.options.length; i++) {
+              // for (var i = 0; i < sourceSelect.options.length; i++) {
 
-                  var option = sourceSelect.options[i];
-                  var newOption = document.createElement('option');
-                  newOption.value = option.value;
-                  newOption.textContent = option.textContent;
-                  selectCabang.appendChild(newOption);
-              }
+              //     var option = sourceSelect.options[i];
+              //     var newOption = document.createElement('option');
+              //     newOption.value = option.value;
+              //     newOption.textContent = option.textContent;
+              //     selectCabang.appendChild(newOption);
+              // }
 
-              var rowcabang = table.rows[xrow];
-              var cellcabang = rowcabang.cells[2];
-              cellcabang.appendChild(selectCabang);
+              // var rowcabang = table.rows[xrow];
+              // var cellcabang = rowcabang.cells[2];
+              // cellcabang.appendChild(selectCabang);
 
-              $('#cabang'+idText).val(v.CabangID).trigger('change');
-              $('#cabang'+idText).prop('disabled', !hakUbahCabang);
-              $('#cabang'+idText).select2({
-                width: '70%'
-              });
+              // $('#cabang'+idText).val(v.CabangID).trigger('change');
+              // $('#cabang'+idText).prop('disabled', !hakUbahCabang);
+              // $('#cabang'+idText).select2({
+              //   width: '70%'
+              // });
               // Cabang
 
               $.ajax({
@@ -1102,19 +1118,21 @@
                 url: "<?=base_url()?>PersonelController/Read",
                 data: {
                   'NIK':'',
-                  'CabangID':$('#cabang'+idText).val(),
+                  'CabangID':"0",
                   'DivisiID': $('#divisi'+idText).val(),
-                  'JabatanID':$('#jabatan'+idText).val()
+                  'JabatanID':$('#jabatan'+idText).val(),
+                  'Provinsi' : ProvID
                 },
                 dataType: "json",
                 success: function (xResponse) {
                   // console.log(response);
+
                   for (var i = 0; i < xResponse.data.length; i++) {
                     // Things[i]
                     // console.log(xResponse.data[i]['Nama'])
                     var option = document.createElement('option');
-                    option.value = xResponse.data[i]['NIK']; // Set option value
-                    option.text = xResponse.data[i]['Nama']; // Set option text
+                    option.value = xResponse.data[i]['NIK'];
+                    option.text = xResponse.data[i]['Nama'];
 
                     if (xResponse.data[i]['selectedPersonel'] == "A") {
                       option.style.color = 'green';
@@ -1122,11 +1140,16 @@
 
                     selectPersonil.appendChild(option);
                   }
+
+                  var option = document.createElement('option');
+                  option.value = "";
+                  option.text = "Pilih Personel";
+                  selectPersonil.appendChild(option);
                 }
               });
 
               var rowpersonel = table.rows[xrow];
-              var cellpersonel = rowpersonel.cells[3];
+              var cellpersonel = rowpersonel.cells[2];
               cellpersonel.appendChild(selectPersonil);
               // console.log(xrow)
 
@@ -1225,8 +1248,8 @@
               var cell3 = document.createElement('td');
               newRow.appendChild(cell3);
 
-              var cell4 = document.createElement('td');
-              newRow.appendChild(cell4);
+              // var cell4 = document.createElement('td');
+              // newRow.appendChild(cell4);
 
               // var cell5 = document.createElement('td');
               // newRow.appendChild(cell5);
@@ -1265,26 +1288,26 @@
               // Jabatan
 
               // Cabang
-              var sourceSelect = document.getElementById('CabangID');
+              // var sourceSelect = document.getElementById('CabangID');
 
-              for (var i = 0; i < sourceSelect.options.length; i++) {
+              // for (var i = 0; i < sourceSelect.options.length; i++) {
 
-                  var option = sourceSelect.options[i];
-                  var newOption = document.createElement('option');
-                  newOption.value = option.value;
-                  newOption.textContent = option.textContent;
-                  selectCabang.appendChild(newOption);
-              }
+              //     var option = sourceSelect.options[i];
+              //     var newOption = document.createElement('option');
+              //     newOption.value = option.value;
+              //     newOption.textContent = option.textContent;
+              //     selectCabang.appendChild(newOption);
+              // }
 
-              var rowcabang = table.rows[xrow];
-              var cellcabang = rowcabang.cells[2];
-              cellcabang.appendChild(selectCabang);
+              // var rowcabang = table.rows[xrow];
+              // var cellcabang = rowcabang.cells[2];
+              // cellcabang.appendChild(selectCabang);
 
-              $('#cabang'+idText).val(v.CabangID).trigger('change');
-              $('#cabang'+idText).prop('disabled', !hakUbahCabang);
-              $('#cabang'+idText).select2({
-                width: '70%'
-              });
+              // $('#cabang'+idText).val(v.CabangID).trigger('change');
+              // $('#cabang'+idText).prop('disabled', !hakUbahCabang);
+              // $('#cabang'+idText).select2({
+              //   width: '70%'
+              // });
               // Cabang
 
               $.ajax({
@@ -1313,11 +1336,16 @@
 
                     selectPersonil.appendChild(option);
                   }
+
+                  var option = document.createElement('option');
+                  option.value = "";
+                  option.text = "Pilih Personel";
+                  selectPersonil.appendChild(option);
                 }
               });
 
               var rowpersonel = table.rows[xrow];
-              var cellpersonel = rowpersonel.cells[3];
+              var cellpersonel = rowpersonel.cells[2];
               cellpersonel.appendChild(selectPersonil);
               // console.log(xrow)
 

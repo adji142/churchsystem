@@ -13,7 +13,7 @@
           <div class="x_title">
             <!-- <h2>Jadwal Ibadah</h2> -->
             <?php 
-            // var_dump($header);
+            // var_dump($jadwalibadah);
               if ($jadwalibadah) {
                 echo "<h2>Edit Jadwal Ibadah</h2>";
                 echo "<input type='hidden' id='formtype' value = 'edit'>";

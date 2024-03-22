@@ -187,10 +187,15 @@ class ModelsExecuteMaster extends CI_Model
 
 	        $mail->Body = $message;
 
-	        if(!$mail->send()){
-	            $data['message']= $mail->ErrorInfo;
-	        }else{
-	            $data['success'] = true;
+	        if ($key->Email != "") {
+	        	if(!$mail->send()){
+		            $data['message']= $mail->ErrorInfo;
+		        }else{
+		            $data['success'] = true;
+		        }
+	        }
+	        else{
+	        	$data['success'] = true;
 	        }
         }
 

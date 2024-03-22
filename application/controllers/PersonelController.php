@@ -25,6 +25,7 @@
 			$CabangID = $this->input->post('CabangID');
 			$DivisiID = $this->input->post('DivisiID');
 			$JabatanID = $this->input->post('JabatanID');
+			$Provinsi = $this->input->post('Provinsi');
 
 			try {
 				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END AS selectedPersonel " );
@@ -47,6 +48,10 @@
 
 				if ($CabangID != 0) {
 					$this->db->where(array("personel.CabangID"=>$CabangID));
+				}
+
+				if ($Provinsi != -1) {
+					$this->db->where(array("personel.ProvID"=>$Provinsi));
 				}
 				$this->db->order_by("CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END ");
 

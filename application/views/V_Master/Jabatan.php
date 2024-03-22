@@ -167,7 +167,7 @@
       $.ajax({
         type: "post",
         url: "<?=base_url()?>JabatanController/Read",
-        data: {'id':id},
+        data: {'id':id, CabangID:"0"},
         dataType: "json",
         success: function (response) {
           $.each(response.data,function (k,v) {
