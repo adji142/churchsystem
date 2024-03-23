@@ -26,7 +26,7 @@
     <!-- Font Awesome -->
     <link href="<?php echo base_url();?>Assets/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
-    <link href="<?php echo base_url();?>Assets/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- <link href="<?php echo base_url();?>Assets/vendors/nprogress/nprogress.css" rel="stylesheet"> -->
     <!-- iCheck -->
     <link href="<?php echo base_url();?>Assets/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
 	
