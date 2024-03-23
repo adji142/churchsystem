@@ -139,6 +139,14 @@
                   </div>
 
                   <div class="item form-group">
+                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Allow Finance Dashboard <span class="required">*</span>
+                    </label>
+                    <div class="col-md-3 col-sm-12 ">
+                      <input type="checkbox" name="AllowFinanceDashboard" id="AllowFinanceDashboard" class="form-control col-md-3" value="0"> Add
+                    </div>
+                  </div>
+
+                  <div class="item form-group">
                     <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">NIK Personel <span class="required">*</span>
                     </label>
                     <div class="col-md-12 col-sm-12 ">
@@ -224,6 +232,14 @@
           $('#canDelete').val("1")
       } else {
           $('#canDelete').val("0")
+      }
+    });
+
+    $('#AllowFinanceDashboard').change(function(){
+      if($(this).is(":checked")) {
+          $('#AllowFinanceDashboard').val("1")
+      } else {
+          $('#AllowFinanceDashboard').val("0")
       }
     });
 
@@ -342,7 +358,7 @@
           $.each(response.data,function (k,v) {
             console.log(response.data);
             // $('#KodePenyakit').val(v.KodePenyakit).change;
-            $("#uname").prop("disabled", true);
+            $("#uname").prop("readonly", true);
             $('#uname').val(v.username);
             $('#nama').val(v.nama);
             $('#pass').val(response.decript);
@@ -356,6 +372,7 @@
             $('#canEdit').val(v.canEdit);
             $('#canDelete').val(v.canDelete);
             $('#NIKPersonel').val(v.NIKPersonel);
+            $('#AllowFinanceDashboard').val(v.AllowFinanceDashboard);
             // $('#Nilai').val(v.Nilai);
 
             if (v.canAdd == 1) {
@@ -377,6 +394,13 @@
             }
             else{
               $('#canDelete').prop('checked', false); 
+            }
+
+            if (v.AllowFinanceDashboard == 1) {
+              $('#AllowFinanceDashboard').prop('checked', true);
+            }
+            else{
+              $('#AllowFinanceDashboard').prop('checked', false); 
             }
 
             $('#formtype').val("edit");
@@ -455,6 +479,11 @@
                 {
                     dataField: "canDelete",
                     caption: "Akses Delete",
+                    allowEditing:false
+                },
+                {
+                    dataField: "AllowFinanceDashboard",
+                    caption: "Allow Finance Dashboard",
                     allowEditing:false
                 }
                 // {

@@ -52,9 +52,9 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content text-center">
-          <span class="count_top"><i class="fa fa-dollar"></i> Total Pemasukan</span>
+          <span class="count_top">Total Pemasukan</span>
           <div class="count">
-            <h1><div id="xTotalPemasukan">2500</div></h1>
+            <h1><div id="xTotalPemasukan">0</div></h1>
           </div>
           <span class="count_bottom">Pemasukan Bulan ini : <i class="green" id="xPemasukanBulanIni"></i></span>
         </div>
@@ -71,9 +71,9 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content text-center">
-          <span class="count_top"><i class="fa fa-dollar"></i> Total Pengeluaran</span>
+          <span class="count_top">Total Pengeluaran</span>
           <div class="count">
-            <h1><div id="xTotalPengeluaran">2500</div></h1>
+            <h1><div id="xTotalPengeluaran">0</div></h1>
           </div>
           <span class="count_bottom">Pengeluaran Bulan ini : <i class="green" id="xPengeluaranBulanIni"> </i></span>
         </div>
@@ -90,9 +90,9 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content text-center">
-          <span class="count_top"><i class="fa fa-dollar"></i> Saldo</span>
+          <span class="count_top"> Saldo</span>
           <div class="count">
-            <h1><div id="xTotalSaldo">2500</div></h1>
+            <h1><div id="xTotalSaldo">0</div></h1>
           </div>
           <span class="count_bottom">Saldo Bulan ini : <i class="green" id="xSaldoBulanIni">4% </i></span>
         </div>
@@ -134,7 +134,8 @@
 
 <script type="text/javascript">
   $(function () {
-    var CabangID = "<?php echo $CabangID; ?>"
+    var CabangID = "<?php echo $CabangID; ?>";
+    var AllowFinanceDashboard = "<?php echo $AllowFinanceDashboard; ?>";
     $(document).ready(function () {
       $('#CabangIDFilter').select2({
         width: '100%'
@@ -164,8 +165,6 @@
         },
         dataType: "json",
         success: function (response) {
-          kasTahunan(response.data.Pengeluaran,response.data.Pemasukan);
-
           // Breakdown Transaksi
 
           var totPemasukan = 0;
@@ -202,14 +201,33 @@
           SaldoBulanIni = PemasukanBulanini - PengeluaranBulanini;
           console.log(totPemasukan)
 
-          $('#xTotalPemasukan').text(totPemasukan.toLocaleString('en-US'));
-          $('#xPemasukanBulanIni').text(PemasukanBulanini.toLocaleString('en-US'));
+          if (AllowFinanceDashboard) {
+            kasTahunan(response.data.Pengeluaran,response.data.Pemasukan);
 
-          $('#xTotalPengeluaran').text(totPemasukan.toLocaleString('en-US'));
-          $('#xPengeluaranBulanIni').text(PemasukanBulanini.toLocaleString('en-US'));
+            $('#xTotalPemasukan').text(totPemasukan.toLocaleString('en-US'));
+            $('#xPemasukanBulanIni').text(PemasukanBulanini.toLocaleString('en-US'));
 
-          $('#xTotalSaldo').text(Saldo.toLocaleString('en-US'));
-          $('#xSaldoBulanIni').text(SaldoBulanIni.toLocaleString('en-US'));
+            $('#xTotalPengeluaran').text(totPemasukan.toLocaleString('en-US'));
+            $('#xPengeluaranBulanIni').text(PemasukanBulanini.toLocaleString('en-US'));
+
+            $('#xTotalSaldo').text(Saldo.toLocaleString('en-US'));
+            $('#xSaldoBulanIni').text(SaldoBulanIni.toLocaleString('en-US'));
+
+          }else{
+            var keluar = [0,0,0,0,0,0,0,0,0,0,0,0]
+            var masuk = [0,0,0,0,0,0,0,0,0,0,0,0]
+
+            kasTahunan(keluar,masuk);
+
+            $('#xTotalPemasukan').text('**********');
+            $('#xPemasukanBulanIni').text('**********');
+
+            $('#xTotalPengeluaran').text('**********');
+            $('#xPengeluaranBulanIni').text('**********');
+
+            $('#xTotalSaldo').text('**********');
+            $('#xSaldoBulanIni').text('**********');
+          }
         }
       });
     }

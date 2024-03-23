@@ -6,6 +6,7 @@
   $canDelete = $this->session->userdata('canDelete');
   $CabangID = $this->session->userdata('CabangID');
   $NIKPersonel = $this->session->userdata('NIKPersonel');
+  $AllowFinanceDashboard = $this->session->userdata('AllowFinanceDashboard');
 //test
 ?>
 <!DOCTYPE html>

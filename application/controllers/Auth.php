@@ -97,6 +97,7 @@ class Auth extends CI_Controller {
 		$canDelete = $this->input->post('canDelete');
 		$CabangID = $this->input->post('CabangID');
 		$NIKPersonel = $this->input->post('NIKPersonel');
+		$AllowFinanceDashboard = $this->input->post('AllowFinanceDashboard');
 
 		$id = $this->input->post('id');
 		$formtype = $this->input->post('formtype');
@@ -112,7 +113,8 @@ class Auth extends CI_Controller {
 			'canAdd'	=> $canAdd,
 			'canEdit'	=> $canEdit,
 			'canDelete'	=> $canDelete,
-			'NIKPersonel' => $NIKPersonel
+			'NIKPersonel' => $NIKPersonel,
+			'AllowFinanceDashboard' => $AllowFinanceDashboard
 		);
 		if ($formtype == 'add') {
 			$call = $this->ModelsExecuteMaster->ExecInsert($insert,'users');
@@ -287,7 +289,8 @@ class Auth extends CI_Controller {
 					a.phone,
 					CASE WHEN a.canAdd = 1 THEN 'Y' ELSE 'N' END canAdd,
 					CASE WHEN a.canEdit = 1 THEN 'Y' ELSE 'N' END canEdit,
-					CASE WHEN a.canDelete = 1 THEN 'Y' ELSE 'N' END canDelete
+					CASE WHEN a.canDelete = 1 THEN 'Y' ELSE 'N' END canDelete,
+					CASE WHEN a.AllowFinanceDashboard = 1 THEN 'Y' ELSE 'N' END AllowFinanceDashboard
 				FROM users a
 				LEFT JOIN userrole b on a.id = b.userid
 				LEFT JOIN roles c on b.roleid = c.id 
@@ -476,6 +479,7 @@ class Auth extends CI_Controller {
 			$sess_data['canEdit']=$oUser->row()->canEdit;
 			$sess_data['canDelete']=$oUser->row()->canDelete;
 			$sess_data['NIKPersonel']=$oUser->row()->NIKPersonel;
+			$sess_data['AllowFinanceDashboard']=$oUser->row()->AllowFinanceDashboard;
 
 			$this->session->set_userdata($sess_data);
 		}
