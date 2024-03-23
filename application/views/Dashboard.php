@@ -202,7 +202,7 @@
           SaldoBulanIni = PemasukanBulanini - PengeluaranBulanini;
           console.log(AllowFinanceDashboard)
 
-          if (AllowFinanceDashboard) {
+          if (AllowFinanceDashboard == 1) {
             kasTahunan(response.data.Pengeluaran,response.data.Pemasukan);
 
             $('#xTotalPemasukan').text(totPemasukan.toLocaleString('en-US'));
