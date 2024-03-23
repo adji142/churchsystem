@@ -181,7 +181,7 @@
       $.ajax({
         type: "post",
         url: "<?=base_url()?>JadwalPelayananController/ReadHeader",
-        data: {'TglAwal':$('#TglAwal').val(),'TglAkhir' : $('#TglAkhir').val(),CabangID:CabangID},
+        data: {'TglAwal':$('#TglAwal').val(),'TglAkhir' : $('#TglAkhir').val(),CabangID:$('#CabangIDFilter').val()},
         dataType: "json",
         success: function (response) {
           if (response.success == true) {

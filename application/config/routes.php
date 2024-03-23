@@ -104,3 +104,8 @@ $route['finance/tariktunai'] = 'TarikTunaiController';
 $route['finance/persembahan'] = 'PersembahanController';
 $route['finance/persembahan/penerimaan/(:any)/(:any)'] = 'PersembahanController/penerimaan/$1/$2';
 $route['finance/persembahan/pengeluaran/(:any)/(:any)'] = 'PersembahanController/pengeluaran/$1/$2';
+
+// Report
+$route['report/jadwalpelayanan'] = 'ReportController/rptJadwalPelayan';
+$route['report/aruskas'] = 'ReportController/rptArusKas';
+$route['report/absensi'] = 'ReportController/rptAbsensi';

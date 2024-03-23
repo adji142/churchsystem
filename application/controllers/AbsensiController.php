@@ -49,7 +49,7 @@
 					$this->db->where(array("absensi.NoTransaksi"=>$NoTransaksi));
 				}
 
-				if ($CabangID != "") {
+				if ($CabangID != "0") {
 					$this->db->where(array("jadwalpelayanan.CabangID"=>$CabangID));
 				}
 

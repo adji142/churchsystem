@@ -74,6 +74,71 @@
   </div>
 </div>
 
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modal_">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Modal Setor Tunai</h4>
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="item form-group">
+          <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Tgl. Setor <span class="required">*</span>
+          </label>
+          <div class="col-md-9 col-sm-9 ">
+            <input type="date" name="TglSetor" id="TglSetor" class="form-control">
+            <input type="hidden" name="CabangIDData" id="CabangIDData">
+            <input type="hidden" name="NoTransaksi" id="NoTransaksi">
+          </div>
+        </div>
+
+        <div class="item form-group">
+          <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Akun Kas <span class="required">*</span>
+          </label>
+          <div class="col-md-9 col-sm-9 ">
+            <select class="form-control" id="KodeAkunKas" name="KodeAkunKas" >
+              <option value="">Pilih Akun Kas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="item form-group">
+          <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Daftar Bank <span class="required">*</span>
+          </label>
+          <div class="col-md-9 col-sm-9 ">
+            <select class="form-control" id="KodeBank" name="KodeBank" >
+              <option value="">Pilih Bank</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="item form-group">
+          <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Total Setor <span class="required">*</span>
+          </label>
+          <div class="col-md-9 col-sm-9 ">
+            <input type="text" name="0" id="Total" class="form-control">
+          </div>
+        </div>
+
+        <div class="item form-group">
+          <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">No. Reff <span class="required">*</span>
+          </label>
+          <div class="col-md-9 col-sm-9 ">
+            <input type="text" name="NoReff" id="NoReff" class="form-control">
+          </div>
+        </div>
+
+        <div class="item" form-group>
+          <button class="btn btn-primary" id="btn_Save">Save</button>
+        </div>
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div> -->
+    </div>
+  </div>
+</div>
 <?php
   require_once(APPPATH."views/parts/Footer.php");
 ?>
@@ -93,6 +158,14 @@
         width: '100%'
       });
 
+      $('#KodeAkunKas').select2({
+        width: '100%'
+      });
+
+      $('#KodeBank').select2({
+        width: '100%'
+      });
+
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
@@ -109,6 +182,7 @@
 
       $('#TglAwal').val(today);
       $('#TglAkhir').val(lastDayofYear);
+      $('#TglSetor').val(lastDayofYear);
 
       getHeader();
     })
@@ -142,6 +216,45 @@
         }
       });
     }
+
+    $('#btn_Save').click(function () {
+      var TotalSetor = $('#Total').attr('name');
+      $.ajax({
+        type: "post",
+        url: "<?=base_url()?>TransaksiKasController/SetorTunai",
+        data: {
+          'NoTransaksi' : '',
+          'TglTransaksi' : $('#TglSetor').val(),
+          'KodeAkunKas' : $('#KodeAkunKas').val(),
+          'KodeBank'  : $('#KodeBank').val(),
+          'Total' : TotalSetor,
+          'Keterangan' : 'NoReff Bank ' + $('#NoReff').val() ,
+          'BaseType' : 'KOL',
+          'CabangID' : $('#CabangIDData').val(),
+          'NoReff' : $('#NoTransaksi').val(),
+          'formtype' : 'add'
+        },
+        dataType: "json",
+        success: function (response) {
+          if (response.success == true) {
+            Swal.fire({
+              type: 'error',
+              title: 'Woops...',
+              text: 'Data Berhasil disimpan',
+              // footer: '<a href>Why do I have this issue?</a>'
+            })
+          }
+          else{
+            Swal.fire({
+              type: 'error',
+              title: 'Woops...',
+              text: response.message,
+              // footer: '<a href>Why do I have this issue?</a>'
+            })
+          }
+        }
+      });
+    });
 
     function bindGridHeader(data) {
       var canAdd = "<?php echo $canAdd; ?>";
@@ -267,14 +380,20 @@
                 cellTemplate: function(cellElement, cellInfo) {
                   SelectedNoJadwal = cellInfo.data.NoTransaksi;
                   SelectedCabang = cellInfo.data.CabangID;
-                  // console.log(cellInfo.data.NoTransaksi)
+                  // console.log(cellInfo.data)
+                  var Sisa = parseFloat(cellInfo.data.Debit) - parseFloat(cellInfo.data.Kredit);
 
                   LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/penerimaan/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-warning' id = 'btn-penerimaan'>Penerimaan</a>";
                   LinkAccess += "<a href = '<?=base_url()?>finance/persembahan/pengeluaran/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-danger' id = 'btn-pengeluaran'>Pengeluaran</a>";
-                  LinkAccess += "<a href = '<?=base_url()?>finance/persembahan/penerimaan/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-default' id = 'btn-setor'>Setor Bank</a>";
-                  // LinkAccess += "<button class='btn btn-danger' onClick=''>Pengeluaran</button>";
-                  // LinkAccess += "<button class='btn btn-default' onClick=''>Setor Bank</button>";
-                  // console.log();
+
+                  if (Sisa > 0) {
+                    var oParam = "showSetorBank('"+cellInfo.data.NoTransaksi+"','"+cellInfo.data.CabangID+"','"+Sisa+"')";
+
+                    LinkAccess += "<button class='btn btn-default' id = 'btn-setor' onClick="+oParam+">Setor Bank</button>";
+                  }
+                  else{
+                    LinkAccess += "<button class='btn btn-default' id = 'btn-setor' disabled>Setor Bank</button>";
+                  }
                   cellElement.append(LinkAccess);
                 }
             },
@@ -284,7 +403,75 @@
 
   });
 
-  function inputpenerimaan() {
-    window.location.href = '<?php echo base_url(); ?>finance/persembahan/penerimaan/'+SelectedNoJadwal+'/'+SelectedCabang;
+  function showSetorBank(NoTransaksi, CabangID, Sisa) {
+    console.log(NoTransaksi);
+    console.log(CabangID);
+    console.log(Sisa);
+
+    // get Kas
+    $.ajax({
+      async:false,
+      type: "post",
+      url: "<?=base_url()?>AkunKasController/Read",
+      data: {'KodeAkun':'', 'CabangID': CabangID },
+      dataType: "json",
+      success: function (response) {
+        // bindGrid(response.data);
+        // console.log(response);
+        $('#KodeAkunKas').empty();
+        var newOption = $('<option>', {
+          value: "",
+          text: "Pilih Akun"
+        });
+
+        $('#KodeAkunKas').append(newOption); 
+        $.each(response.data,function (k,v) {
+          var newOption = $('<option>', {
+            value: v.KodeAkun,
+            text: v.NamaAkun
+          });
+
+          $('#KodeAkunKas').append(newOption);
+        });
+      }
+    });
+
+    // get Bank
+
+    $.ajax({
+      async:false,
+      type: "post",
+      url: "<?=base_url()?>BankController/Read",
+      data: {'KodeBank':'', 'CabangID': CabangID },
+      dataType: "json",
+      success: function (response) {
+        // bindGrid(response.data);
+        // console.log(response);
+        $('#KodeBank').empty();
+        var newOption = $('<option>', {
+          value: "",
+          text: "Pilih Bank Tujuan"
+        });
+
+        $('#KodeBank').append(newOption); 
+        $.each(response.data,function (k,v) {
+          var newOption = $('<option>', {
+            value: v.KodeBank,
+            text: v.NamaBank + ' - ' + v.NoRekening
+          });
+
+          $('#KodeBank').append(newOption);
+        });
+      }
+    });
+
+    // 
+    var SisaTextbox = document.getElementById('Total');
+    SisaTextbox.name = parseFloat(Sisa);
+    SisaTextbox.value = parseFloat(Sisa).toLocaleString('en-US');
+
+    $('#CabangIDData').val(CabangID);
+    $('#NoTransaksi').val(NoTransaksi);
+    $('#modal_').modal('show');
   }
 </script>

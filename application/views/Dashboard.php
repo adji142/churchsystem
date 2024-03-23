@@ -7,9 +7,121 @@
 <div class="right_col" role="main">
   <div class="row">
     <div class="col-md-12">
-      <?php echo $CabangName; ?>
+      <center>
+        <h2>SISTEM ADMINISTRASI GEREJA TIBERIAS INDONESIA</h2>
+        <p><?php echo ($CabangName == '') ? 'SUPERADMIN' : 'CABANG : '. $CabangName ?></p>
+      </center>
+    </div>
+    <div class="col-md-9 col-sm-9">
+      <select class="form-control" id="CabangIDFilter" name="CabangIDFilter" >
+        <option value="0">Pilih Cabang</option>
+        <?php
+
+          foreach ($Cabang as $key) {
+            echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
+          }
+        ?>
+      </select>
+      <hr>
+    </div>
+    <div class="col-md-3 col-sm-3">
+      <button class="btn btn-primary" id="btSearch">Cari Data</button>
+    </div>
+    <div class="col-md-12 col-sm-12">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Grafik Kas Tahunan</h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+          <div class="financechart" id="grafikaruskasTahunan" style="width: 100%; height: 250px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-sm-4">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Total Pemasukan</h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content text-center">
+          <span class="count_top"><i class="fa fa-dollar"></i> Total Pemasukan</span>
+          <div class="count">
+            <h1><div id="xTotalPemasukan">2500</div></h1>
+          </div>
+          <span class="count_bottom">Pemasukan Bulan ini : <i class="green" id="xPemasukanBulanIni"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-sm-4">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Total Pengeluaran</h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content text-center">
+          <span class="count_top"><i class="fa fa-dollar"></i> Total Users</span>
+          <div class="count">
+            <h1><div id="xTotalPengeluaran">2500</div></h1>
+          </div>
+          <span class="count_bottom">Pengeluaran Bulan ini : <i class="green" id="xPengeluaranBulanIni"> </i></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-sm-4">
+      <div class="x_panel">
+        <div class="x_title">
+          <h2>Saldo</h2>
+          <ul class="nav navbar-right panel_toolbox">
+            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+        <div class="x_content text-center">
+          <span class="count_top"><i class="fa fa-dollar"></i> Total Users</span>
+          <div class="count">
+            <h1><div id="xTotalSaldo">2500</div></h1>
+          </div>
+          <span class="count_bottom">Saldo Bulan ini : <i class="green" id="xSaldoBulanIni">4% </i></span>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- <div class="row" style="display: inline-block;" >
+    <div class="tile_count">
+      <div class="col-md-4 col-sm-4  tile_stats_count">
+        <span class="count_top"><i class="fa fa-user"></i> Total Users</span>
+        <div class="count">2500</div>
+        <span class="count_bottom"><i class="green">4% </i> From last Week</span>
+      </div>
+
+      <div class="col-md-4 col-sm-4  tile_stats_count">
+        <span class="count_top"><i class="fa fa-user"></i> Total Users</span>
+        <div class="count">2500</div>
+        <span class="count_bottom"><i class="green">4% </i> From last Week</span>
+      </div>
+
+      <div class="col-md-4 col-sm-4  tile_stats_count">
+        <span class="count_top"><i class="fa fa-user"></i> Total Users</span>
+        <div class="count">2500</div>
+        <span class="count_bottom"><i class="green">4% </i> From last Week</span>
+      </div>
+
+    </div>
+  </div> -->
 </div>
 <!-- /page content -->
 <?php
@@ -22,127 +134,137 @@
 
 <script type="text/javascript">
   $(function () {
-    var RecordOwnerID = "<?php echo $this->session->userdata('RecordOwnerID') ?>";
+    var CabangID = "<?php echo $CabangID; ?>"
     $(document).ready(function () {
-      var now = new Date();
+      $('#CabangIDFilter').select2({
+        width: '100%'
+      });
 
-      var day = ("0" + now.getDate()).slice(-2);
-      var month = ("0" + (now.getMonth() + 1)).slice(-2);
+      if (CabangID != 0) {
 
-      var today = now.getFullYear()+"-01-01";
-      var lastDayofYear = now.getFullYear()+"-"+month+"-"+day;
-
-      $('#TglAwal').val(today);
-      $('#TglAkhir').val(lastDayofYear);
-      $("#TglAwal").prop("readOnly", true);
-      $("#TglAkhir").prop("readOnly", true);
+        $('#CabangIDFilter').prop('disabled', true);
+        $('#CabangIDFilter').val(CabangID).trigger('change');
+      }
 
       var button = document.getElementById("btSearch");
       button.click();
-      // loadperformapatroli();
+      loadKasTahunan();
     });
 
     $('#btSearch').click(function () {
+      loadKasTahunan();
+    })
+
+    function loadKasTahunan() {
       $.ajax({
         type: "post",
-        url: "<?=base_url()?>Home/LoadPerformaPatroli",
+        url: "<?=base_url()?>ReportController/GrafikKasTahunan",
         data: {
-          'TglAwal'       :$('#TglAwal').val(),
-          'TglAkhir'      :$('#TglAkhir').val(),
-          'RecordOwnerID' :RecordOwnerID,
-          'LocationID'    :$('#LocationID').val(),
+          'CabangID'    :$('#CabangIDFilter').val(),
         },
         dataType: "json",
         success: function (response) {
-          // bindGrid(response.data);
-          // console.log(response);
-          loadperformapatroli(response.data.target, response.data.realisasi);
+          kasTahunan(response.data.Pengeluaran,response.data.Pemasukan);
+
+          // Breakdown Transaksi
+
+          var totPemasukan = 0;
+          var totPengeluaran = 0;
+          var Saldo = 0;
+
+          var PemasukanBulanini = 0;
+          var PengeluaranBulanini = 0;
+          var SaldoBulanIni = 0;
+
+          var now = new Date();
+          var month = now.getMonth() +1;
+
+          for (var i = 0; i < response.data.Pengeluaran.length; i++) {
+            // Things[i]
+            totPengeluaran += response.data.Pengeluaran[i]
+
+            if (i+1 == month) {
+              PengeluaranBulanini += response.data.Pengeluaran[i];
+            }
+          }
+
+          for (var i = 0; i < response.data.Pemasukan.length; i++) {
+            // Things[i]
+            console.log(response.data.Pemasukan[i])
+            totPemasukan += response.data.Pemasukan[i]
+
+            if (i+1 == month) {
+              PemasukanBulanini += response.data.Pemasukan[i];
+            }
+          }
+
+          Saldo = totPemasukan - totPengeluaran;
+          SaldoBulanIni = PemasukanBulanini - PengeluaranBulanini;
+          console.log(totPemasukan)
+
+          $('#xTotalPemasukan').text(totPemasukan.toLocaleString('en-US'));
+          $('#xPemasukanBulanIni').text(PemasukanBulanini.toLocaleString('en-US'));
+
+          $('#xTotalPengeluaran').text(totPemasukan.toLocaleString('en-US'));
+          $('#xPengeluaranBulanIni').text(PemasukanBulanini.toLocaleString('en-US'));
+
+          $('#xTotalSaldo').text(Saldo.toLocaleString('en-US'));
+          $('#xSaldoBulanIni').text(SaldoBulanIni.toLocaleString('en-US'));
         }
       });
-    })
-
-    function loadperformapatroli(target, realisasi) {
-      var myChart = echarts.init(document.getElementById('pencapaianpatrol'));
-
-      const colors = ['#5470C6', '#91CC75', '#EE6666'];
+    }
+    function kasTahunan(Keluar, Masuk) {
+      var myChart = echarts.init(document.getElementById('grafikaruskasTahunan'));
       option = {
-        color: colors,
+        title: {
+          text: ''
+        },
         tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'cross'
-          }
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['Pemasukan', 'Pengeluaran']
         },
         grid: {
-          right: '20%'
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
         },
         toolbox: {
           feature: {
-            dataView: { show: true, readOnly: false },
-            restore: { show: true },
-            saveAsImage: { show: true }
+            saveAsImage: {}
           }
         },
-        legend: {
-          // data: ['Evaporation', 'Precipitation', 'Temperature']
-          data: ['Realisasi', 'Target']
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-        xAxis: [
-          {
-            type: 'category',
-            axisTick: {
-              alignWithLabel: true
-            },
-            // prettier-ignore
-            data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-          }
-        ],
-        yAxis: [
-          {
-            type: 'value',
-            name: 'Realisasi',
-            position: 'right',
-            alignTicks: true,
-            axisLine: {
-              show: true,
-              lineStyle: {
-                color: colors[0]
-              }
-            },
-            axisLabel: {
-              formatter: '{value} x'
-            }
-          },
-          {
-            type: 'value',
-            name: 'Target',
-            position: 'left',
-            alignTicks: true,
-            axisLine: {
-              show: true,
-              lineStyle: {
-                color: colors[2]
-              }
-            },
-            axisLabel: {
-              formatter: '{value} x'
-            }
-          }
-        ],
+        yAxis: {
+          type: 'value'
+        },
         series: [
           {
-            name: 'Realisasi',
-            type: 'bar',
-            data: realisasi
+            name: 'Pemasukan',
+            type: 'line',
+            stack: 'Total',
+            // data: [0, 101, 134, 90, 230, 210, 0, 101, 134, 90, 230, 210]
+            data : Masuk
           },
           {
-            name: 'Target',
+            name: 'Pengeluaran',
             type: 'line',
-            data: target
+            stack: 'Total',
+            data: Keluar
           }
         ]
       };
+
       myChart.setOption(option);
+      window.addEventListener('resize', function() {
+        myChart.resize();
+      }); 
     }
   });
 </script>

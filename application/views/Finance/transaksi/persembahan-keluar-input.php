@@ -155,7 +155,14 @@
       var dataGridInstance = $('#gridContainer').dxDataGrid('instance');
       var allRowsData  = dataGridInstance.getDataSource().items();
 
-      if (allRowsData.length == 0) {
+      var total = 0;
+
+      for (var i = 0; i < allRowsData.length; i++) {
+        // Things[i]
+        // console.log(allRowsData[i]);
+        total += parseFloat(allRowsData[i]['Rate']);
+      }
+      if (total == 0) {
         errorCount +=1;
       }
 

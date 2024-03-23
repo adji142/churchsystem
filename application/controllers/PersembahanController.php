@@ -447,7 +447,7 @@
 			$NoJadwal = $this->input->post('NoJadwal');
 			$CabangID = $this->input->post('CabangID');
 
-			$this->db->select("personel.NIK, concat(personel.GelarDepan,' ', personel.NamaLengkap,' ',personel.GelarBelakang) AS NamaLengkap, divisi.NamaDivisi,jabatan.NamaJabatan,ratepk.Rate,absensi.CabangID ");
+			$this->db->select("personel.NIK, concat(personel.GelarDepan,' ', personel.NamaLengkap,' ',personel.GelarBelakang) AS NamaLengkap, divisi.NamaDivisi,jabatan.NamaJabatan,COALESCE(ratepk.Rate,0) Rate,absensi.CabangID ");
 			$this->db->from('absensi');
 			$this->db->join('jadwalpelayanan', 'absensi.ReffJadwal = jadwalpelayanan.NoTransaksi AND absensi.CabangID = jadwalpelayanan.CabangID','left');
 			$this->db->join('personel', 'absensi.NIK = personel.NIK and absensi.CabangID = personel.CabangID','left');

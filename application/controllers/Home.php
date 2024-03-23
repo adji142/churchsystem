@@ -160,8 +160,11 @@ class home extends CI_Controller {
 	}
 	public function index()
 	{
+		$rs = $this->ModelsExecuteMaster->GetCabang();
+		
 		$data['CabangID'] = $this->session->userdata('CabangID');
 		$data['CabangName'] = $this->session->userdata('CabangName');
+		$data['Cabang'] = $rs->result();
 		$this->load->view('Dashboard', $data);
 	}
 	public function generatePascode()

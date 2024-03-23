@@ -33,13 +33,14 @@
 					CASE WHEN transaksikas.TipeTransaksi = 1 THEN 'IN' ELSE 'OUT' END 'Direction', 
 					DATE_FORMAT(DATE(transaksikas.TglTransaksi),'%d-%m-%Y') Tanggal, 
 					CASE WHEN transaksikas.TipeTransaksi = 1 THEN transaksikas.Total ELSE 0 END AS 'Debit', 
-					CASE WHEN transaksikas.TipeTransaksi = 2 THEN transaksikas.Total ELSE 0 END AS 'Credit'");
+					CASE WHEN transaksikas.TipeTransaksi = 2 THEN transaksikas.Total ELSE 0 END AS 'Credit',0 Saldo");
 				$this->db->from('transaksikas');
 				$this->db->join('akunkas','transaksikas.KodeAkunKas = akunkas.KodeAkun and transaksikas.CabangID = akunkas.CabangID','left');
 				$this->db->join('cabang', 'transaksikas.CabangID = cabang.id', 'left');
 				$this->db->join('kasbasetype', 'transaksikas.BaseType = kasbasetype.Kode', 'left');
 				$this->db->where('date(transaksikas.TglTransaksi) >=', $TglAwal);
 				$this->db->where('date(transaksikas.TglTransaksi) <=', $TglAkhir);
+				$this->db->where('transaksikas.StatusTransaksi','OPEN');
 
 				if ($CabangID != "0") {
 					$this->db->where(array("transaksikas.CabangID"=>$CabangID));
