@@ -71,7 +71,7 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content text-center">
-          <span class="count_top"><i class="fa fa-dollar"></i> Total Users</span>
+          <span class="count_top"><i class="fa fa-dollar"></i> Total Pengeluaran</span>
           <div class="count">
             <h1><div id="xTotalPengeluaran">2500</div></h1>
           </div>
@@ -90,7 +90,7 @@
           <div class="clearfix"></div>
         </div>
         <div class="x_content text-center">
-          <span class="count_top"><i class="fa fa-dollar"></i> Total Users</span>
+          <span class="count_top"><i class="fa fa-dollar"></i> Saldo</span>
           <div class="count">
             <h1><div id="xTotalSaldo">2500</div></h1>
           </div>
