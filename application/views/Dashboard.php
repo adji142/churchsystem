@@ -158,6 +158,7 @@
 
     function loadKasTahunan() {
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>ReportController/GrafikKasTahunan",
         data: {
@@ -189,7 +190,7 @@
 
           for (var i = 0; i < response.data.Pemasukan.length; i++) {
             // Things[i]
-            console.log(response.data.Pemasukan[i])
+            // console.log(response.data.Pemasukan[i])
             totPemasukan += response.data.Pemasukan[i]
 
             if (i+1 == month) {
@@ -199,7 +200,7 @@
 
           Saldo = totPemasukan - totPengeluaran;
           SaldoBulanIni = PemasukanBulanini - PengeluaranBulanini;
-          console.log(totPemasukan)
+          console.log(AllowFinanceDashboard)
 
           if (AllowFinanceDashboard) {
             kasTahunan(response.data.Pengeluaran,response.data.Pemasukan);
