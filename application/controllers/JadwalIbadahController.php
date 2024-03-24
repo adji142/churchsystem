@@ -57,7 +57,7 @@
 			$data['template'] = $template->result();
 			$data['Cabang'] = $rs->result();
 			$data['Hari'] = $getHari->result();
-			$this->load->view('V_Master/jadwalibadah-input',$data);
+			$this->load->view('V_Master/JadwalIbadah-input',$data);
 		}
 		public function Read()
 		{

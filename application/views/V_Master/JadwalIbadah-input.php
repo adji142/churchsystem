@@ -109,7 +109,7 @@
                   </div>
                 </div>
                 <div class="item" form-group>
-                    <button class="btn btn-primary" id="btn_Save">Save</button>
+                    <button class="btn btn-primary" id="btn_Save" disabled="">Save</button>
                   </div>
               </div>
             </div>
@@ -222,6 +222,7 @@
         }
       }
     });
+
 
     $('#btn_Save').click(function () {
       $('#btn_Save').text('Tunggu Sebentar.....');
@@ -423,7 +424,9 @@
       var canEdit = "<?php echo $canEdit; ?>";
       var canDelete = "<?php echo $canDelete; ?>";
 
-      $("#gridContainer").dxDataGrid({
+      // setEnableCommand();
+
+      var dataGridInstance = $("#gridContainer").dxDataGrid({
         allowColumnResizing: true,
             dataSource: data,
             keyExpr: "JabatanID",
@@ -504,9 +507,71 @@
                 // logEvent("InitNewRow");
                 $('#modal_').modal('show');
             },
-        });
+        }).dxDataGrid('instance');
+        var allRowsData  = dataGridInstance.getDataSource().items();
+
+        if (allRowsData.length == 0) {
+          // $('#bt_save').
+          $('#btn_Save').prop('disabled', true);
+        }
+        else{
+          $('#btn_Save').prop('disabled', false);
+        }
         // add dx-toolbar-after
         // $('.dx-toolbar-after').append('Tambah Alat untuk di pinjam ');
+    }
+
+    $('#NamaIbadah').change(function () {
+      setEnableCommand();
+    });
+
+    $('#CabangID').change(function () {
+      setEnableCommand();
+    });
+
+    $('#Hari').change(function () {
+      setEnableCommand();
+    });
+
+    $('#MulaiJam').change(function () {
+      setEnableCommand();
+    });
+
+    $('#SelesaiJam').change(function () {
+      setEnableCommand();
+    });
+
+    function setEnableCommand() {
+      var errorCount = 0;
+
+
+      if ($('#NamaIbadah').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#CabangID').val() == '0') {
+        errorCount += 1;
+      }
+
+      if ($('#Hari').val() == "0") {
+        errorCount += 1;
+      }
+
+      if ($('#MulaiJam').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#SelesaiJam').val() == "") {
+        errorCount += 1;
+      }
+
+      if (errorCount > 0) {
+        // $('#bt_save').
+        $('#btn_Save').prop('disabled', true);
+      }
+      else{
+        $('#btn_Save').prop('disabled', false);
+      }
     }
   });
 </script>

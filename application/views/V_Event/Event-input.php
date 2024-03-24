@@ -163,7 +163,7 @@
                   </div>
                 </div>
                 <div class="item" form-group>
-                  <button class="btn btn-primary" id="btn_Save">Save</button>
+                  <button class="btn btn-primary" id="btn_Save" disabled="">Save</button>
                 </div>
               </div>
             </div>
@@ -584,7 +584,7 @@
       var canEdit = "<?php echo $canEdit; ?>";
       var canDelete = "<?php echo $canDelete; ?>";
 
-      $("#gridContainer").dxDataGrid({
+      var dataGridInstance = $("#gridContainer").dxDataGrid({
         allowColumnResizing: true,
             dataSource: data,
             keyExpr: "JabatanID",
@@ -665,9 +665,111 @@
                 // logEvent("InitNewRow");
                 $('#modal_').modal('show');
             },
-        });
+        }).dxDataGrid('instance');
+        var allRowsData  = dataGridInstance.getDataSource().items();
+
+        if (allRowsData.length == 0) {
+          // $('#bt_save').
+          $('#btn_Save').prop('disabled', true);
+        }
+        else{
+          $('#btn_Save').prop('disabled', false);
+        };
         // add dx-toolbar-after
         // $('.dx-toolbar-after').append('Tambah Alat untuk di pinjam ');
+    }
+
+    $('#NamaEvent').change(function () {
+      setEnableCommand();
+    })
+
+    $('#CabangID').change(function () {
+      setEnableCommand();
+    })
+
+    $('#JamMulai').change(function () {
+      setEnableCommand();
+    })
+
+    $('#JamSelesai').change(function () {
+      setEnableCommand();
+    })
+
+    $('#Deskripsi').change(function () {
+      setEnableCommand();
+    })
+
+    $('#LokasiEvent').change(function () {
+      setEnableCommand();
+    })
+
+    $('#AlamatEvent').change(function () {
+      setEnableCommand();
+    })
+
+    $('#ContactPerson').change(function () {
+      setEnableCommand();
+    })
+
+    $('#NoHPContactPerson').change(function () {
+      setEnableCommand();
+    })
+
+    $('#JenisEventID').change(function () {
+      setEnableCommand();
+    })
+
+    function setEnableCommand() {
+      var errorCount = 0;
+
+
+      if ($('#NamaEvent').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#CabangID').val() == '0') {
+        errorCount += 1;
+      }
+
+      if ($('#JamMulai').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#JamSelesai').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#Deskripsi').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#LokasiEvent').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#AlamatEvent').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#ContactPerson').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#NoHPContactPerson').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#JenisEventID').val() == "-1") {
+        errorCount += 1;
+      }
+
+      if (errorCount > 0) {
+        // $('#bt_save').
+        $('#btn_Save').prop('disabled', true);
+      }
+      else{
+        $('#btn_Save').prop('disabled', false);
+      }
     }
   });
 </script>

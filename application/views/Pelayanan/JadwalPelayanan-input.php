@@ -161,7 +161,7 @@
       </div>
       <div class="col-md-12 col-sm-12">
         <h2></h2>
-        <button class="btn btn-primary" id="btn_save">Simpan</button>
+        <button class="btn btn-primary" id="btn_save" disabled="">Simpan</button>
       </div>
     </div>
   </div>
@@ -1173,6 +1173,7 @@
               });
 
               xrow +=1;
+              setEnableCommand();
             })
           }
         });
@@ -1369,6 +1370,7 @@
               });
 
               xrow +=1;
+              setEnableCommand();
             })
           }
         });
@@ -1550,6 +1552,70 @@
             onEditorPrepared:function (args) {
             }
         }).dxDataGrid('instance');
+    }
+
+    $('#CabangID').change(function () {
+      setEnableCommand();
+    })
+
+    $('#JenisTransaksi').change(function () {
+      setEnableCommand();
+    })
+
+    $('#JadwalIbadahID').change(function () {
+      setEnableCommand();
+    })
+
+    $('#EventID').change(function () {
+      setEnableCommand();
+    })
+
+    $('#NamaJadwal').change(function () {
+      setEnableCommand();
+    })
+
+    $('#PICKegiatan').change(function () {
+      setEnableCommand();
+    })
+
+    function setEnableCommand() {
+      var errorCount = 0;
+
+      if ($('#CabangID').val() == "0") {
+        errorCount += 1;
+      }
+
+      if ($('#JenisTransaksi').val() == "0") {
+        errorCount += 1;
+      }
+
+      if ($('#JenisTransaksi').val() == "1" && $('#JadwalIbadahID').val() == "0") {
+        errorCount += 1;
+      }
+
+      if ($('#JenisTransaksi').val() == "2" && $('#EventID').val() == "0") {
+        errorCount += 1;
+      }
+
+      if ($('#NamaJadwal').val() == "") {
+        errorCount += 1;
+      }
+
+      if ($('#PICKegiatan').val() == "0") {
+        errorCount += 1;
+      }
+
+      if (detailObject.length == 0) {
+        errorCount += 1;
+      }
+
+      if (errorCount > 0) {
+        // $('#bt_save').
+        $('#btn_save').prop('disabled', true);
+      }
+      else{
+        $('#btn_save').prop('disabled', false);
+      }
     }
   });
 </script>

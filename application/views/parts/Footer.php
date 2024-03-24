@@ -1,7 +1,7 @@
 <!-- footer content -->
         <footer>
           <div class="pull-right">
-            AIS System - Software developer <a href="http://aistrick.com">aistrick</a>
+            Gereja <a href="http://tiberias.id">Tiberias Indonesia</a>
           </div>
           <div class="clearfix"></div>
         </footer>
