@@ -820,12 +820,12 @@
         var selectDivisi = document.getElementById('divisi'+detailObject[i]['ID']);
 
         var personelOption = selectPersonel.options[selectPersonel.selectedIndex];
-        var cabangOption = selectCabang.options[selectCabang.selectedIndex];
+        // var cabangOption = selectCabang.options[selectCabang.selectedIndex];
         var jabatanOption = selectJabatan.options[selectJabatan.selectedIndex];
         var divisiOption = selectDivisi.options[selectDivisi.selectedIndex];
 
         var personelText = personelOption.text;
-        var cabangText = cabangOption.text;
+        var cabangText = "";
         var jabatanText = jabatanOption.text;
         var divisiText = divisiOption.text;
 

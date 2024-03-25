@@ -11,13 +11,13 @@
       <div class="col-md-12 col-sm-12  ">
         <div class="x_panel">
           <div class="x_title">
-            <h2>Input Data Persembahan</h2>
+            <h2>Input Data Sisa Persembahan</h2>
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
             <div class="row">
               <div class="col-md-6 col-sm-6">
-                <h2>Persembahan</h2>
+                <h2>Sisa Persembahan</h2>
                 <div class="col-md-12 col-sm-12">
                   <label class="col-form-label col-md-3 col-sm-3" for="first-name">Akun Kas <span class="required">*</span>
                   </label>
@@ -65,7 +65,7 @@
               </div>
               <div class="col-md-12 col-sm-12">
                 <hr>
-                <button class="btn btn-success" id="bt_save" disabled="">Simpan Data Pemasukan</button>
+                <button class="btn btn-success" id="bt_save" disabled="">Simpan Data Sisa Persembahan</button>
               </div>
             </div>
           </div>
