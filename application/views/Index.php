@@ -1,13 +1,13 @@
 <?php
-    $user_id = $this->session->userdata('UserID');
-    if($user_id != ''){
-        echo "<script>location.replace('".base_url()."home');</script>";
-    }
-    else{
-      delete_cookie('ci_session');
-      $this->session->sess_destroy();
-      // echo "<script>location.replace('".base_url()."');</script>";
-    }
+    // $user_id = $this->session->userdata('UserID');
+    // if($user_id != ''){
+    //     echo "<script>location.replace('".base_url()."home');</script>";
+    // }
+    // else{
+    //   delete_cookie('ci_session');
+    //   $this->session->sess_destroy();
+    //   // echo "<script>location.replace('".base_url()."');</script>";
+    // }
 ?>
 <!DOCTYPE html>
 <html lang="en">

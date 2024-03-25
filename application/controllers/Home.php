@@ -169,6 +169,7 @@ class home extends CI_Controller {
 		if ($this->session->userdata('UserID') == "") {
 			delete_cookie('ci_session');
       		$this->session->sess_destroy();
+      		echo "<script>location.replace('".base_url()."');</script>";
 		}
 		else{
 			$this->load->view('Dashboard', $data);
