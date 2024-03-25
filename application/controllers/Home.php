@@ -165,7 +165,14 @@ class home extends CI_Controller {
 		$data['CabangID'] = $this->session->userdata('CabangID');
 		$data['CabangName'] = $this->session->userdata('CabangName');
 		$data['Cabang'] = $rs->result();
-		$this->load->view('Dashboard', $data);
+
+		if ($this->session->userdata('UserID') == "") {
+			delete_cookie('ci_session');
+      		$this->session->sess_destroy();
+		}
+		else{
+			$this->load->view('Dashboard', $data);
+		}
 	}
 	public function generatePascode()
 	{
