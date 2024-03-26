@@ -7,7 +7,7 @@
 <div class="right_col" role="main">
   <div class="">
     <div class="clearfix"></div>
-    <div class="row">
+    <div class="row"  style="display: block;">
       <div class="col-md-12 col-sm-12  ">
         <div class="x_panel">
           <div class="x_title">
@@ -136,23 +136,19 @@
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
-            <table class="table table-hover" id="PelayanTable">
+            <table class="table" id="PelayanTable">
               <thead>
                 <tr>
                   <th>Divisi</th>
                   <th>Jabatan</th>
-                  <!-- <th>Cabang</th> -->
                   <th>Personil</th>
-                  <!-- <th>Action</th> -->
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td></td>
-                  <td></td>
-                  <!-- <td></td> -->
-                  <td></td>
-                  <!-- <td></td> -->
+                  <td width="30%"></td>
+                  <td width="30%"></td>
+                  <td width="40%"></td>
                 </tr>
               </tbody>
             </table>

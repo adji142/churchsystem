@@ -12,11 +12,27 @@
         <div class="x_panel">
           <div class="x_title">
             <h2>Jadwal Ibadah</h2>
-            <div class="clearfix"></div>
-            <div class="col-md-3 col-sm-3 ">
+            <br>
+            <hr>
+            <div class="col-md-6 col-sm-6 ">
+              Cabang
+              <select class="form-control" id="CabangIDFilter" name="CabangIDFilter" >
+                <option value="0">Pilih Cabang</option>
+                <?php
+
+                  foreach ($Cabang as $key) {
+                    echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+            <div class="col-md-6 col-sm-6 ">
               <br>
+              <button class="btn btn-primary" id="btn_Search">Cari Data</button>
               <button class="btn btn-danger" id="btn_Add">Tambah Data</button>
             </div>
+            <div class="clearfix"></div>
+            <hr>
           </div>
           <div class="x_content">
               <div class="dx-viewport demo-container">
@@ -129,20 +145,40 @@
     var canDelete = "<?php echo $canDelete; ?>";
     $(document).ready(function () {
       $('#CabangID').select2({
-        width: '200px'
+        width: '100%'
+      });
+
+      $('#CabangIDFilter').select2({
+        width: '100%'
       });
 
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
+
+        $('#CabangIDFilter').prop('disabled', true);
+        $('#CabangIDFilter').val(CabangID).trigger('change');
       }
 
       $('#btn_Add').attr('disabled',!canAdd);
 
+      ReadData();
+    });
+
+    $('#btn_Add').click(function () {
+      var id = "0";
+      window.location.href = '<?Php echo base_url(); ?>jadwalibadah/input/'+id+'/'+CabangID;
+    });
+
+    $('#btn_Search').click(function () {
+      ReadData();
+    });
+
+    function ReadData() {
       $.ajax({
         type: "post",
         url: "<?=base_url()?>JadwalIbadahController/Read",
-        data: {'id':'',CabangID:CabangID},
+        data: {'id':'',CabangID:$('#CabangIDFilter').val()},
         dataType: "json",
         success: function (response) {
           if (response.success == true) {
@@ -166,12 +202,7 @@
           }
         }
       });
-    });
-
-    $('#btn_Add').click(function () {
-      var id = "0";
-      window.location.href = '<?Php echo base_url(); ?>jadwalibadah/input/'+id+'/'+CabangID;
-    })
+    }
 
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
@@ -252,7 +283,7 @@
             showBorders: true,
             remoteOperations: true,
             paging: {
-                enabled: false
+                enabled: true
             },
             editing: {
                 mode: "row",
@@ -294,6 +325,11 @@
                 {
                     dataField: "NamaHari",
                     caption: "Hari",
+                    allowEditing:false
+                },
+                {
+                    dataField: "CabangName",
+                    caption: "Cabang",
                     allowEditing:false
                 },
                 {

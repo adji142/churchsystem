@@ -78,7 +78,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="<?php echo base_url(); ?>">
+              <a href="<?php echo base_url(); ?>Home">
                 <!-- <i class="fa fa-paw"></i>  -->
                 <center>
                   <img src="<?php echo base_url() ?>Assets/images/logoflat.png" width = "30%">

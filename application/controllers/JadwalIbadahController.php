@@ -22,9 +22,10 @@
 		}
 		public function form($id, $CabangID)
 		{
-			$this->db->select("jadwalibadah.*,defaulthari.NamaHari, DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') SelesaiJamFormated, DATE_FORMAT(jadwalibadah.MulaiJam,'%T') MulaiJamFormated");
+			$this->db->select("jadwalibadah.*,defaulthari.NamaHari, DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') SelesaiJamFormated, DATE_FORMAT(jadwalibadah.MulaiJam,'%T') MulaiJamFormated, cabang.CabangName");
 			$this->db->from('jadwalibadah');
 			$this->db->join('defaulthari','defaulthari.KodeHari=jadwalibadah.Hari','left');
+			$this->db->join('cabang','jadwalibadah.CabangID = cabang.id', 'left');
 			$this->db->where(array("1"=>"1"));
 			$this->db->where(array("CabangID"=>$CabangID));
 
@@ -67,9 +68,10 @@
 			$CabangID = $this->input->post('CabangID');
 
 			try {
-				$this->db->select("jadwalibadah.*,defaulthari.NamaHari, DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') SelesaiJamFormated, DATE_FORMAT(jadwalibadah.MulaiJam,'%T') MulaiJamFormated");
+				$this->db->select("jadwalibadah.*,defaulthari.NamaHari, DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') SelesaiJamFormated, DATE_FORMAT(jadwalibadah.MulaiJam,'%T') MulaiJamFormated, cabang.CabangName");
 				$this->db->from('jadwalibadah');
 				$this->db->join('defaulthari','defaulthari.KodeHari=jadwalibadah.Hari','left');
+				$this->db->join('cabang','jadwalibadah.CabangID = cabang.id', 'left');
 				$this->db->where(array("1"=>"1"));
 
 				if ($id != "") {

@@ -472,7 +472,7 @@ $message = "
 	*Hari 			: ".$key->NamaHari."*
 	*Tanggal 			: ".$key->TglTransaksi."*
 	*Jam 			: ".$key->JamMulai.' s/d '.$key->JamSelesai."*
-	*Lokasi 		: ".$key->CabangName."*
+	*Lokasi 			: ".$key->CabangName."*
 
 	Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
 	".base_url()."pelayanan/konfirmasi/".$key->KonfirmasiID."
