@@ -122,7 +122,7 @@ class _MainState extends State<MyApp> {
       );
     }
     return MaterialApp(
-      home: LoadWebView(sess, "https://aissystem.org/demo/echurch/"),
+      home: LoadWebView(sess, "https://system.tiberias.id/"),
     );
     // return MaterialApp(
     //     title: 'Patroli Siap x86',

@@ -64,16 +64,27 @@
     <script src="<?php echo base_url();?>Assets/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url();?>Assets/css/bootstrap-wysihtml5.css" />
   </head>
+  <style type="text/css">
+    .nav_title{
+      height: 100px !important;
+    }
+    .systemText{
+      color: white;
+    }
+  </style>
   <body class="nav-md">
     <div class="container body">
       <div class="main_container">
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="<?php echo base_url(); ?>" class="site_title">
+              <a href="<?php echo base_url(); ?>">
                 <!-- <i class="fa fa-paw"></i>  -->
-                <img src="<?php echo base_url() ?>Assets/images/logoflat.png" width = "30%">
-                <span>GTI System</span>
+                <center>
+                  <img src="<?php echo base_url() ?>Assets/images/logoflat.png" width = "30%">
+                  <br>
+                  <div class="systemText"><h2>Tiberias System</h2></div>
+                </center>
               </a>
             </div>
 
