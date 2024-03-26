@@ -441,13 +441,13 @@
 					            	Hari 			: '.$key->NamaHari.' <br>
 					            	Tanggal 		: '.$key->TglTransaksi.'<br>
 					            	Jam 			: '.$key->JamMulai.' s/d '.$key->JamSelesai.'<br>
-					            	Lokasi Cabang	: '.$key->CabangName.'<br>
+					            	Lokasi		: '.$key->CabangName.'<br>
 
 					            </pre>
 					            <p>
 					            Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
 					            <a href="'.base_url().'pelayanan/konfirmasi/'.$key->KonfirmasiID.'">Klik disini</a>
-					            Tuhan Yesus Memberkati<br><br>
+					            Tuhan Yesus memberkati<br><br>
 					            '.$key->CreatedBy.'
 					            </p>
 					        ';
@@ -466,18 +466,18 @@
 
 						if ($key->NoHP != "") {
 $message = "
-	Shalom *".$key->NamaLengkap."* 
+	Shalom *".rtrim($key->NamaLengkap)."* 
 	Anda Mendapat Jadwal Pelayanan Pada :
 
 	*Hari 			: ".$key->NamaHari."*
 	*Tanggal 			: ".$key->TglTransaksi."*
 	*Jam 			: ".$key->JamMulai.' s/d '.$key->JamSelesai."*
-	*Lokasi Cabang 	: ".$key->CabangName."*
+	*Lokasi 		: ".$key->CabangName."*
 
 	Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
 	".base_url()."pelayanan/konfirmasi/".$key->KonfirmasiID."
 
-	Tuhan Yesus Memberkati
+	Tuhan Yesus memberkati
 
 	".$key->CreatedBy."
 ";

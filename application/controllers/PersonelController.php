@@ -32,7 +32,7 @@
 				$this->db->from('personel');
 				$this->db->join('cabang','personel.CabangID=cabang.id','left');
 				$this->db->join('divisi','personel.DivisiID=divisi.id AND personel.CabangID = divisi.CabangID','left');
-				$this->db->join('jabatan','personel.JabatanID=jabatan.id AND personel.JabatanID = jabatan.CabangID','left');
+				$this->db->join('jabatan','personel.JabatanID=jabatan.id AND personel.CabangID = jabatan.CabangID','left');
 				$this->db->join('ratepk','personel.RatePKCode=ratepk.id','left');
 				$this->db->join('dem_provinsi','personel.ProvID = dem_provinsi.prov_id','left');
 				$this->db->join('dem_kota','personel.KotaID = dem_kota.city_id','left');
@@ -46,7 +46,7 @@
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
-				if ($CabangID != 0) {
+				if ($CabangID != "0") {
 					$this->db->where(array("personel.CabangID"=>$CabangID));
 				}
 

@@ -277,7 +277,7 @@
       $.ajax({
         type: "post",
         url: "<?=base_url()?>PersonelController/Read",
-        data: {'NIK':'', CabangID:CabangID},
+        data: {'NIK':'', CabangID:CabangID,'Provinsi': -1},
         dataType: "json",
         success: function (response) {
           if (response.success == true) {
