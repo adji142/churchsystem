@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+// use PHPMailer\PHPMailer\PHPMailer;
+// use PHPMailer\PHPMailer\Exception;
 /**
  * 
  */
@@ -11,9 +11,9 @@ class ModelsExecuteMaster extends CI_Model
 	function __construct()
 	{
 		parent::__construct();
-		require APPPATH.'libraries/phpmailer/src/Exception.php';
-        require APPPATH.'libraries/phpmailer/src/PHPMailer.php';
-        require APPPATH.'libraries/phpmailer/src/SMTP.php';
+		// require APPPATH.'libraries/phpmailer/src/Exception.php';
+  //       require APPPATH.'libraries/phpmailer/src/PHPMailer.php';
+  //       require APPPATH.'libraries/phpmailer/src/SMTP.php';
 	}
 	public function GetCabang()
 	{
