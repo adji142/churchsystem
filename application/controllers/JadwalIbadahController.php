@@ -30,7 +30,7 @@
 			$this->db->where(array("CabangID"=>$CabangID));
 
 			if ($id != "0") {
-				$this->db->where(array("id"=>$id));
+				$this->db->where(array("jadwalibadah.id"=>$id));
 			}
 
 			$jadwalibadah = $this->db->get();
@@ -75,7 +75,7 @@
 				$this->db->where(array("1"=>"1"));
 
 				if ($id != "") {
-					$this->db->where(array("id"=>$id));
+					$this->db->where(array("jadwalibadah.id"=>$id));
 				}
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
