@@ -102,7 +102,7 @@
 				$this->db->join('cabang', 'penugasanjadwalpelayanan.CabangID = cabang.id','left');
 				$this->db->join('divisi', 'penugasanjadwalpelayanan.DivisiID = divisi.id and penugasanjadwalpelayanan.CabangID = divisi.CabangID','left');
 				$this->db->join('jabatan', 'penugasanjadwalpelayanan.JabatanID = jabatan.id and penugasanjadwalpelayanan.CabangID = jabatan.CabangID','left');
-				$this->db->join('personel','penugasanjadwalpelayanan.PIC =personel.NIK and penugasanjadwalpelayanan.CabangID = personel.CabangID','left');
+				$this->db->join('personel','penugasanjadwalpelayanan.PIC =personel.NIK','left');
 				$this->db->where("penugasanjadwalpelayanan.NoTransaksi", $NoTransaksi);
 				$this->db->where("penugasanjadwalpelayanan.CabangID", $CabangID);
 
@@ -408,7 +408,7 @@
 						->join('cabang','penugasanjadwalpelayanan.CabangID = cabang.id','left')
 						->group_by('penugasanjadwalpelayanan.NoTransaksi,penugasanjadwalpelayanan.CabangID')->get_compiled_select();
 
-					$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.JamMulai,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),DATE_FORMAT(dataevent.JamSelesai,'%T')) AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasi, sub.BelumKonfirmasi,personel.NoHP, personel.Email, defaulthari.NamaHari,personel.NamaLengkap,penugasanjadwalpelayanan.KonfirmasiID,jadwalpelayanan.CreatedBy");
+					$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.JamMulai,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),DATE_FORMAT(dataevent.JamSelesai,'%T')) AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasi, sub.BelumKonfirmasi,COALESCE(personel.NoHP, '') NoHP, COALESCE(personel.Email) Email, defaulthari.NamaHari,personel.NamaLengkap,penugasanjadwalpelayanan.KonfirmasiID,jadwalpelayanan.CreatedBy");
 					$this->db->from('jadwalpelayanan');
 					$this->db->join('jadwalibadah','jadwalpelayanan.JadwalIbadahID=jadwalibadah.id AND jadwalpelayanan.CabangID = jadwalibadah.CabangID','left');
 					$this->db->join('dataevent','jadwalpelayanan.EventID=dataevent.NoTransaksi AND jadwalpelayanan.CabangID = dataevent.CabangID','left');
@@ -416,33 +416,85 @@
 					$this->db->join("($subquery) as sub","jadwalpelayanan.NoTransaksi = sub.NoTransaksi and jadwalpelayanan.CabangID = sub.CabangID",'left');
 					$this->db->join('defaulthari','defaulthari.KodeHari = COALESCE(jadwalibadah.Hari,dayname(dataevent.TglEvent))');
 					$this->db->join('penugasanjadwalpelayanan', 'jadwalpelayanan.NoTransaksi = penugasanjadwalpelayanan.NoTransaksi AND jadwalpelayanan.CabangID = penugasanjadwalpelayanan.CabangID');
-					$this->db->join('personel','personel.NIK = penugasanjadwalpelayanan.PIC and personel.CabangID = penugasanjadwalpelayanan.CabangID');
+					$this->db->join('personel','personel.NIK = penugasanjadwalpelayanan.PIC','left');
 
 					$this->db->where('jadwalpelayanan.NoTransaksi', $lastTRX);
 					$this->db->where('jadwalpelayanan.CabangID', $CabangID);
 
 					$saved = $this->db->get();
 
-					$data = $this->ModelsExecuteMaster->SendEmail($saved->result());
-					// foreach ($saved->result() as $key) {
-					// 	$oParamEmail = array(
-	    //             		"NamaLengkap" => $key->NamaLengkap,
-	    //             		"Hari" => $key->NamaHari,
-	    //             		"Tanggal" => $key->TglTransaksi,
-	    //             		"Jam" => $key->JamMulai. ' Sampai '.$key->JamSelesai,
-	    //             		"CreatedBy" => $CreatedBy,
-	    //             		"KonfirmasiID" => $key->KonfirmasiID,
-	    //             		"reciept" => $key->Email,
-	    //             		"subject" => "Email Konfirmasi Kehadiran"
-	    //             	);
+					// $data = $this->ModelsExecuteMaster->SendEmail($saved->result());
+					$oParam = array(
+						'BaseEntry' => $lastTRX
+					);
+					$this->ModelsExecuteMaster->DeleteData($oParam,'blastmessage');
 
-	    //             	// var_dump($oParamEmail["NamaLengkap"]);
+					foreach ($saved->result() as $key) {
+						if ($key->Email != "") {
+							$message = '
+					        	<h3><center><b>Tiberias System</b></center></h3><br>
+					            <p>
+					            	<b>Shalom '.$key->NamaLengkap.'</b><br>
+					            	Anda Mendapat Jadwal Pelayanan Pada :
+					            </p>
+					            <pre>
+					            	Hari 		: '.$key->NamaHari.' <br>
+					            	Tanggal 	: '.$key->TglTransaksi.'<br>
+					            	Jam 		: '.$key->JamMulai.' s/d '.$key->JamSelesai.'<br>
+					            </pre>
+					            <p>
+					            Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
+					            <a href="'.base_url().'pelayanan/konfirmasi/'.$key->KonfirmasiID.'">Klik disini</a>
+					            Tuhan Yesus Memberkati<br><br>
+					            '.$key->CreatedBy.'
+					            </p>
+					        ';
 
-	    //             	$data = $this->ModelsExecuteMaster->SendEmail($oParamEmail);
-	    //             	// var_dump($x);
+							$oParamEmail = array(
+								'BaseEntry' => $lastTRX,
+		                		'Chanel' => 'email',
+								'Penerima' => $key->Email,
+								'Message' => $message,
+								'Sended' => 0,
+								'CreatedOn' => date('Y-m-d h:i:s')
+		                	);
+
+		                	$this->ModelsExecuteMaster->ExecInsert($oParamEmail,'blastmessage');
+						}
+
+						if ($key->NoHP != "") {
+$message = "
+	Shalom *".$key->NamaLengkap."* 
+	Anda Mendapat Jadwal Pelayanan Pada :
+
+	*Hari 		: ".$key->NamaHari."*
+	*Tanggal 	: ".$key->TglTransaksi."*
+	*Jam 		: ".$key->JamMulai.' s/d '.$key->JamSelesai."*
+
+	Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
+	".base_url()."pelayanan/konfirmasi/".$key->KonfirmasiID."
+
+	Tuhan Yesus Memberkati
+
+	".$key->CreatedBy."
+";
+
+							$oParamEmail = array(
+								'BaseEntry' => $lastTRX,
+		                		'Chanel' => 'whats',
+								'Penerima' => $key->NoHP,
+								'Message' => $message,
+								'Sended' => 0,
+								'CreatedOn' => date('Y-m-d h:i:s')
+		                	);
+
+		                	$this->ModelsExecuteMaster->ExecInsert($oParamEmail,'blastmessage');
+						}
+
+	                	// $data = $this->ModelsExecuteMaster->SendEmail($oParamEmail);
 	                	
 
-					// }
+					}
 				}
 
 

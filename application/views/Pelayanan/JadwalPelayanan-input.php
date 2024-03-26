@@ -161,7 +161,15 @@
       </div>
       <div class="col-md-12 col-sm-12">
         <h2></h2>
-        <button class="btn btn-primary" id="btn_save" disabled="">Simpan</button>
+        <?php
+          if ($header) {
+            // var_dump($header);
+            echo '<button class="btn btn-primary" id="btn_save">Simpan</button>';
+          }
+          else{
+            echo '<button class="btn btn-primary" id="btn_save" disabled="">Simpan</button>';
+          }
+        ?>
       </div>
     </div>
   </div>
@@ -332,8 +340,8 @@
                   var cell3 = document.createElement('td');
                   newRow.appendChild(cell3);
 
-                  var cell4 = document.createElement('td');
-                  newRow.appendChild(cell4);
+                  // var cell4 = document.createElement('td');
+                  // newRow.appendChild(cell4);
 
                   table.appendChild(newRow);
 
@@ -422,9 +430,10 @@
                     url: "<?=base_url()?>PersonelController/Read",
                     data: {
                       'NIK':'',
-                      'CabangID':$('#cabang'+idText).val(),
-                      'DivisiID': $('#divisi'+idText).val(),
-                      'JabatanID':$('jabatan'+idText).val()
+                      'CabangID':"0",
+                      'DivisiID': "",
+                      'JabatanID':"",
+                      'Provinsi' : ProvID
                     },
                     dataType: "json",
                     success: function (xResponse) {
@@ -460,7 +469,7 @@
                 
                 // console.log(jsonObject)
                 // bindGridPersonel(jsonObject);
-                console.log(detailObject);
+                // console.log(detailObject);
                 $('#btn_add_pelayan').prop('disabled', false);
 
                 // for (var i = 0; i < detailObject.length; i++) {
@@ -478,6 +487,7 @@
         bindGridPersonel([]);
       }
 
+      setEnableCommand();
     });
     $('#btn_Select').click(function () {
         // var dataGridInstance = $('#gridContainerLookup').dxDataGrid('instance');
@@ -583,6 +593,7 @@
         // Cabang
 
         $.ajax({
+          async:false,
           type: "post",
           url: "<?=base_url()?>PersonelController/Read",
           data: {
@@ -855,9 +866,10 @@
           'formtype' : $('#formtype').val(),
           'detail' : jsonObject
       };
-      console.log(dataParam);
+      // console.log(dataParam);
 
       $.ajax({
+          async:false,
           url: "<?=base_url()?>JadwalPelayananController/CRUD",
           type: 'POST',
           contentType: 'application/json',
@@ -954,7 +966,7 @@
     }
 
     $('#JenisTransaksi').change(function () {
-      console.log($('#JenisTransaksi').val())
+      // console.log($('#JenisTransaksi').val())
       if ($('#JenisTransaksi').val() == 1) {
         $('#JadwalIbadahID').prop('disabled', false);
         $('#EventID').prop('disabled', true);
@@ -975,6 +987,7 @@
       var where_value = id;
       var table = 'users';
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>DivisiController/Read",
         data: {'id':id,CabangID:CabangID},
@@ -998,11 +1011,12 @@
       // console.log(JabatanFill);
       // var detailObject = [];
       if ($('#headerData').val() == "") {
-        console.log($('#JadwalIbadahID').val());
+        // console.log($('#JadwalIbadahID').val());
         if ($('#JadwalIbadahID').val() != "") {
           $('#btn_add_pelayan').prop('disabled', false);
         }
         $.ajax({
+          async:false,
           type: "post",
           url: "<?=base_url()?>TemplatePetugasController/find",
           data: {'CabangID':$('#CabangID').val(),'BaseReff':$('#JadwalIbadahID').val(),'BaseType':'JADWALIBADAH'},
@@ -1202,6 +1216,7 @@
           $('#btn_add_pelayan').prop('disabled', false);
         }
         $.ajax({
+          async:false,
           type: "post",
           url: "<?=base_url()?>TemplatePetugasController/find",
           data: {'CabangID':$('#CabangID').val(),'BaseReff':$('#EventID').val(),'BaseType':'EVENT'},
@@ -1317,9 +1332,10 @@
                 url: "<?=base_url()?>PersonelController/Read",
                 data: {
                   'NIK':'',
-                  'CabangID':$('#cabang'+idText).val(),
+                  'CabangID':"0",
                   'DivisiID': $('#divisi'+idText).val(),
-                  'JabatanID':$('#jabatan'+idText).val()
+                  'JabatanID':$('#jabatan'+idText).val(),
+                  'Provinsi' : ProvID
                 },
                 dataType: "json",
                 success: function (xResponse) {
@@ -1539,6 +1555,7 @@
             ],
             onInitNewRow: function(e) {
               $.ajax({
+                async:false,
                 type: "post",
                 url: "<?=base_url()?>PersonelController/Read",
                 data: {'NIK':'','CabangID':$('#CabangID').val()},
@@ -1604,7 +1621,7 @@
       if ($('#PICKegiatan').val() == "0") {
         errorCount += 1;
       }
-
+      // console.log(detailObject)
       if (detailObject.length == 0) {
         errorCount += 1;
       }
