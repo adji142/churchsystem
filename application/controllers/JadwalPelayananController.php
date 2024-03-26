@@ -438,9 +438,11 @@
 					            	Anda Mendapat Jadwal Pelayanan Pada :
 					            </p>
 					            <pre>
-					            	Hari 		: '.$key->NamaHari.' <br>
-					            	Tanggal 	: '.$key->TglTransaksi.'<br>
-					            	Jam 		: '.$key->JamMulai.' s/d '.$key->JamSelesai.'<br>
+					            	Hari 			: '.$key->NamaHari.' <br>
+					            	Tanggal 		: '.$key->TglTransaksi.'<br>
+					            	Jam 			: '.$key->JamMulai.' s/d '.$key->JamSelesai.'<br>
+					            	Lokasi Cabang	: '.$key->CabangName.'<br>
+
 					            </pre>
 					            <p>
 					            Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
@@ -467,9 +469,10 @@ $message = "
 	Shalom *".$key->NamaLengkap."* 
 	Anda Mendapat Jadwal Pelayanan Pada :
 
-	*Hari 		: ".$key->NamaHari."*
-	*Tanggal 	: ".$key->TglTransaksi."*
-	*Jam 		: ".$key->JamMulai.' s/d '.$key->JamSelesai."*
+	*Hari 			: ".$key->NamaHari."*
+	*Tanggal 			: ".$key->TglTransaksi."*
+	*Jam 			: ".$key->JamMulai.' s/d '.$key->JamSelesai."*
+	*Lokasi Cabang 	: ".$key->CabangName."*
 
 	Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
 	".base_url()."pelayanan/konfirmasi/".$key->KonfirmasiID."
