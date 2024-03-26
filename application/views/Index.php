@@ -65,7 +65,7 @@
         margin: 0 auto;
         padding: 25px 0 0;
         position: relative;
-        text-align: left;
+        text-align: center;
         text-shadow: 0 1px 0 #fff;
         /*min-width: 0px !important; */
         width: fit-content !important;
