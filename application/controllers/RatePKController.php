@@ -10,7 +10,22 @@
 
 		public function index()
 		{
-			$this->load->view('V_Master/RatePK');
+			// Hari
+			$this->db->select('*');
+			$this->db->from('defaulthari');
+			$this->db->order_by('Index', 'ASC');
+			$getHari = $this->db->get();
+
+			// Bidang Pelayanan
+			$this->db->select('*');
+			$this->db->from('posisipelayanan');
+			$bidangpelayanan = $this->db->get();
+
+			// var_dump($bidangpelayanan->result());
+
+			$data['Hari'] = $getHari->result();
+			$data['BidangPelayanan'] = $bidangpelayanan->result();
+			$this->load->view('V_Master/RatePK', $data);
 		}
 		public function Read()
 		{
@@ -20,8 +35,12 @@
 			$CabangID = $this->input->post('CabangID');
 
 			try {
-				$this->db->select('*');
+				$this->db->select('ratepk.*, cabang.CabangName, jadwalibadah.NamaIbadah, posisipelayanan.PosisiPelayanan, defaulthari.NamaHari');
 				$this->db->from('ratepk');
+				$this->db->join('cabang', 'ratepk.CabangID = cabang.id','left');
+				$this->db->join('jadwalibadah', 'ratepk.IbadahID = jadwalibadah.id','left');
+				$this->db->join('posisipelayanan', 'ratepk.BidangPelayananID = posisipelayanan.id','left');
+				$this->db->join('defaulthari', 'ratepk.Hari = defaulthari.KodeHari','left');
 				$this->db->where(array("1"=>"1"));
 
 				if ($id != "") {
@@ -50,6 +69,11 @@
 
 			$id = $this->input->post('id');
 			$NamaRate = $this->input->post('NamaRate');
+			$TglBerlaku = $this->input->post('TglBerlaku');
+			$IbadahID = $this->input->post('IbadahID');
+			$Hari = $this->input->post('Hari');
+			$Sesi = $this->input->post('Sesi');
+			$BidangPelayananID = $this->input->post('BidangPelayananID');
 			$Rate = $this->input->post('Rate');
 			$CabangID = $this->input->post('CabangID');
 			$CreatedOn = date('Y-m-d h:i:s');

@@ -80,7 +80,7 @@
           <div class="item form-group">
             <div class="col-md-12 col-sm-12 ">
               <label></label>
-              <input type="text" name="NIK" id="NIK" required="" placeholder="Nomor Induk" class="form-control ">
+              <input type="text" name="NIK" id="NIK" required="" placeholder="<AUTO>" class="form-control " value="" readonly="">
               <input type="hidden" name="formtype" id="formtype" value="add">
             </div>
           </div>
@@ -98,18 +98,43 @@
               <input type="text" name="GelarBelakang" id="GelarBelakang" placeholder="Gelar Belakang" class="form-control ">
             </div>
           </div>
+          <div class="item form-group">
+            <label ></label>
+            <div class="col-md-3 col-sm-3 ">
+              <select id="ProvID" name="ProvID" class="form-control">
+                <option value="-1">Pilih Provinsi</option>
+                <?php 
+                  foreach ($prov as $key) {
+                    echo "<option value = '".$key->prov_id."' >".$key->prov_name."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+            <label></label>
+            <div class="col-md-3 col-sm-3 ">
+              <select id="KotaID" name="KotaID" class="form-control">
+                <option value="-1">Pilih Kota</option>
+              </select>
+            </div>
+            <label></label>
+            <div class="col-md-3 col-sm-3 ">
+              <select id="KecID" name="KecID" class="form-control">
+                <option value="-1">Pilih Kecamatan</option>
+              </select>
+            </div>
+            <label></label>
+            <div class="col-md-3 col-sm-3 ">
+              <select id="KelID" name="KelID" class="form-control">
+                <option value="-1">Pilih Kelurahan</option>
+              </select>
+            </div>
+          </div>
           <label></label>
           <div class="item form-group">
             <div class="col-md-12 col-sm-12 ">
               <select class="form-control col-md-12" id="CabangID" name="CabangID" >
                 <option value="0">Pilih Cabang</option>
-                <?php
-                  $rs = $this->ModelsExecuteMaster->GetData('cabang')->result();
-
-                  foreach ($rs as $key) {
-                    echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
-                  }
-                ?>
+                
               </select>
             </div>
           </div>
@@ -180,38 +205,6 @@
             </div>
           </div>
 
-           <div class="item form-group">
-            <label ></label>
-            <div class="col-md-3 col-sm-3 ">
-              <select id="ProvID" name="ProvID" class="form-control">
-                <option value="-1">Pilih Provinsi</option>
-                <?php 
-                  foreach ($prov as $key) {
-                    echo "<option value = '".$key->prov_id."' >".$key->prov_name."</option>";
-                  }
-                ?>
-              </select>
-            </div>
-            <label></label>
-            <div class="col-md-3 col-sm-3 ">
-              <select id="KotaID" name="KotaID" class="form-control">
-                <option value="-1">Pilih Kota</option>
-              </select>
-            </div>
-            <label></label>
-            <div class="col-md-3 col-sm-3 ">
-              <select id="KecID" name="KecID" class="form-control">
-                <option value="-1">Pilih Kecamatan</option>
-              </select>
-            </div>
-            <label></label>
-            <div class="col-md-3 col-sm-3 ">
-              <select id="KelID" name="KelID" class="form-control">
-                <option value="-1">Pilih Kelurahan</option>
-              </select>
-            </div>
-          </div>
-
           <div class="item form-group">
             <label></label>
             <div class="col-md-12 col-sm-12 ">
@@ -275,6 +268,7 @@
       }
 
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>PersonelController/Read",
         data: {'NIK':'', CabangID:CabangID,'Provinsi': -1},
@@ -311,8 +305,6 @@
         data: {'demografilevel':'dem_kota', 'wherefield': 'prov_id', 'wherevalue': $('#ProvID').val() },
         dataType: "json",
         success: function (response) {
-          // bindGrid(response.data);
-          // console.log(response);
           $('#KotaID').empty();
           var newOption = $('<option>', {
             value: -1,
@@ -328,6 +320,36 @@
 
             $('#KotaID').append(newOption);
           });
+        }
+      });
+
+      // Fill Cabang
+
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>CabangController/Read",
+        data: {'id':'', 'ProvID': $('#ProvID').val()},
+        dataType: "json",
+        success: function (response) {
+          $('#CabangID').empty();
+          var newOption = $('<option>', {
+            value: 0,
+            text: "Pilih Cabang"
+          });
+
+          $('#CabangID').append(newOption); 
+          $.each(response.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.id,
+              text: v.CabangName
+            });
+
+            $('#CabangID').append(newOption);
+          });
+
+          // Fill Cabang
+
         }
       });
     });
@@ -488,6 +510,7 @@
       e.preventDefault();
       var me = $(this);
       $.ajax({
+        async:false,
         type    :'post',
         url     : '<?=base_url()?>PersonelController/CRUD',
         data    : me.serialize(),
@@ -528,6 +551,7 @@
       var where_value = id;
       var table = 'users';
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>PersonelController/Find",
         data: {'NIK':id,'CabangID':CabangID},
@@ -542,6 +566,10 @@
               $('#NamaLengkap').val(v.NamaLengkap);
               $('#GelarDepan').val(v.GelarDepan);
               $('#GelarBelakang').val(v.GelarBelakang);
+              $('#ProvID').val(v.ProvID).trigger('change');
+              $('#KotaID').val(v.KotaID).trigger('change');
+              $('#KecID').val(v.KecID).trigger('change');
+              $('#KelID').val(v.KelID).trigger('change');
               $('#CabangID').val(v.CabangID).trigger('change');
               $('#DivisiID').val(v.DivisiID).trigger('change');
               $('#JabatanID').val(v.JabatanID).trigger('change');
@@ -551,10 +579,6 @@
               $('#JenisKelamin').val(v.JenisKelamin);
               $('#RatePKCode').val(v.RatePKCode);
               $('#NomorKependudukan').val(v.NomorKependudukan);
-              $('#ProvID').val(v.ProvID).trigger('change');
-              $('#KotaID').val(v.KotaID).trigger('change');
-              $('#KecID').val(v.KecID).trigger('change');
-              $('#KelID').val(v.KelID).trigger('change');
               $('#Alamat').val(v.Alamat);
               $('#image_base64').val(v.Foto);
               $('#Email').val(v.Email);
@@ -712,6 +736,7 @@
                   var field = 'id';
                   var value = id;
                   $.ajax({
+                      async:false,
                       type    :'post',
                       url     : '<?=base_url()?>PersonelController/CRUD',
                       data    : {'NIK':e.data.NIK,'CabangID':e.data.CabangID,'formtype':'delete'},

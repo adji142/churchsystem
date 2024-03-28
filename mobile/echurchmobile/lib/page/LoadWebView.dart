@@ -39,7 +39,7 @@ class _WebViewState extends State<LoadWebView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("GTI SYSTEM"),
+        title: Text("GEREJA TIBERIAS INDONESIA"),
       ),
       body: InAppWebView(
         key: webViewKey,

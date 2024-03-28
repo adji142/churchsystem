@@ -24,6 +24,7 @@ class Auth extends CI_Controller {
 		$this->load->model('ModelsExecuteMaster');
 		$this->load->model('GlobalVar');
 		$this->load->model('LoginMod');
+		$this->load->model('PersonelModel');
 	}
 	public function index()
 	{
@@ -139,7 +140,12 @@ class Auth extends CI_Controller {
 		elseif ($formtype == 'edit') {
 			$rs = $this->ModelsExecuteMaster->ExecUpdate($insert,array('id'=>$id),'users');
 			if ($rs) {
-				$updaterole = $this->ModelsExecuteMaster->ExecUpdate(array('roleid'=>$role),array('userid'=>$id),'userrole');
+				$this->ModelsExecuteMaster->DeleteData(array('userid'=>$id),'userrole');
+				$insert = array(
+					'userid' 	=> $id,
+					'roleid'	=> $role,
+				);
+				$updaterole = $this->ModelsExecuteMaster->ExecInsert($insert,'userrole');
 				if ($updaterole) {
 					$data['success'] = true;
 				}
@@ -176,19 +182,19 @@ class Auth extends CI_Controller {
 	{
 		$data = array('success' => false ,'message'=>array(),'id' =>'');
 
-		$username = $this->input->post('username');
-		$password = $this->input->post('password');
-		$repassword = $this->input->post('repassword');
+		$KodeUser = $this->input->post('KodeUser');
+		$NewPassword = $this->input->post('NewPassword');
+		$ReNewPassword = $this->input->post('ReNewPassword');
 
-		if ($password != $repassword) {
+		if ($NewPassword != $ReNewPassword) {
 			$data['success'] = false;
 			$data['message'] = "Kombinasi Password berbeda";
 			goto jump;
 		}
 		else{
-			$getUser = $this->ModelsExecuteMaster->FindData(array('username'=>$username,'verified'=>0),'users');
+			$getUser = $this->ModelsExecuteMaster->FindData(array('username'=>$KodeUser,'ChangePassword'=>'Y'),'users');
 			if ($getUser->num_rows() > 0) {
-				$call =$this->ModelsExecuteMaster->ExecUpdate(array('password'=>$this->encryption->encrypt($repassword),'verified'=>"1"),array('username'=>$username),'users');
+				$call =$this->ModelsExecuteMaster->ExecUpdate(array('password'=>$this->encryption->encrypt($ReNewPassword),'ChangePassword'=>"N"),array('username'=>$KodeUser),'users');
 				if ($call) {
 					$data['success'] = true;
 				}
@@ -426,7 +432,8 @@ class Auth extends CI_Controller {
 					'canAdd'		=> 0, 
 					'canEdit'		=> 0,
 					'canDelete'		=> 0,
-					'NIKPersonel'	=> ''
+					'NIKPersonel'	=> '',
+					'ChangePassword' => 'N'
 				);
 		$Username = $this->input->post('username');
 		$password = $this->input->post('password');
@@ -437,6 +444,13 @@ class Auth extends CI_Controller {
 		if ($oUser->num_rows() == 0) {
 			$data['success'] = false;
 			$data['message'] = 'Username Tidak Ditemukan, Silahkan Hubungi Operator';
+			goto jump;
+		}
+
+		if ($oUser->row()->ChangePassword == "Y") {
+			$data['success'] = false;
+			$data['ChangePassword'] = 'Y';
+			$data['message'] = "Silahkan Rubah Password Anda";
 			goto jump;
 		}
 
@@ -463,9 +477,19 @@ class Auth extends CI_Controller {
 				$data['canEdit']=$oUser->row()->canEdit;
 				$data['canDelete']=$oUser->row()->canDelete;
 				$data['NIKPersonel']=$oUser->row()->NIKPersonel;
+
+				// Get Level Akses Personel
+
+				$oPersonel = $this->PersonelModel->GetDetailPersonel($oUser->row()->NIKPersonel);
+				// var_dump($oPersonel);
 				
+				$sess_data['LevelAkses']=$oPersonel->Level;
+				$sess_data['DivisiID']=$oPersonel->DivisiID;
 				$sess_data['CabangID']=$oCabang->row()->id;
 				$sess_data['CabangName']=$oCabang->row()->CabangName;
+				$sess_data['Provinsi']=$oCabang->row()->ProvID;
+				$sess_data['Kota']=$oCabang->row()->KotaID;
+				$sess_data['Wilayah']=$oCabang->row()->Area;
 			}
 			else{
 				$sess_data['CabangID']= 0;

@@ -65,8 +65,8 @@
           <div class="item form-group">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Cabang <span class="required">*</span>
             </label>
-            <div class="col-md-12 col-sm-12 ">
-              <select class="form-control col-md-6" id="CabangID" name="CabangID" >
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control" id="CabangID" name="CabangID" >
                 <option value="0">Pilih Cabang</option>
                 <?php
                   $rs = $this->ModelsExecuteMaster->GetData('cabang')->result();
@@ -95,12 +95,14 @@
 ?>
 <script type="text/javascript">
   $(function () {
-    var CabangID = "<?php echo $CabangID; ?>"
+    var CabangID = "<?php echo $CabangID; ?>";
+    var paramCabangID = "<?php echo $paramCabangID; ?>";
     $(document).ready(function () {
       $('#CabangID').select2({
-        width: '200px'
+        width: '100%'
       });
 
+      $('#CabangID').prop('disabled', true);
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
@@ -116,6 +118,10 @@
           bindGrid(response.data);
         }
       });
+
+      console.log(paramCabangID)
+
+      $('#CabangID').val(paramCabangID).trigger("change");
     });
 
     $('#post_').submit(function (e) {

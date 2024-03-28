@@ -152,10 +152,10 @@
       });
 
       if (CabangID != 0) {
-        $('#CabangID').prop('disabled', true);
+        // $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
 
-        $('#CabangIDFilter').prop('disabled', true);
+        // $('#CabangIDFilter').prop('disabled', true);
         $('#CabangIDFilter').val(CabangID).trigger('change');
       }
 
@@ -175,6 +175,10 @@
     $('#btn_Add').click(function () {
       var NoTransaksi = "-";
       window.location.href = '<?Php echo base_url(); ?>pelayanan/jadwal/'+NoTransaksi+'/'+CabangID;
+    });
+
+    $('#btn_Search').click(function () {
+      getHeader();
     })
 
     function getHeader() {
@@ -513,8 +517,8 @@
                 visible: false
             },
             {
-                dataField: "NamaJabatan",
-                caption: "Jabatan",
+                dataField: "PosisiPelayanan",
+                caption: "Bidang Pelayanan",
                 allowEditing:false,
             },
             {

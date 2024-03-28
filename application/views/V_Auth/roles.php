@@ -51,7 +51,7 @@
                       <input type="hidden" name="formtype" id="formtype" value="add">
                     </div>
                   </div>
-                  <div class="item form-group">
+                  <div class="item form-group" style="display: none;">
                     <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Nama Cabang <span class="required">*</span>
                     </label>
                     <div class="col-md-6 col-sm-6 ">
@@ -66,6 +66,22 @@
                       </select>
                     </div>
                   </div>
+
+                  <div class="item form-group">
+                    <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Level Akses <span class="required">*</span>
+                    </label>
+                    <div class="col-md-6 col-sm-6 ">
+                      <select id="LevelAkses" name="LevelAkses" class="form-control" >
+                        <option value="1">Super User</option>
+                        <option value="2">Wilayah</option>
+                        <option value="3">Provinsi</option>
+                        <option value="4">Kota</option>
+                        <option value="5">Cabang</option>
+                        <option value="6">User</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div class="item" form-group>
                     <button class="btn btn-primary" id="btn_Save">Save</button>
                   </div>
@@ -87,6 +103,10 @@
         $(document).ready(function () {
           $('#cabang').select2({
             width: '200px'
+          });
+
+          $('#LevelAkses').select2({
+            width: '100%'
           });
 
           var CabangID = <?php echo $CabangID; ?>
@@ -168,6 +188,7 @@
                 $('#rolename').val(v.rolename);
                 $('#id').val(v.id);
                 $('#CabangID').val(v.CabangID).trigger('change');
+                $('#LevelAkses').val(v.LevelAkses).trigger('change');
                 // $('#Nilai').val(v.Nilai);
 
                 $('#formtype').val("edit");

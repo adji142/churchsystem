@@ -49,18 +49,18 @@
           </div>
 
           <div class="item form-group">
-            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Rate (Rp) <span class="required">*</span>
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Tgl Berlaku <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
-              <input type="number" name="Rate" id="Rate" required="" placeholder="Rate (Rp)" class="form-control ">
+              <input type="date" name="TglBerlaku" id="TglBerlaku" required="" class="form-control ">
             </div>
           </div>
 
           <div class="item form-group">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Cabang <span class="required">*</span>
             </label>
-            <div class="col-md-12 col-sm-12 ">
-              <select class="form-control col-md-6" id="CabangID" name="CabangID" >
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control" id="CabangID" name="CabangID" >
                 <option value="0">Pilih Cabang</option>
                 <?php
                   $rs = $this->ModelsExecuteMaster->GetData('cabang')->result();
@@ -70,6 +70,65 @@
                   }
                 ?>
               </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Ibadah <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control col-md-6" id="IbadahID" name="IbadahID" >
+                <option value="">Pilih Jadwal Ibadah</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Hari <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control" id="Hari" name="Hari" disabled="">
+                <option value="">Pilih Hari</option>
+                <?php
+
+                  foreach ($Hari as $key) {
+                    echo "<option value = '".$key->KodeHari."'>".$key->NamaHari."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Sesi <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <input type="text" name="Sesi" id="Sesi" class="form-control" readonly="">
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Bidang Pelayanan <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control" id="BidangPelayananID" name="BidangPelayananID">
+                <option value="">Pilih Bidang Pelayanan</option>
+                <?php
+
+                  foreach ($BidangPelayanan as $key) {
+                    var_dump($key);
+                    echo "<option value = '".$key->id."'>".$key->PosisiPelayanan."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Rate (Rp) <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <input type="number" name="Rate" id="Rate" required="" placeholder="Rate (Rp)" class="form-control ">
             </div>
           </div>
 
@@ -92,8 +151,21 @@
     var CabangID = "<?php echo $CabangID; ?>"
     $(document).ready(function () {
       $('#CabangID').select2({
-        width: '200px'
+        width: '100%'
       });
+
+      $('#Hari').select2({
+        width: '100%'
+      });
+
+      $('#IbadahID').select2({
+        width: '100%'
+      });
+
+      $('#BidangPelayananID').select2({
+        width: '100%'
+      });
+
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
@@ -109,6 +181,51 @@
         }
       });
     });
+
+    $('#CabangID').change(function () {
+      $.ajax({
+          async:false,
+          type: "post",
+          url: "<?=base_url()?>JadwalIbadahController/Read",
+          data: {'CabangID': $('#CabangID').val(),'Hari': $('#Hari').val()},
+          dataType: "json",
+          success: function (response) {
+            // bindGrid(response.data);
+            // console.log(response);
+            $('#IbadahID').empty();
+            var newOption = $('<option>', {
+              value: "",
+              text: "Pilih Sesi Ibadah"
+            });
+
+            $('#IbadahID').append(newOption); 
+            $.each(response.data,function (k,v) {
+              var newOption = $('<option>', {
+                value: v.id,
+                text: v.NamaIbadah
+              });
+
+              $('#IbadahID').append(newOption);
+            });
+          }
+      });
+    });
+
+    $('#IbadahID').change(function () {
+      $.ajax({
+          async:false,
+          type: "post",
+          url: "<?=base_url()?>JadwalIbadahController/Read",
+          data: {'id': $('#IbadahID').val(),'CabangID': $('#CabangID').val()},
+          dataType: "json",
+          success: function (response) {
+            // bindGrid(response.data);
+            // console.log(response.data[0].Hari);
+            $('#Hari').val(response.data[0]['Hari']).trigger('change');
+            $('#Sesi').val(response.data[0]['MulaiJamFormated'] + " - " + response.data[0]['SelesaiJamFormated'])
+          }
+      });
+    })
 
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
@@ -167,6 +284,11 @@
 
             $('#id').val(v.id);
             $('#NamaRate').val(v.NamaRate);
+            $('TglBerlaku').val(v.TglBerlaku)
+            $('IbadahID').val(v.IbadahID).trigger('change')
+            $('Hari').val(v.Hari).trigger('change'
+            $('Sesi').val(v.Sesi)
+            $('BidangPelayananID').val(v.BidangPelayananID)
             $('#Rate').val(v.Rate);
             $('#CabangID').val(v.CabangID).trigger('change');
 
@@ -214,6 +336,31 @@
                 {
                     dataField: "NamaRate",
                     caption: "Nama",
+                    allowEditing:false
+                },
+                {
+                    dataField: "TglBerlaku",
+                    caption: "Valid Date",
+                    allowEditing:false
+                },
+                {
+                    dataField: "NamaIbadah",
+                    caption: "Ibadah",
+                    allowEditing:false
+                },
+                {
+                    dataField: "Hari",
+                    caption: "Hari",
+                    allowEditing:false
+                },
+                {
+                    dataField: "Sesi",
+                    caption: "Sesi",
+                    allowEditing:false
+                },
+                {
+                    dataField: "PosisiPelayanan",
+                    caption: "Bidang Pelayanan",
                     allowEditing:false
                 },
                 {

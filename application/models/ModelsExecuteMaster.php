@@ -18,14 +18,50 @@ class ModelsExecuteMaster extends CI_Model
 	public function GetCabang()
 	{
 		$CabangID = $this->session->userdata('CabangID');
+		$Wilayah = $this->session->userdata('Wilayah');
+		$ProvID = $this->session->userdata('Provinsi');
+		$KotaID = $this->session->userdata('Kota');
+		$UserID = $this->session->userdata('UserID');
+
+		$this->db->select('roles.*');
+		$this->db->from('users');
+		$this->db->join('userrole', 'users.id = userrole.userid');
+		$this->db->join('roles', 'userrole.roleid = roles.id');
+		$this->db->where('users.id', $UserID);
+
+		$oRoles = $this->db->get();
 
 		$this->db->select('*');
 		$this->db->from('cabang');
-		if ($CabangID != 0) {
+		if ($Wilayah != "" && $oRoles->row()->LevelAkses == "2") {
+			$this->db->where('Area', $Wilayah);
+		}
+		if ($ProvID != "" && $oRoles->row()->LevelAkses == "3") {
+			$this->db->where('ProvID', $ProvID);
+		}
+		if ($KotaID != "" && $oRoles->row()->LevelAkses == "4") {
+			$this->db->where('KotaID', $KotaID);
+		}
+		if ($CabangID != '0' && $oRoles->row()->LevelAkses == "5") {
 			$this->db->where(array('id'=> $CabangID));
 		}
 		$rs = $this->db->get();
 		return $rs;
+	}
+
+	public function GetRoleData()
+	{
+		$UserID = $this->session->userdata('UserID');
+
+		$this->db->select('roles.*');
+		$this->db->from('users');
+		$this->db->join('userrole', 'users.id = userrole.userid');
+		$this->db->join('roles', 'userrole.roleid = roles.id');
+		$this->db->where('users.id', $UserID);
+
+		$oRoles = $this->db->get();
+
+		return $oRoles->row();
 	}
 	function WriteLog($RecordOwnerID,$Event,$retValue)
 	{

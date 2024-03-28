@@ -27,6 +27,7 @@ use PHPMailer\PHPMailer\Exception;
 			$blast = $this->db->get();
 
 			if ($blast->num_rows() > 0) {
+				$row = 1;
 				foreach ($blast->result() as $key) {
 					if ($key->Chanel == "email") {
 						$response = false;
@@ -66,13 +67,23 @@ use PHPMailer\PHPMailer\Exception;
 
 					}
 					elseif ($key->Chanel == "whats") {
+						$sender = "";
+						if ($row % 2 != 0) {
+						    // echo "Hasil pembagian menghasilkan angka desimal.";
+						    $sender= "628895796897";
+						} else {
+						    // echo "Hasil pembagian tidak menghasilkan angka desimal.";
+						    $sender= "628895796938";
+						}
+
+
 						$ch = curl_init();
 						curl_setopt($ch, CURLOPT_URL, 'https://whats.tiberias.id/send-message');
 						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 						curl_setopt($ch, CURLOPT_POST, true);
 						curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-							'api_key'	=> 'sYCiOOQ7aMIe1RLkazq0dHIq3j7i4F',
-							'sender'	=> '6285950484669',
+							'api_key'	=> 'cczWqmimNi10ZPUnO8rdNQl1nzBqlk',
+							'sender'	=> $sender,
 							'number'	=> $key->Penerima,
 							'message'	=> $key->Message
 						]));
@@ -102,6 +113,9 @@ use PHPMailer\PHPMailer\Exception;
 					);
 
 					$this->ModelsExecuteMaster->ExecUpdate($oUpdateObject,array('id'=> $key->id),'blastmessage');
+
+					sleep(20);
+					$row += 1;
 				}
 			}
 

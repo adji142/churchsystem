@@ -21,7 +21,7 @@
     <title>GTI SYSTEM! | Management Gereja</title>
 
     <!-- Bootstrap -->
-    <link href="<?php echo base_url();?>Assets/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Font Awesome -->
     <link href="<?php echo base_url();?>Assets/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <!-- NProgress -->
@@ -35,6 +35,9 @@
 
     <script src="<?php echo base_url();?>Assets/sweetalert2-8.8.0/package/dist/sweetalert2.min.js"></script>
   <link rel="stylesheet" href="<?php echo base_url();?>Assets/sweetalert2-8.8.0/package/dist/sweetalert2.min.css">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </head>
   <style type="text/css">
     .login{
@@ -147,6 +150,52 @@
       </div> -->
 
     </div>
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modal_">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Modal Reset Password</h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="post_" data-parsley-validate class="form-horizontal form-label-left">
+              <div class="item form-group">
+                <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kode User <span class="required">*</span>
+                </label>
+                <div class="col-md-9 col-sm-9 ">
+                  <input type="text" name="KodeUser" id="KodeUser" required="" placeholder="Kode User" readonly="" class="form-control ">
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name"> Password Baru<span class="required">*</span>
+                </label>
+                <div class="col-md-9 col-sm-9 ">
+                  <input type="password" name="NewPassword" id="NewPassword" required="" placeholder="New Password" class="form-control ">
+                </div>
+              </div>
+
+              <div class="item form-group">
+                <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name"> Tulis Ulang Password <span class="required">*</span>
+                </label>
+                <div class="col-md-9 col-sm-9 ">
+                  <input type="password" name="ReNewPassword" id="ReNewPassword" required="" placeholder="Tulis Ulang Password" class="form-control ">
+                </div>
+              </div>
+
+              <div class="item" form-group>
+                <button class="btn btn-primary" id="btn_resetPassword">Reset Password</button>
+              </div>
+            </form>
+          </div>
+          <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div> -->
+        </div>
+      </div>
+    </div>
   </body>
 </html>
 <script type="text/javascript">
@@ -193,20 +242,77 @@
                       location.replace("<?=base_url()?>Home")
                     }
                     else{
-                      Swal.fire({
-                        type: 'error',
-                        title: 'Oops...',
-                        text: response.message,
-                        // footer: '<a href>Why do I have this issue?</a>'
-                      }).then((result)=>{
-                          $('#username').val('');
-                          $('#password').val('');
-                          $('#btn_login').text('Login');
-                          $('#btn_login').attr('disabled',false);
-                      });
+                      if (response.ChangePassword =='Y') {
+                        Swal.fire({
+                          type: 'error',
+                          title: 'Oops...',
+                          text: "Silahkan Reset Password !!",
+                          // footer: '<a href>Why do I have this issue?</a>'
+                        }).then((result)=>{
+                            $('#btn_login').text('Login');
+                            $('#btn_login').attr('disabled',false);
+
+                            // Modals
+                            $('#KodeUser').val($('#username').val());
+                            $('#modal_').modal('show');
+                        });
+                      }
+                      else{
+                        Swal.fire({
+                          type: 'error',
+                          title: 'Oops...',
+                          text: response.message,
+                          // footer: '<a href>Why do I have this issue?</a>'
+                        }).then((result)=>{
+                            $('#username').val('');
+                            $('#password').val('');
+                            $('#btn_login').text('Login');
+                            $('#btn_login').attr('disabled',false);
+                        });
+                      }
                     }
                 }
             });
+        });
+
+        $('#post_').submit(function (e) {
+          $('#btn_resetPassword').text('Tunggu Sebentar.....');
+          $('#btn_resetPassword').attr('disabled',true);
+          $(this).find(':input:disabled').prop('disabled', false);
+          e.preventDefault();
+          var me = $(this);
+          $.ajax({
+            type    :'post',
+            url     : '<?=base_url()?>Auth/changepass',
+            data    : me.serialize(),
+            dataType: 'json',
+            success : function (response) {
+              if(response.success == true){
+                $('#modal_').modal('toggle');
+                Swal.fire({
+                  type: 'success',
+                  title: 'Horay..',
+                  text: 'Data Berhasil disimpan!',
+                  // footer: '<a href>Why do I have this issue?</a>'
+                }).then((result)=>{
+                  location.reload();
+                });
+              }
+              else{
+                $('#modal_').modal('toggle');
+                Swal.fire({
+                  type: 'error',
+                  title: 'Woops...',
+                  text: response.message,
+                  // footer: '<a href>Why do I have this issue?</a>'
+                }).then((result)=>{
+                  $('#modal_').modal('show');
+                  $('#btn_resetPassword').text('Save');
+                  $('#btn_resetPassword').attr('disabled',false);
+                });
+              }
+            }
+          });
         });
     });
 

@@ -66,6 +66,7 @@
 
 			$id = $this->input->post('id');
 			$CabangID = $this->input->post('CabangID');
+			$Hari = $this->input->post('Hari');
 
 			try {
 				$this->db->select("jadwalibadah.*,defaulthari.NamaHari, DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') SelesaiJamFormated, DATE_FORMAT(jadwalibadah.MulaiJam,'%T') MulaiJamFormated, cabang.CabangName");
@@ -82,6 +83,9 @@
 
 				if ($CabangID != "0") {
 					$this->db->where(array("CabangID"=>$CabangID));
+				}
+				if ($Hari != "") {
+					$this->db->where('jadwalibadah.Hari',$Hari);
 				}
 
 				$rs = $this->db->get();

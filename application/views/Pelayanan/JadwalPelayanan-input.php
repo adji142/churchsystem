@@ -158,13 +158,14 @@
       <div class="col-md-12 col-sm-12">
         <h2></h2>
         <?php
-          if ($header) {
-            // var_dump($header);
-            echo '<button class="btn btn-primary" id="btn_save">Simpan</button>';
-          }
-          else{
-            echo '<button class="btn btn-primary" id="btn_save" disabled="">Simpan</button>';
-          }
+          // if ($header) {
+          //   // var_dump($header);
+          //   echo '<button class="btn btn-primary" id="btn_save">Simpan</button>';
+          // }
+          // else{
+          //   echo '<button class="btn btn-primary" id="btn_save" disabled="">Simpan</button>';
+          // }
+          echo '<button class="btn btn-primary" id="btn_save">Simpan</button>';
         ?>
       </div>
     </div>

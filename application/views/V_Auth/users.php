@@ -33,7 +33,7 @@
                                 <?php
                                   $rs = $this->db->query("select a.*, b.CabangName from roles a left join cabang b on a.CabangID = b.id")->result();
                                   foreach ($rs as $key) {
-                                    echo "<option value = '".$key->id."'>".$key->rolename." - ".$key->CabangName."</option>";
+                                    echo "<option value = '".$key->id."'>".$key->rolename."</option>";
                                   }
                                 ?>
                               </select>
@@ -201,6 +201,7 @@
       var roleid = $('#fil_roles').val();
 
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>Auth/read",
         data: {kriteria:kriteria,skrip:skrip,userid:userid,roleid:roleid},
@@ -250,6 +251,7 @@
       var roleid = $('#fil_roles').val();
 
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>Auth/read",
         data: {kriteria:kriteria,skrip:skrip,userid:userid,roleid:roleid},
@@ -262,6 +264,7 @@
 
     $('#CabangID').change(function (e) {
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>C_UserManagement/ReadRole",
         data: {'id':''},
@@ -269,10 +272,16 @@
         success: function (response) {
           // bindGrid(response.data);
           $('#roles').empty();
+
+          $('#roles').append($('<option>', {
+                value: -1,
+                text: 'Pilih Role'
+            }));
+
           $.each(response.data,function (k,v) {
             $('#roles').append($('<option>', {
                 value: v.id,
-                text: v.rolename + " - " + v.CabangName
+                text: v.rolename
             }));
           })
         }
@@ -281,9 +290,10 @@
       // NIK
 
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>PersonelController/Read",
-        data: {'NIK':'','CabangID':$('#CabangID').val()},
+        data: {'NIK':'','CabangID':$('#CabangID').val(), 'Provinsi':'-1'},
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
@@ -310,6 +320,7 @@
       var me = $(this);
 
       $.ajax({
+        async:false,
         type    :'post',
         url     : '<?=base_url()?>Auth/RegisterUser',
         data    : me.serialize(),
@@ -350,6 +361,7 @@
       var where_value = id;
       var table = 'users';
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>Auth/ReadUser",
         data: {'id':id},
@@ -371,9 +383,10 @@
             $('#canAdd').val(v.canAdd);
             $('#canEdit').val(v.canEdit);
             $('#canDelete').val(v.canDelete);
-            $('#NIKPersonel').val(v.NIKPersonel);
+            $('#NIKPersonel').val(v.NIKPersonel).trigger('change');
             $('#AllowFinanceDashboard').val(v.AllowFinanceDashboard);
             // $('#Nilai').val(v.Nilai);
+            console.log(v.NIKPersonel)
 
             if (v.canAdd == 1) {
               $('#canAdd').prop('checked', true);
@@ -534,6 +547,7 @@
                 if (result.value) {
 
                   $.ajax({
+                      async:false,
                       type    :'post',
                       url     : '<?=base_url()?>Auth/RegisterUser',
                       data    : {'id':id,'formtype':'delete'},

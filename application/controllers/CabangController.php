@@ -17,24 +17,40 @@
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());
 
 			$id = $this->input->post('id');
+			$Area = $this->input->post('Area');
+			$ProvID = $this->input->post('ProvID');
+			$KotaID = $this->input->post('KotaID');
 
 			try {
-				$this->db->select('cabang.*,dem_provinsi.prov_name,dem_kota.city_name, dem_kelurahan.subdis_name, dem_kecamatan.dis_name');
+				$this->db->select('cabang.*,dem_provinsi.prov_name,dem_kota.city_name, dem_kelurahan.subdis_name, dem_kecamatan.dis_name, areapelayanan.NamaArea');
 				$this->db->from('cabang');
 				$this->db->join('dem_provinsi','cabang.ProvID = dem_provinsi.prov_id','left');
 				$this->db->join('dem_kota','cabang.KotaID = dem_kota.city_id','left');
 				$this->db->join('dem_kelurahan','cabang.KelID = dem_kelurahan.subdis_id','left');
 				$this->db->join('dem_kecamatan','cabang.KecID = dem_kecamatan.dis_id','left');
+				$this->db->join('areapelayanan','cabang.Area = areapelayanan.id','left');
 				$this->db->where(array("1"=>"1"));
 
 				if ($id != "") {
-					$this->db->where(array("id"=>$id));
+					$this->db->where(array("cabang.id"=>$id));
 				}
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
 				if ($this->session->userdata('CabangID') != "") {
-					$this->db->where(array("id"=>$this->session->userdata('CabangID')));
+					$this->db->where(array("cabang.id"=>$this->session->userdata('CabangID')));
+				}
+
+				if ($ProvID != "") {
+					$this->db->where('ProvID',$ProvID);
+				}
+
+				if ($Area != "") {
+					$this->db->where('cabang.Area',$Area);
+				}
+
+				if ($KotaID != "") {
+					$this->db->where('cabang.KotaID',$KotaID);
 				}
 
 				$rs = $this->db->get();
@@ -59,6 +75,7 @@
 			$KotaID = $this->input->post('KotaID');
 			$KelID = $this->input->post('KelID');
 			$KecID = $this->input->post('KecID');
+			$Area = $this->input->post('Area');
 			$CreatedOn = date('Y-m-d h:i:s');
 			$UpdatedOn = date('Y-m-d h:i:s');
 			$CreatedBy = $this->session->userdata('NamaUser');
@@ -73,7 +90,8 @@
 					'ProvID' => $ProvID,
 					'KotaID' => $KotaID,
 					'KelID' => $KelID,
-					'KecID' => $KecID
+					'KecID' => $KecID,
+					'Area' => $Area
 				);
 
 				if ($formtype == "add") {

@@ -25,7 +25,14 @@
 			$CabangID = $this->input->post('CabangID');
 			$DivisiID = $this->input->post('DivisiID');
 			$JabatanID = $this->input->post('JabatanID');
+			$Wilayah = $this->input->post('Wilayah');
 			$Provinsi = $this->input->post('Provinsi');
+			$Kota = $this->input->post('Kota');
+			$LevelAkses = ($this->session->userdata('UserName') == 'admin') ? "0" : $this->session->userdata('LevelAkses');
+			$NIKIn = $this->input->post('NIKIn');
+
+			$roleData = $this->ModelsExecuteMaster->GetRoleData();
+
 
 			try {
 				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END AS selectedPersonel " );
@@ -38,21 +45,119 @@
 				$this->db->join('dem_kota','personel.KotaID = dem_kota.city_id','left');
 				$this->db->join('dem_kelurahan','personel.KelID = dem_kelurahan.subdis_id','left');
 				$this->db->join('dem_kecamatan','personel.KecID = dem_kecamatan.dis_id','left');
-				$this->db->where(array("personel.StatusAnggota"=>1));
+				$this->db->where("personel.StatusAnggota", 1);
 
 				if ($NIK != "") {
-					$this->db->where(array("NIK"=>$NIK));
+					$this->db->where("NIK",$NIK);
 				}
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
+				
+				// var_dump($roleData->LevelAkses);
+				if ($CabangID != "0" && $roleData->LevelAkses == "5") {
+					$this->db->where("personel.CabangID",$CabangID);
+				}
+
+				if ($Provinsi != -1 && $roleData->LevelAkses == "3") {
+					$this->db->where("personel.ProvID",$Provinsi);
+				}
+
+				if ($Wilayah != "0" && $roleData->LevelAkses == "2") {
+					$this->db->where("cabang.Area",$Wilayah);
+				}
+
+				if ($Kota != "" && $roleData->LevelAkses == "4") {
+					$this->db->where("personel.KotaID", $Kota);
+				}
+
+				if ($DivisiID != "" && $roleData->LevelAkses == "5") {
+					// $oDivisi = explode(",", $DivisiID)
+					$this->db->where("personel.DivisiID", $DivisiID);
+				}
+
+				if ($LevelAkses != "0") {
+					$this->db->where("jabatan.Level >=", $LevelAkses);
+				}
+
+
+				if ($NIKIn != "") {
+					$oWhere = explode(",", $NIKIn);
+					if (count($oWhere) > 0) {
+						$this->db->where_not_in('personel.NIK', $oWhere);
+					}
+				}
+
+				$this->db->order_by("CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END ");
+
+				$rs = $this->db->get();
+
+				$error = $this->db->error();
+				// var_dump($error);
+				if($error['code'] > 0) {
+		            $data['message'] =$error['code'] .' - ' .$error['message'];
+		        } else {
+		            if ($rs->num_rows() > 0) {
+						$data['success'] = true;
+						$data['data'] = $rs->result();
+					}
+		        }
+
+			} catch (\Exception $e) {
+				$data['message'] = $e->getMessage();
+			}
+			echo json_encode($data);
+		}
+
+		public function ReadRaw()
+		{
+			$data = array('success'=>true, 'message'=>'', 'data'=>array());
+
+			$NIK = $this->input->post('NIK');
+			$CabangID = $this->input->post('CabangID');
+			$DivisiID = $this->input->post('DivisiID');
+			$JabatanID = $this->input->post('JabatanID');
+			$Wilayah = $this->input->post('Wilayah');
+			$Provinsi = $this->input->post('Provinsi');
+			$Kota = $this->input->post('Kota');
+
+			try {
+				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END AS selectedPersonel " );
+				$this->db->from('personel');
+				$this->db->join('cabang','personel.CabangID=cabang.id','left');
+				$this->db->join('divisi','personel.DivisiID=divisi.id AND personel.CabangID = divisi.CabangID','left');
+				$this->db->join('jabatan','personel.JabatanID=jabatan.id AND personel.CabangID = jabatan.CabangID','left');
+				$this->db->join('ratepk','personel.RatePKCode=ratepk.id','left');
+				$this->db->join('dem_provinsi','personel.ProvID = dem_provinsi.prov_id','left');
+				$this->db->join('dem_kota','personel.KotaID = dem_kota.city_id','left');
+				$this->db->join('dem_kelurahan','personel.KelID = dem_kelurahan.subdis_id','left');
+				$this->db->join('dem_kecamatan','personel.KecID = dem_kecamatan.dis_id','left');
+				$this->db->where("personel.StatusAnggota", 1);
+
+				if ($NIK != "") {
+					$this->db->where("NIK",$NIK);
+				}
+
+				// var_dump("cabangdong". $this->session->userdata('CabangID'));
+
+				
+				// var_dump($oRoles->row()->LevelAkses);
 				if ($CabangID != "0") {
-					$this->db->where(array("personel.CabangID"=>$CabangID));
+					$this->db->where("personel.CabangID",$CabangID);
 				}
 
 				if ($Provinsi != -1) {
-					$this->db->where(array("personel.ProvID"=>$Provinsi));
+					$this->db->where("personel.ProvID",$Provinsi);
 				}
+
+				if ($Wilayah != "0") {
+					$this->db->where("cabang.Area",$Wilayah);
+				}
+
+				if ($Kota != "") {
+					$this->db->where("personel.KotaID", $Kota);
+				}
+
 				$this->db->order_by("CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END ");
 
 				$rs = $this->db->get();
@@ -110,6 +215,7 @@
 		{
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());
 
+			$errorCount = 0;
 			
 			$NIK = $this->input->post('NIK');
 			$NamaLengkap = $this->input->post('NamaLengkap');
@@ -143,6 +249,13 @@
 
 
 			try {
+				$this->db->trans_start();
+
+				if ($formtype == "add") {
+					$prefix = substr(date('Ymd'),2,8).$CabangID;
+					$lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$CabangID), 'personel')->num_rows() +1;
+					$NIK = $prefix.str_pad($lastNoTrx, 4, '0', STR_PAD_LEFT);
+				}
 				$oObject = array(
 					'NIK' => $NIK,
 					'NamaLengkap' => $NamaLengkap,
@@ -171,14 +284,41 @@
 				if ($formtype == "add") {
 					$oObject['CreatedOn'] = $CreatedOn;
 					$oObject['CreatedBy'] = $CreatedBy;
-					$this->db->insert('personel',$oObject);
+					$save = $this->db->insert('personel',$oObject);
+
+					if (!$save) {
+						$data['message'] = "Gagal Create Personel";
+						$errorCount += 0;
+						goto jump;
+					}
+
+					$oUser = array(
+						'username' 	=> $NIK,
+						'nama'		=> $NamaLengkap,
+						'email'		=> $Email,
+						'password'	=> $this->encryption->encrypt($NIK),
+						'CabangID'	=> $CabangID,
+						'canAdd'	=> 0,
+						'canEdit'	=> 0,
+						'canDelete'	=> 0,
+						'NIKPersonel' => $NIK,
+						'AllowFinanceDashboard' => 0,
+						'ChangePassword' => 'Y'
+					);
+
+					$saveUser = $this->db->insert('users',$oUser);
+
+					if (!$saveUser) {
+						$data['message'] = "Gagal Create User";
+						$errorCount += 0;
+						goto jump;
+					}
 				}
 				elseif ($formtype == "edit") {
 					$oObject['UpdatedOn'] = $UpdatedOn;
 					$oObject['UpdatedBy'] = $UpdatedBy;
 					$oWhere = array(
-						'NIK'=>$NIK,
-						'CabangID'=>$CabangID
+						'NIK'=>$NIK
 					);
 					$this->db->update('personel', $oObject, $oWhere);
 				}
@@ -199,17 +339,21 @@
 					$data['message'] = "invalid Form Type";
 				}
 
-				$error = $this->db->error();
+				jump:
+				$this->db->trans_complete();
 
-				if($error['code']) {
-		            // echo "Database error occurred: ".$error['message'];
-		            $data['message'] = $error['message'];
-		        } else {
-		            if ($this->db->affected_rows() > 0) {
-						$data['success'] =true;
-						$data['message'] = "Data Divisi Berhasil disimpan";
-					}
-		        }
+				if ($errorCount > 0) {
+					$error = $this->db->error();
+				    $this->db->trans_rollback();
+
+				    if($error['code']) {
+				    	$data['message'] = $error['message'];	
+				    }
+				}
+				else{
+					$this->db->trans_commit();
+					$data['success'] = true;
+				}
 			} catch (\Exception $e) {
 				$data['message'] = $e->message;
 			}

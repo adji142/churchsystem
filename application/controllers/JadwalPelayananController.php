@@ -10,6 +10,7 @@
 
 		public function index()
 		{
+			// var_dump($this->session);
 			$rs = $this->ModelsExecuteMaster->GetCabang();
 			$data['Cabang'] = $rs->result();
 			$this->load->view('Pelayanan/JadwalPelayanan',$data);
@@ -75,10 +76,32 @@
 			$Detail = $this->ModelsExecuteMaster->FindData(array('NoTransaksi'=> $NoTransaksi,'CabangID'=> $CabangID),'penugasanjadwalpelayanan')->result();
 			$cabang = $this->ModelsExecuteMaster->GetCabang();
 
+			// Hari
+			$this->db->select('*');
+			$this->db->from('defaulthari');
+			$this->db->order_by('Index', 'ASC');
+			$getHari = $this->db->get();
+
+			// Provinsi
+
+			$this->db->select('*');
+			$this->db->from('dem_provinsi');
+			$provinsi = $this->db->get();
+
+			// Wilayah
+
+			$this->db->select('*');
+			$this->db->from('areapelayanan');
+			$area = $this->db->get();
+
 			$data['Cabang'] = $cabang->result();
 			$data['header'] = $Header->result();
 			$data['detail'] = json_encode($Detail);
-			$this->load->view('Pelayanan/JadwalPelayanan-input',$data);
+			$data['Hari'] = $getHari->result();
+			$data['prov'] = $provinsi->result();
+			$data['Wilayah'] = $area->result();
+
+			$this->load->view('Pelayanan/JadwalPelayanan-input-2',$data);
 		}
 
 		public function formKonfirmasi()
@@ -97,12 +120,13 @@
 			$CabangID = $this->input->post('CabangID');
 
 			try {
-				$this->db->select("penugasanjadwalpelayanan.*, cabang.CabangName, divisi.NamaDivisi, jabatan.NamaJabatan, CONCAT(personel.GelarDepan,' ',personel.NamaLengkap, ' ', personel.GelarBelakang) As NamaLengkap, CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 1 THEN 'Y' ELSE CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 2 THEN 'N' ELSE '' END END AS diKonfirmasi, (penugasanjadwalpelayanan.LineNumber) + 1 as LineNum, personel.NoHP, personel.Email, penugasanjadwalpelayanan.KonfirmasiKeterangan");
+				$this->db->select("penugasanjadwalpelayanan.*, cabang.CabangName, divisi.NamaDivisi, jabatan.NamaJabatan, CONCAT(personel.GelarDepan,' ',personel.NamaLengkap, ' ', personel.GelarBelakang) As NamaLengkap, CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 1 THEN 'Y' ELSE CASE WHEN penugasanjadwalpelayanan.Konfirmasi = 2 THEN 'N' ELSE '' END END AS diKonfirmasi, (penugasanjadwalpelayanan.LineNumber) + 1 as LineNum, personel.NoHP, personel.Email, penugasanjadwalpelayanan.KonfirmasiKeterangan, posisipelayanan.PosisiPelayanan");
 				$this->db->from('penugasanjadwalpelayanan');
 				$this->db->join('cabang', 'penugasanjadwalpelayanan.CabangID = cabang.id','left');
 				$this->db->join('divisi', 'penugasanjadwalpelayanan.DivisiID = divisi.id and penugasanjadwalpelayanan.CabangID = divisi.CabangID','left');
 				$this->db->join('jabatan', 'penugasanjadwalpelayanan.JabatanID = jabatan.id and penugasanjadwalpelayanan.CabangID = jabatan.CabangID','left');
 				$this->db->join('personel','penugasanjadwalpelayanan.PIC =personel.NIK','left');
+				$this->db->join('posisipelayanan', 'penugasanjadwalpelayanan.PosisiPelayananID = posisipelayanan.id','left');
 				$this->db->where("penugasanjadwalpelayanan.NoTransaksi", $NoTransaksi);
 				$this->db->where("penugasanjadwalpelayanan.CabangID", $CabangID);
 
@@ -308,6 +332,7 @@
 							'KonfirmasiID' => random_string('alpha', 18),
 							'Konfirmasi' => 0,
 							'KonfirmasiKeterangan' => '',
+							'PosisiPelayananID' => $json_data['detail'][$i]['PosisiPelayananID']
 	                	);
 
 	                	$oObjectDetail['CreatedOn'] = $CreatedOn;
@@ -338,15 +363,6 @@
 	                    goto jump;
 	                }
 
-	                $this->db->where(array('NoTransaksi'=> ($formtype == "add") ? $NoTransaksi : $json_data['NoTransaksi'], 'CabangID'=>$json_data['CabangID']));
-	                $oDelete = $this->db->delete('penugasanjadwalpelayanan');
-
-	                if (!$oDelete) {
-	                	$data['message'] = "gagal Delete Detail";
-	                    $errorCount +=1;
-	                    goto jump;
-	                }
-
 	                for ($i=0; $i < count($json_data['detail']) ; $i++) {
 	                	$oObjectDetail = array(
 	                		'NoTransaksi' => ($formtype == "add") ? $NoTransaksi : $json_data['NoTransaksi'],
@@ -359,10 +375,26 @@
 							'KonfirmasiID' => random_string('alpha', 18),
 							'Konfirmasi' => 0,
 							'KonfirmasiKeterangan' => '',
+							'PosisiPelayananID' => $json_data['detail'][$i]['PosisiPelayananID']
 	                	);
 
 	                	$oObjectDetail['UpdatedOn'] = $CreatedOn;
 						$oObjectDetail['UpdatedBy'] = $CreatedBy;
+						// Delete Record
+						$oDeleteWhere = array(
+		                	'NoTransaksi'=> ($formtype == "add") ? $NoTransaksi : $json_data['NoTransaksi'], 
+		                	'CabangID'=>$json_data['CabangID'],
+		                	'PIC' => $json_data['detail'][$i]['NIK']
+		                );
+		                $this->db->where($oDeleteWhere);
+		                $oDelete = $this->db->delete('penugasanjadwalpelayanan');
+
+		                if (!$oDelete) {
+		                	$data['message'] = "gagal Delete Detail";
+		                    $errorCount +=1;
+		                    goto jump;
+		                }
+
 						$oSaveDetail = $this->db->insert('penugasanjadwalpelayanan',$oObjectDetail);
 
 						if (!$oSaveDetail) {
@@ -408,7 +440,7 @@
 						->join('cabang','penugasanjadwalpelayanan.CabangID = cabang.id','left')
 						->group_by('penugasanjadwalpelayanan.NoTransaksi,penugasanjadwalpelayanan.CabangID')->get_compiled_select();
 
-					$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.JamMulai,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),DATE_FORMAT(dataevent.JamSelesai,'%T')) AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasi, sub.BelumKonfirmasi,COALESCE(personel.NoHP, '') NoHP, COALESCE(personel.Email) Email, defaulthari.NamaHari,personel.NamaLengkap,penugasanjadwalpelayanan.KonfirmasiID,jadwalpelayanan.CreatedBy");
+					$this->db->select("jadwalpelayanan.NoTransaksi, jadwalpelayanan.TglTransaksi,CASE WHEN jadwalpelayanan.JenisTransaksi = 1 THEN 'IBADAH' ELSE 'EVENT' END JenisJadwal, jadwalpelayanan.CabangID, cabang.CabangName,COALESCE(jadwalibadah.NamaIbadah,dataevent.NamaEvent) AS NamaJadwal,COALESCE(DATE_FORMAT(jadwalibadah.MulaiJam,'%T'),DATE_FORMAT(dataevent.JamMulai,'%T')) AS JamMulai, COALESCE(DATE_FORMAT(jadwalibadah.SelesaiJam,'%T'),DATE_FORMAT(dataevent.JamSelesai,'%T')) AS JamSelesai, sub.JumlahPelayan, sub.JumlahKonfirmasi, sub.BelumKonfirmasi,COALESCE(personel.NoHP, '') NoHP, COALESCE(personel.Email) Email, defaulthari.NamaHari,personel.NamaLengkap,penugasanjadwalpelayanan.KonfirmasiID,jadwalpelayanan.CreatedBy, posisipelayanan.PosisiPelayanan");
 					$this->db->from('jadwalpelayanan');
 					$this->db->join('jadwalibadah','jadwalpelayanan.JadwalIbadahID=jadwalibadah.id AND jadwalpelayanan.CabangID = jadwalibadah.CabangID','left');
 					$this->db->join('dataevent','jadwalpelayanan.EventID=dataevent.NoTransaksi AND jadwalpelayanan.CabangID = dataevent.CabangID','left');
@@ -417,6 +449,7 @@
 					$this->db->join('defaulthari','defaulthari.KodeHari = COALESCE(jadwalibadah.Hari,dayname(dataevent.TglEvent))');
 					$this->db->join('penugasanjadwalpelayanan', 'jadwalpelayanan.NoTransaksi = penugasanjadwalpelayanan.NoTransaksi AND jadwalpelayanan.CabangID = penugasanjadwalpelayanan.CabangID');
 					$this->db->join('personel','personel.NIK = penugasanjadwalpelayanan.PIC','left');
+					$this->db->join('posisipelayanan', 'penugasanjadwalpelayanan.PosisiPelayananID = posisipelayanan.id','left');
 
 					$this->db->where('jadwalpelayanan.NoTransaksi', $lastTRX);
 					$this->db->where('jadwalpelayanan.CabangID', $CabangID);
@@ -441,6 +474,7 @@
 					            	Hari 			: '.$key->NamaHari.' <br>
 					            	Tanggal 		: '.$key->TglTransaksi.'<br>
 					            	Jam 			: '.$key->JamMulai.' s/d '.$key->JamSelesai.'<br>
+					            	Posisi Pelayanan: '.$key->PosisiPelayanan.'<br>
 					            	Lokasi		: '.$key->CabangName.'<br>
 
 					            </pre>
@@ -472,6 +506,7 @@ $message = "
 	*Hari 			: ".$key->NamaHari."*
 	*Tanggal 			: ".$key->TglTransaksi."*
 	*Jam 			: ".$key->JamMulai.' s/d '.$key->JamSelesai."*
+	*Posisi Pelayanan : ".$key->PosisiPelayanan."*
 	*Lokasi 			: ".$key->CabangName."*
 
 	Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
@@ -506,6 +541,50 @@ $message = "
 			}
 
 			$this->output->set_content_type('application/json')->set_output(json_encode($data));
+		}
+
+		public function FindHeader()
+		{
+			$data = array('success'=>false, 'message'=>'', 'data'=>array());
+
+			$TglTransaksi = $this->input->post('TglTransaksi');
+			$Hari = $this->input->post('Hari');
+			$JadwalIbadahID = $this->input->post('JadwalIbadahID');
+
+			$this->db->select('*');
+			$this->db->from('jadwalpelayanan');
+			$this->db->where('TglTransaksi',$TglTransaksi);
+			$this->db->where('dayname(TglTransaksi)',$Hari);
+			$this->db->where('JadwalIbadahID',$JadwalIbadahID);
+
+			$FindHeader = $this->db->get();
+
+			if ($FindHeader->num_rows() > 0) {
+				$data['data'] = $FindHeader->result();
+			}
+
+			echo json_encode($data);
+		}
+
+		public function FindDetail()
+		{
+			$data = array('success'=>false, 'message'=>'', 'data'=>array());
+
+			$NoTransaksi = $this->input->post('NoTransaksi');
+			$DivisiID = $this->input->post('DivisiID');
+
+			$this->db->select('*');
+			$this->db->from('penugasanjadwalpelayanan');
+			$this->db->where('NoTransaksi',$NoTransaksi);
+			$this->db->where('DivisiID',$DivisiID);
+
+			$FindDetail = $this->db->get();
+
+			if ($FindDetail->num_rows() > 0) {
+				$data['data'] = $FindDetail->result();
+			}
+
+			echo json_encode($data);
 		}
 	}
 ?>

@@ -49,6 +49,21 @@
           </div>
 
           <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Area <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select id="Area" name="Area" class="form-control">
+                <?php 
+                  $data = $this->ModelsExecuteMaster->GetData("areapelayanan");
+                  foreach ($data->result() as $key) {
+                    echo "<option value = '".$key->id."' >".$key->NamaArea."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Provinsi <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
@@ -139,6 +154,10 @@
           });
           $('#KelID').select2({
             width: '200px'
+          });
+
+          $('#Area').select2({
+            width: '100%'
           });
 
           var CabangID = "<?php echo $CabangID; ?>"
@@ -305,6 +324,7 @@
             $('#KotaID').val(v.KotaID).trigger('change');
             $('#KecID').val(v.KecID).trigger('change');
             $('#KelID').val(v.KelID).trigger('change');
+            $('#Area').val(v.Area).trigger('change');
 
             $('#modal_').modal('show');
           });
@@ -362,6 +382,11 @@
                 {
                     dataField: "CabangName",
                     caption: "Nama Cabang",
+                    allowEditing:false
+                },
+                {
+                    dataField: "NamaArea",
+                    caption: "Nama Area",
                     allowEditing:false
                 },
                 {

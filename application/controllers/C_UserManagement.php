@@ -14,7 +14,7 @@
 			$data = array('success' => false ,'message'=>array(),'data'=>array());
 
 			$id = $this->input->post('id');
-			$this->db->select('roles.id, roles.rolename, roles.CabangID, cabang.CabangName');
+			$this->db->select('roles.id, roles.rolename, roles.CabangID, cabang.CabangName, roles.LevelAkses');
 			$this->db->from('roles');
 			$this->db->join('cabang','cabang.id = roles.CabangID','left');
 			if ($id != "") {
@@ -49,10 +49,12 @@
 			$rolename = $this->input->post('rolename');
 			$formtype = $this->input->post('formtype');
 			$CabangID = $this->input->post('CabangID');
+			$LevelAkses = $this->input->post('LevelAkses');
 			$param = array(
 				'id'		=> $id,
 				'rolename'	=> $rolename,
-				'CabangID'	=> $CabangID
+				'CabangID'	=> $CabangID,
+				'LevelAkses' => $LevelAkses
 			);
 
 			$rs;
