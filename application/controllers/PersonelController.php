@@ -293,7 +293,7 @@
 					}
 
 					$oUser = array(
-						'username' 	=> $NIK,
+						'username' 	=> $NoHP,
 						'nama'		=> $NamaLengkap,
 						'email'		=> $Email,
 						'password'	=> $this->encryption->encrypt($NIK),

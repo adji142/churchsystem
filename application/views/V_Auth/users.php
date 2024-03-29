@@ -438,7 +438,7 @@
             columnAutoWidth: true,
             showBorders: true,
             paging: {
-                enabled: false
+                enabled: true
             },
             editing: {
                 mode: "row",
