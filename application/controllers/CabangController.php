@@ -37,7 +37,7 @@
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
-				if ($this->session->userdata('CabangID') != "") {
+				if ($this->session->userdata('CabangID') != "0") {
 					$this->db->where(array("cabang.id"=>$this->session->userdata('CabangID')));
 				}
 
