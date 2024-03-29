@@ -95,6 +95,10 @@ class ModelsExecuteMaster extends CI_Model
 			return false;
 		}
 	}
+	public function GetStoreProcedure($Name, $Parameter)
+	{
+		return $this->db->query('CALL '.$Name.'('.$Parameter.')');
+	}
 	function ExecUpdate($data,$where,$table)
 	{
         $this->db->where($where);

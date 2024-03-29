@@ -42,7 +42,7 @@
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Deskripsi Rate <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
-              <input type="text" name="NamaRate" id="NamaRate" required="" placeholder="Deskripsi Divisi" class="form-control ">
+              <input type="text" name="NamaRate" id="NamaRate" required="" placeholder="Deskripsi Rate" class="form-control ">
               <input type="hidden" name="id" id="id">
               <input type="hidden" name="formtype" id="formtype" value="add">
             </div>
@@ -274,23 +274,24 @@
       var where_value = id;
       var table = 'users';
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>RatePKController/Read",
         data: {'id':id,CabangID:CabangID},
         dataType: "json",
         success: function (response) {
+          console.log(response.data)
           $.each(response.data,function (k,v) {
             $('#formtype').val("edit");
-
             $('#id').val(v.id);
             $('#NamaRate').val(v.NamaRate);
-            $('TglBerlaku').val(v.TglBerlaku)
-            $('IbadahID').val(v.IbadahID).trigger('change')
-            $('Hari').val(v.Hari).trigger('change'
-            $('Sesi').val(v.Sesi)
-            $('BidangPelayananID').val(v.BidangPelayananID)
-            $('#Rate').val(v.Rate);
+            $('#TglBerlaku').val(v.TglBerlaku)
             $('#CabangID').val(v.CabangID).trigger('change');
+            $('#IbadahID').val(v.IbadahID).trigger('change')
+            $('#Hari').val(v.Hari).trigger('change');
+            $('#Sesi').val(v.Sesi)
+            $('#BidangPelayananID').val(v.BidangPelayananID).trigger('change')
+            $('#Rate').val(v.Rate);
 
             $('#modal_').modal('show');
           });
@@ -410,8 +411,8 @@
                   var value = id;
                   $.ajax({
                       type    :'post',
-                      url     : '<?=base_url()?>DivisiController/CRUD',
-                      data    : {'id':id,'formtype':'delete'},
+                      url     : '<?=base_url()?>RatePKController/CRUD',
+                      data    : {'id':id,'CabangID':e.data.CabangID,'formtype':'delete'},
                       dataType: 'json',
                       success : function (response) {
                         if(response.success == true){

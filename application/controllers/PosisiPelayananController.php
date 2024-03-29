@@ -29,6 +29,7 @@
 				if ($id != "") {
 					$this->db->where(array("id"=>$id));
 				}
+				$this->db->order_by('Index');
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 

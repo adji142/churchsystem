@@ -44,13 +44,13 @@
 				$this->db->where(array("1"=>"1"));
 
 				if ($id != "") {
-					$this->db->where(array("id"=>$id));
+					$this->db->where(array("ratepk.id"=>$id));
 				}
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
 				if ($CabangID != "0") {
-					$this->db->where(array("CabangID"=>$CabangID));
+					$this->db->where(array("ratepk.CabangID"=>$CabangID));
 				}
 
 				$rs = $this->db->get();
@@ -87,7 +87,12 @@
 				$oObject = array(
 					'NamaRate' 	=> $NamaRate,
 					'CabangID' 	=> $CabangID,
-					'Rate'		=> $Rate
+					'Rate'		=> $Rate,
+					'TglBerlaku' => $TglBerlaku,
+					'IbadahID' => $IbadahID,
+					'Hari' => $Hari,
+					'Sesi' => $Sesi,
+					'BidangPelayananID' => $BidangPelayananID,
 				);
 
 				if ($formtype == "add") {
@@ -101,7 +106,9 @@
 					$this->db->update('ratepk', $oObject, array('id'=>$id));
 				}
 				elseif ($formtype == "delete") {
-					# code...
+					$this->db->where('id',$id);
+					$this->db->where('CabangID', $CabangID);
+					$this->db->delete('ratepk');
 				}
 				else{
 					$data['message'] = "invalid Form Type";

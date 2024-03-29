@@ -25,6 +25,25 @@
 
 			$this->output->set_content_type('application/json')->set_output(json_encode($data));
 		}
+		public function inputpersembahan($NoTransaksi, $CabangID)
+		{
+			$data['NoTransaksi'] = $NoTransaksi;
+			$data['parseCabangID'] = $CabangID;
+			$this->load->view('Finance/transaksi/persembahan-input',$data);
+		}
+
+		public function LoadDataPersembahan()
+		{
+			$data = array('success'=>true, 'message'=>'', 'data'=>array());
+			$NoJadwal = $this->input->post('NoJadwal');
+
+			$persembahan = $this->ModelsExecuteMaster->GetStoreProcedure('fsp_getPersonelRate',"'".$NoJadwal."'");
+
+			$data['data'] = $persembahan->result();
+
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
+		}
+
 		public function penerimaan($NoTransaksi, $CabangID)
 		{
 			$data['NoTransaksi'] = $NoTransaksi;
@@ -447,17 +466,32 @@
 			$NoJadwal = $this->input->post('NoJadwal');
 			$CabangID = $this->input->post('CabangID');
 
-			$this->db->select("personel.NIK, concat(personel.GelarDepan,' ', personel.NamaLengkap,' ',personel.GelarBelakang) AS NamaLengkap, divisi.NamaDivisi,jabatan.NamaJabatan,COALESCE(ratepk.Rate,0) Rate,absensi.CabangID ");
+			$this->db->select("personel.NIK, concat(personel.GelarDepan,' ', personel.NamaLengkap,' ',personel.GelarBelakang) AS NamaLengkap, divisi.NamaDivisi,posisipelayanan.PosisiPelayanan as NamaJabatan,COALESCE(ratepk.Rate,0) Rate,absensi.CabangID ");
 			$this->db->from('absensi');
-			$this->db->join('jadwalpelayanan', 'absensi.ReffJadwal = jadwalpelayanan.NoTransaksi AND absensi.CabangID = jadwalpelayanan.CabangID','left');
-			$this->db->join('personel', 'absensi.NIK = personel.NIK and absensi.CabangID = personel.CabangID','left');
-			$this->db->join('ratepk','personel.RatePKCode = ratepk.id and personel.CabangID = ratepk.CabangID','left');
-			$this->db->join('divisi', 'personel.DivisiID = divisi.id', 'left');
-			$this->db->join('jabatan', 'personel.JabatanID = jabatan.id', 'left');
+			$this->db->join('penugasanjadwalpelayanan','absensi.ReffJadwal = penugasanjadwalpelayanan.NoTransaksi');
+			$this->db->join('jadwalpelayanan','penugasanjadwalpelayanan.NoTransaksi = jadwalpelayanan.NoTransaksi');
+			$this->db->join('personel', 'penugasanjadwalpelayanan.PIC = personel.NIK');
+			$this->db->join('ratepk', 'jadwalpelayanan.JadwalIbadahID = ratepk.IbadahID AND DAYNAME(jadwalpelayanan.TglTransaksi) = ratepk.Hari AND penugasanjadwalpelayanan.PosisiPelayananID = ratepk.BidangPelayananID','LEFT');
+			$this->db->join('divisi','personel.DivisiID = divisi.id');
+			$this->db->join('posisipelayanan','penugasanjadwalpelayanan.PosisiPelayananID = posisipelayanan.id');
 			$this->db->where('absensi.ReffJadwal',$NoJadwal);
 			$this->db->where('absensi.CabangID', $CabangID);
 			$this->db->order_by('personel.DivisiID');
 			$this->db->order_by('personel.JabatanID');
+
+
+			// $this->db->select("personel.NIK, concat(personel.GelarDepan,' ', personel.NamaLengkap,' ',personel.GelarBelakang) AS NamaLengkap, divisi.NamaDivisi,jabatan.NamaJabatan,COALESCE(ratepk.Rate,0) Rate,absensi.CabangID ");
+			// $this->db->from('absensi');
+			// $this->db->join('jadwalpelayanan', 'absensi.ReffJadwal = jadwalpelayanan.NoTransaksi AND absensi.CabangID = jadwalpelayanan.CabangID','left');
+			// $this->db->join('personel', 'absensi.NIK = personel.NIK and absensi.CabangID = personel.CabangID','left');
+			// $this->db->join('penugasanjadwalpelayanan','jadwalpelayanan.NoTransaksi = penugasanjadwalpelayanan.NoTransaksi');
+			// $this->db->join('ratepk','ratepk.IbadahID = jadwalpelayanan.JadwalIbadahID AND DAYNAME(jadwalpelayanan.TglTransaksi) = ratepk.Hari AND penugasanjadwalpelayanan.PosisiPelayananID = ratepk.BidangPelayananID','left');
+			// $this->db->join('divisi', 'personel.DivisiID = divisi.id', 'left');
+			// $this->db->join('jabatan', 'personel.JabatanID = jabatan.id', 'left');
+			// $this->db->where('absensi.ReffJadwal',$NoJadwal);
+			// $this->db->where('absensi.CabangID', $CabangID);
+			// $this->db->order_by('personel.DivisiID');
+			// $this->db->order_by('personel.JabatanID');
 
 			$RateData = $this->db->get();
 

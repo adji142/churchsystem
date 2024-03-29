@@ -5,13 +5,16 @@
 ?>
 <!-- page content -->
 <div class="right_col" role="main">
-  <div class="row">
+  <div class="row" id="HeaderSection">
     <div class="col-md-12">
       <center>
         <h2>SISTEM ADMINISTRASI GEREJA TIBERIAS INDONESIA</h2>
         <p><?php echo ($CabangName == '') ? 'SUPERADMIN' : 'CABANG : '. $CabangName ?></p>
+        <p>Selamat datang <strong><?php echo $NamaUser ?></strong> </p>
       </center>
     </div>
+  </div>
+  <div class="row" id="DashboardSection">
     <div class="col-md-9 col-sm-9">
       <select class="form-control" id="CabangIDFilter" name="CabangIDFilter" >
         <option value="0">Pilih Cabang</option>
@@ -132,11 +135,28 @@
 <script src="<?php echo base_url();?>Assets/vendors/echarts/map/js/world.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" integrity="sha512-EmNxF3E6bM0Xg1zvmkeYD3HDBeGxtsG92IxFt1myNZhXdCav9MzvuH/zNMBU1DmIPN6njrhX1VTbqdJxQ2wHDg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+<style type="text/css">
+  .HideObject{
+    display: all;
+  }
+</style>
 <script type="text/javascript">
   $(function () {
     var CabangID = "<?php echo $CabangID; ?>";
     var AllowFinanceDashboard = "<?php echo $AllowFinanceDashboard; ?>";
     $(document).ready(function () {
+      var HideObject = document.getElementById('DashboardSection');
+      console.log(AllowFinanceDashboard)
+      if (AllowFinanceDashboard == 1) {
+        HideObject.style.display = 'none';
+      }
+      else if (AllowFinanceDashboard =='') {
+        HideObject.style.display = 'none'; 
+      }
+      else{
+        HideObject.style.display = 'All';
+      }
+
       $('#CabangIDFilter').select2({
         width: '100%'
       });

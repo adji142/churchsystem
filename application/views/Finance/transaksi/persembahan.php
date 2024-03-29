@@ -383,6 +383,8 @@
                   // console.log(cellInfo.data)
                   var Sisa = parseFloat(cellInfo.data.Debit) - parseFloat(cellInfo.data.Kredit);
 
+                  // LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-warning' id = 'btn-penerimaan'>Isi Persembahan</a>";
+
                   LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/penerimaan/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-warning' id = 'btn-penerimaan'>Penerimaan</a>";
                   LinkAccess += "<a href = '<?=base_url()?>finance/persembahan/pengeluaran/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-danger' id = 'btn-pengeluaran'>Pengeluaran</a>";
 
