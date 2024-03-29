@@ -250,9 +250,9 @@
 
 			try {
 				$this->db->trans_start();
-
+				// 20240329
 				if ($formtype == "add") {
-					$prefix = substr(date('Ymd'),2,8).$CabangID;
+					$prefix = substr(date('Ymd'),2,6).$CabangID;
 					$lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$CabangID), 'personel')->num_rows() +1;
 					$NIK = $prefix.str_pad($lastNoTrx, 4, '0', STR_PAD_LEFT);
 				}

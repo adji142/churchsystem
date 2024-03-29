@@ -23,6 +23,10 @@
 
 			// var_dump($bidangpelayanan->result());
 
+			// Cabang
+			$rs = $this->ModelsExecuteMaster->GetCabang();
+			$data['Cabang'] = $rs->result();
+
 			$data['Hari'] = $getHari->result();
 			$data['BidangPelayanan'] = $bidangpelayanan->result();
 			$this->load->view('V_Master/RatePK', $data);

@@ -57,10 +57,11 @@
 
     .login-form-container {
       width: 400px;
-      padding: 24px;
+      /*padding: 24px;*/
       background-color: rgba(255, 255, 255, 0.8);
       border-radius: 4px;
       text-align: center;
+      transform: translateY(100px);
     }
 
     @media screen and (min-width: 800px) {
@@ -77,10 +78,11 @@
     @media screen and (min-width: 320px) and (max-width: 680px) {
       .login-form-container {
         width: 300px;
-        padding: 24px;
+        /*padding: 24px;*/
         background-color: rgba(255, 255, 255, 0.8);
         border-radius: 4px;
         text-align: center;
+        transform: translateY(100px);
       }
       .login_content {
         margin: 0 auto;
@@ -101,7 +103,7 @@
       <div class="login-form-container">
         <section class="login_content">
           <form id="loginform" class="form-horizontal">
-            <h1>Login Form</h1>
+            <!-- <h1>Login Form</h1> -->
 
             <input type="text" class="form-control" placeholder="Username" required="" id="username" name="username"/>
             <input type="hidden" name="androidid" id="androidid" value="admin">

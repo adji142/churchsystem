@@ -12,6 +12,26 @@
         <div class="x_panel">
           <div class="x_title">
             <h2>Rate PK</h2>
+            <br>
+            <hr>
+            <div class="col-md-6 col-sm-6 ">
+              Cabang
+              <select class="form-control" id="CabangIDFilter" name="CabangIDFilter" >
+                <option value="0">Pilih Cabang</option>
+                <?php
+
+                  foreach ($Cabang as $key) {
+                    echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+            <div class="col-md-3 col-sm-3 ">
+              <br>
+              <button class="btn btn-primary" id="btn_Search">Cari Data</button>
+            </div>
+            <div class="clearfix"></div>
+            <hr>
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
@@ -154,6 +174,10 @@
         width: '100%'
       });
 
+      $('#CabangIDFilter').select2({
+        width: '100%'
+      });
+
       $('#Hari').select2({
         width: '100%'
       });
@@ -169,19 +193,29 @@
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
+
+        $('#CabangIDFilter').prop('disabled', true);
+        $('#CabangIDFilter').val(CabangID).trigger('change');
       }
 
+      getRateData();
+    });
+
+    function getRateData() {
       $.ajax({
         type: "post",
         url: "<?=base_url()?>RatePKController/Read",
-        data: {'id':'', CabangID:CabangID},
+        data: {'id':'', 'CabangID':$('#CabangIDFilter').val()},
         dataType: "json",
         success: function (response) {
           bindGrid(response.data);
         }
       });
-    });
+    }
 
+    $('#btn_Search').click(function () {
+      getRateData()
+    })
     $('#CabangID').change(function () {
       $.ajax({
           async:false,
@@ -313,7 +347,7 @@
             columnAutoWidth: true,
             showBorders: true,
             paging: {
-                enabled: false
+                enabled: true
             },
             editing: {
                 mode: "row",
@@ -337,6 +371,17 @@
                 {
                     dataField: "NamaRate",
                     caption: "Nama",
+                    allowEditing:false
+                },
+                {
+                    dataField: "CabangID",
+                    caption: "Nama",
+                    allowEditing:false,
+                    visible: false
+                },
+                {
+                    dataField: "CabangName",
+                    caption: "Cabang",
                     allowEditing:false
                 },
                 {
