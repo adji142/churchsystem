@@ -200,7 +200,8 @@
       width: 150,
       height: 200,
       image_format: 'jpeg',
-      jpeg_quality: 90
+      jpeg_quality: 90,
+      constraints: { facingMode: 'environment' }
     });
     Webcam.attach( '#image_result' );
 
@@ -411,9 +412,9 @@
             },
             editing: {
                 mode: "row",
-                allowAdding:canAdd,
-                allowUpdating: canEdit,
-                allowDeleting: canDelete,
+                // allowAdding:canAdd,
+                // allowUpdating: canEdit,
+                // allowDeleting: canDelete,
                 texts: {
                     confirmDeleteMessage: ''  
                 }

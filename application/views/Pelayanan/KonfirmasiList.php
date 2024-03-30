@@ -219,9 +219,9 @@
             },
             editing: {
                 mode: "row",
-                allowAdding:canAdd,
-                allowUpdating: canEdit,
-                allowDeleting: canDelete,
+                // allowAdding:canAdd,
+                // allowUpdating: canEdit,
+                // allowDeleting: canDelete,
                 texts: {
                     confirmDeleteMessage: ''  
                 }

@@ -122,8 +122,8 @@ class _MainState extends State<MyApp> {
       );
     }
     return MaterialApp(
-      // home: LoadWebView(sess, "https://system.tiberias.id/Home"),
-      home: LoadWebView(sess, "http://192.168.1.66:8080/echurch/Home"),
+      home: LoadWebView(sess, "https://system.tiberias.id/Home"),
+      // home: LoadWebView(sess, "http://192.168.1.66:8080/echurch/Home"),
     );
     // return MaterialApp(
     //     title: 'Patroli Siap x86',

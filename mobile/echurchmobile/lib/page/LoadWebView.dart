@@ -43,19 +43,20 @@ class _WebViewState extends State<LoadWebView> {
       ),
       body: InAppWebView(
         key: webViewKey,
+        // this.widget.link.toString()
         initialUrlRequest: URLRequest(url: Uri.parse(this.widget.link.toString())),
-        onWebViewCreated: (controller) {
-          webViewController = controller;
-        },
         initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
             javaScriptEnabled:  true,
-            mediaPlaybackRequiresUserGesture: true
+            mediaPlaybackRequiresUserGesture: false
           ),
           android: AndroidInAppWebViewOptions(
             useShouldInterceptRequest: true
           )
         ),
+        onWebViewCreated: (controller) {
+          webViewController = controller;
+        },
         androidOnPermissionRequest: (InAppWebViewController controller, String origin, List<String> resources) async {
           return PermissionRequestResponse(resources: resources, action: PermissionRequestResponseAction.GRANT);
         },
