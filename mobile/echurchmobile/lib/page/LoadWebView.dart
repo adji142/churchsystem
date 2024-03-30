@@ -47,6 +47,15 @@ class _WebViewState extends State<LoadWebView> {
         onWebViewCreated: (controller) {
           webViewController = controller;
         },
+        initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(
+            javaScriptEnabled:  true,
+            mediaPlaybackRequiresUserGesture: true
+          ),
+          android: AndroidInAppWebViewOptions(
+            useShouldInterceptRequest: true
+          )
+        ),
         androidOnPermissionRequest: (InAppWebViewController controller, String origin, List<String> resources) async {
           return PermissionRequestResponse(resources: resources, action: PermissionRequestResponseAction.GRANT);
         },

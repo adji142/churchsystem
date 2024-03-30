@@ -160,11 +160,6 @@ class home extends CI_Controller {
 	}
 	public function index()
 	{
-		$rs = $this->ModelsExecuteMaster->GetCabang();
-		
-		$data['CabangID'] = $this->session->userdata('CabangID');
-		$data['CabangName'] = $this->session->userdata('CabangName');
-		$data['Cabang'] = $rs->result();
 
 		if ($this->session->userdata('UserID') == "") {
 			delete_cookie('ci_session');
@@ -172,6 +167,11 @@ class home extends CI_Controller {
       		echo "<script>location.replace('".base_url()."');</script>";
 		}
 		else{
+			$rs = $this->ModelsExecuteMaster->GetCabang();
+		
+			$data['CabangID'] = $this->session->userdata('CabangID');
+			$data['CabangName'] = $this->session->userdata('CabangName');
+			$data['Cabang'] = $rs->result();
 			$this->load->view('Dashboard', $data);
 		}
 	}
