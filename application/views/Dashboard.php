@@ -148,7 +148,7 @@
       var HideObject = document.getElementById('DashboardSection');
       console.log(AllowFinanceDashboard)
       if (AllowFinanceDashboard == 1) {
-        HideObject.style.display = 'none';
+        HideObject.style.display = 'All';
       }
       else if (AllowFinanceDashboard =='') {
         HideObject.style.display = 'none'; 
@@ -157,7 +157,7 @@
         HideObject.style.display = 'none'; 
       }
       else{
-        HideObject.style.display = 'All';
+        HideObject.style.display = 'none';
       }
 
       $('#CabangIDFilter').select2({
