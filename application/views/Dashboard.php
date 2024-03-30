@@ -153,6 +153,9 @@
       else if (AllowFinanceDashboard =='') {
         HideObject.style.display = 'none'; 
       }
+      else if (AllowFinanceDashboard ==0) {
+        HideObject.style.display = 'none'; 
+      }
       else{
         HideObject.style.display = 'All';
       }
