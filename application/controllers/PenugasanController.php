@@ -155,7 +155,7 @@
 				if ($formtype == "add") {
 					$NoTransaksi = "";
 					if ($formtype == "add") {
-						$prefix = 'JDW'.substr(date('Ymd'),2,8);
+						$prefix = 'JDW'.substr(date('Ymd'),2,4);
 
 						// Get Distinct Data
 						$this->db->select('NoTransaksi');
