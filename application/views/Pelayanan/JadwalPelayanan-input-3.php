@@ -793,7 +793,7 @@
 			          	$.each(PersonelFill,function (k,z) {
 			          		var option = document.createElement('option');
 			                option.value = z.NIK; // Set option value
-			                option.text = z.Nama + ' - ' + z.PosisiPelayanan; // Set option text
+			                option.text = z.Nama + ' - ' + z.NamaDivisi; // Set option text
 			                selectPersonil.appendChild(option);
 			          	});
 
@@ -961,7 +961,7 @@
           	$.each(PersonelFill,function (k,z) {
           		var option = document.createElement('option');
                 option.value = z.NIK; // Set option value
-                option.text = z.Nama + ' - ' + z.PosisiPelayanan; // Set option text
+                option.text = z.Nama + ' - ' + z.NamaDivisi; // Set option text
                 selectPersonil.appendChild(option);
           	});
 
