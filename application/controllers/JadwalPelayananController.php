@@ -15,6 +15,7 @@
 
 			$this->db->select('*');
 			$this->db->from('divisi');
+			$this->db->order_by('divisi.NamaDivisi', 'ASC');
 			$divisi = $this->db->get();
 
 			$data['Cabang'] = $rs->result();
@@ -104,6 +105,7 @@
 
 			$this->db->select('*');
 			$this->db->from('divisi');
+			$this->db->order_by('divisi.NamaDivisi', 'ASC');
 			$divisi = $this->db->get();
 
 			// penugasan

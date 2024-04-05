@@ -21,7 +21,7 @@
               <input type="date" name="TglAkhir" id="TglAkhir" class="form-control ">
             </div>
             <div class="col-md-3 col-sm-3 ">
-              Cabang
+              Divisi
               <select class="form-control col-md-6" id="DivisiIDFilter" name="DivisiIDFilter" >
                 <option value="">Pilih Divisi</option>
                 <?php
