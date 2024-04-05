@@ -37,6 +37,8 @@
 					$this->db->where(array("divisi.CabangID"=>$CabangID));
 				}
 
+				$this->db->order_by('divisi.NamaDivisi','ASC');
+
 				$rs = $this->db->get();
 				if ($rs->num_rows() > 0) {
 					$data['success'] = true;
