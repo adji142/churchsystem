@@ -13,8 +13,7 @@
           <div class="x_title">
             <h2>Divisi</h2>
             <br>
-            <hr>
-            <div class="col-md-6 col-sm-6 ">
+            <div class="col-md-6 col-sm-6 " style="display: none;">
               Cabang
               <select class="form-control" id="CabangIDFilter" name="CabangIDFilter" >
                 <option value="0">Pilih Cabang</option>
@@ -26,12 +25,11 @@
                 ?>
               </select>
             </div>
-            <div class="col-md-3 col-sm-3 ">
+            <div class="col-md-3 col-sm-3 " style="display: none;">
               <br>
               <button class="btn btn-primary" id="btn_Search">Cari Data</button>
             </div>
             <div class="clearfix"></div>
-            <hr>
 
           </div>
           <div class="x_content">
@@ -68,7 +66,7 @@
             </div>
           </div>
 
-          <div class="item form-group">
+          <div class="item form-group" style="display: none;">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Cabang <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
@@ -255,6 +253,7 @@
                     dataField: "CabangName",
                     caption: "Cabang",
                     allowEditing:false,
+                    visible:false
                 },
                 {
                     dataField: "FileItem",

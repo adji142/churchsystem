@@ -187,6 +187,10 @@
       getHeader();
     })
 
+    $('#btn_Search').click(function () {
+      getHeader();
+    })
+
     function getHeader() {
       $.ajax({
         type: "post",

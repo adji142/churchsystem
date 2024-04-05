@@ -14,7 +14,10 @@
 			$this->db->from('dem_provinsi');
 			$provinsi = $this->db->get();
 
+			$PosisiPelayanan= $this->ModelsExecuteMaster->GetData('posisipelayanan');
+
 			$data['prov'] = $provinsi->result();
+			$data['PosisiPelayanan'] = $PosisiPelayanan->result();
 			$this->load->view('V_Master/Personel',$data);
 		}
 		public function Read()
@@ -33,18 +36,20 @@
 
 			$roleData = $this->ModelsExecuteMaster->GetRoleData();
 
+			// var_dump($this->session->userdata('LevelAkses'));
 
 			try {
-				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END AS selectedPersonel " );
+				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END AS selectedPersonel, posisipelayanan.PosisiPelayanan " );
 				$this->db->from('personel');
 				$this->db->join('cabang','personel.CabangID=cabang.id','left');
-				$this->db->join('divisi','personel.DivisiID=divisi.id AND personel.CabangID = divisi.CabangID','left');
-				$this->db->join('jabatan','personel.JabatanID=jabatan.id AND personel.CabangID = jabatan.CabangID','left');
+				$this->db->join('divisi','personel.DivisiID=divisi.id','left');
+				$this->db->join('jabatan','personel.JabatanID=jabatan.id','left');
 				$this->db->join('ratepk','personel.RatePKCode=ratepk.id','left');
 				$this->db->join('dem_provinsi','personel.ProvID = dem_provinsi.prov_id','left');
 				$this->db->join('dem_kota','personel.KotaID = dem_kota.city_id','left');
 				$this->db->join('dem_kelurahan','personel.KelID = dem_kelurahan.subdis_id','left');
 				$this->db->join('dem_kecamatan','personel.KecID = dem_kecamatan.dis_id','left');
+				$this->db->join('posisipelayanan', 'posisipelayanan.id = personel.PosisiPelayanan','left');
 				$this->db->where("personel.StatusAnggota", 1);
 
 				if ($NIK != "") {
@@ -53,31 +58,52 @@
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
-				
-				// var_dump($roleData->LevelAkses);
-				if ($CabangID != "0" && $roleData->LevelAkses == "5") {
+			
+				if ($CabangID != "0") {
 					$this->db->where("personel.CabangID",$CabangID);
 				}
 
-				if ($Provinsi != -1 && $roleData->LevelAkses == "3") {
+				if ($Provinsi != '-1' ) {
 					$this->db->where("personel.ProvID",$Provinsi);
 				}
 
-				if ($Wilayah != "0" && $roleData->LevelAkses == "2") {
+				if ($Wilayah != "0" ) {
 					$this->db->where("cabang.Area",$Wilayah);
 				}
 
-				if ($Kota != "" && $roleData->LevelAkses == "4") {
+				if ($Kota != "") {
 					$this->db->where("personel.KotaID", $Kota);
 				}
 
-				if ($DivisiID != "" && $roleData->LevelAkses == "5") {
+				if ($DivisiID != "" ) {
 					// $oDivisi = explode(",", $DivisiID)
 					$this->db->where("personel.DivisiID", $DivisiID);
 				}
 
 				if ($LevelAkses != "0") {
 					$this->db->where("jabatan.Level >=", $LevelAkses);
+				}
+
+				switch ($roleData->LevelAkses) {
+					case '5':
+						$this->db->where("personel.CabangID",$CabangID);
+						// var_dump("5");
+						break;
+					case '4':
+						$this->db->where("personel.KotaID", $Kota);
+						// var_dump("4");
+						break;
+					case '3':
+						$this->db->where("personel.ProvID",$Provinsi);
+						// var_dump("3");
+						break;
+					case '2':
+						$this->db->where("cabang.Area",$Wilayah);
+						// var_dump("2");
+					case '0' :
+						$this->db->where("jabatan.Level >=", $LevelAkses);
+						// var_dump("0");
+						break;
 				}
 
 
@@ -125,8 +151,8 @@
 				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END AS selectedPersonel " );
 				$this->db->from('personel');
 				$this->db->join('cabang','personel.CabangID=cabang.id','left');
-				$this->db->join('divisi','personel.DivisiID=divisi.id AND personel.CabangID = divisi.CabangID','left');
-				$this->db->join('jabatan','personel.JabatanID=jabatan.id AND personel.CabangID = jabatan.CabangID','left');
+				$this->db->join('divisi','personel.DivisiID=divisi.id','left');
+				$this->db->join('jabatan','personel.JabatanID=jabatan.id','left');
 				$this->db->join('ratepk','personel.RatePKCode=ratepk.id','left');
 				$this->db->join('dem_provinsi','personel.ProvID = dem_provinsi.prov_id','left');
 				$this->db->join('dem_kota','personel.KotaID = dem_kota.city_id','left');
@@ -156,6 +182,10 @@
 
 				if ($Kota != "") {
 					$this->db->where("personel.KotaID", $Kota);
+				}
+
+				if ($DivisiID != "") {
+					$this->db->where("personel.DivisiID", $DivisiID);
 				}
 
 				$this->db->order_by("CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END ");
@@ -240,6 +270,7 @@
 			$image_base64 = $this->input->post('image_base64');
 			$Email = $this->input->post('Email');
 			$NoHP = $this->input->post('NoHP');
+			$PosisiPelayanan = $this->input->post('PosisiPelayanan');
 
 			$CreatedOn = date('Y-m-d h:i:s');
 			$UpdatedOn = date('Y-m-d h:i:s');
@@ -278,7 +309,8 @@
 					'StatusAnggota' => 1,
 					'Foto' => $image_base64,
 					'NoHP' => $NoHP,
-					'Email' => $Email
+					'Email' => $Email,
+					'PosisiPelayanan' => $PosisiPelayanan
 				);
 
 				if ($formtype == "add") {

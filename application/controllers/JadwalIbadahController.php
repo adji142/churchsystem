@@ -35,15 +35,16 @@
 
 			$jadwalibadah = $this->db->get();
 
-			$this->db->select("divisi.id AS DivisiID,jabatan.id AS JabatanID, divisi.NamaDivisi, jabatan.NamaJabatan, CASE WHEN templatepelayan.id IS NULL THEN 'N' ELSE 'Y' END checked, COALESCE(templatepelayan.JumlahPelayan,0) JumlahPelayan");
+			// $this->db->select("divisi.id AS DivisiID,jabatan.id AS JabatanID, divisi.NamaDivisi, jabatan.NamaJabatan, CASE WHEN templatepelayan.id IS NULL THEN 'N' ELSE 'Y' END checked, COALESCE(templatepelayan.JumlahPelayan,0) JumlahPelayan");
+			$this->db->select("divisi.id AS DivisiID,0 AS JabatanID, divisi.NamaDivisi, '' NamaJabatan, CASE WHEN templatepelayan.id IS NULL THEN 'N' ELSE 'Y' END checked, COALESCE(templatepelayan.JumlahPelayan,0) JumlahPelayan");
 			$this->db->from('divisi');
-			$this->db->join('jabatan', 'divisi.id = jabatan.DivisiID AND divisi.CabangID = jabatan.CabangID','left');
-			$this->db->join('templatepelayan', 'divisi.id = templatepelayan.DivisiID AND jabatan.id = templatepelayan.JabatanID AND divisi.CabangID = templatepelayan.CabangID','left');
+			// $this->db->join('jabatan', 'divisi.id = jabatan.DivisiID AND divisi.CabangID = jabatan.CabangID','left');
+			$this->db->join('templatepelayan', 'divisi.id = templatepelayan.DivisiID','left');
 			$this->db->where(array("templatepelayan.BaseReff"=>$id));
 			$this->db->where(array("templatepelayan.BaseType"=>'JADWALIBADAH'));
 			$this->db->where(array("templatepelayan.CabangID"=>$CabangID));
 			$this->db->order_by('divisi.id', 'ASC');
-			$this->db->order_by('jabatan.id', 'ASC');
+			// $this->db->order_by('jabatan.id', 'ASC');
 
 			$template = $this->db->get();
 
@@ -309,10 +310,11 @@
 			$BaseType = $this->input->post('BaseType');
 
 			try {
-				$this->db->select("divisi.id AS DivisiID,jabatan.id AS JabatanID, divisi.NamaDivisi, jabatan.NamaJabatan, CASE WHEN templatepelayan.id IS NULL THEN 'N' ELSE 'Y' END checked, COALESCE(templatepelayan.JumlahPelayan, 1) JumlahPelayan ");
+				// $this->db->select("divisi.id AS DivisiID,jabatan.id AS JabatanID, divisi.NamaDivisi, jabatan.NamaJabatan, CASE WHEN templatepelayan.id IS NULL THEN 'N' ELSE 'Y' END checked, COALESCE(templatepelayan.JumlahPelayan, 1) JumlahPelayan ");
+				$this->db->select("divisi.id AS DivisiID,0 AS JabatanID, divisi.NamaDivisi,  '' NamaJabatan, CASE WHEN templatepelayan.id IS NULL THEN 'N' ELSE 'Y' END checked, COALESCE(templatepelayan.JumlahPelayan, 1) JumlahPelayan ");
 				$this->db->from('divisi');
-				$this->db->join('jabatan', 'divisi.id = jabatan.DivisiID AND divisi.CabangID = jabatan.CabangID','left');
-				$this->db->join('templatepelayan', "divisi.id = templatepelayan.DivisiID AND jabatan.id = templatepelayan.JabatanID AND divisi.CabangID = templatepelayan.CabangID AND templatepelayan.BaseReff= '".$BaseType."' ",'left');
+				// $this->db->join('jabatan', 'divisi.id = jabatan.DivisiID','left');
+				$this->db->join('templatepelayan', "divisi.id = templatepelayan.DivisiID AND templatepelayan.BaseReff= '".$BaseType."' ",'left');
 				// $this->db->where('templatepelayan.BaseType', $BaseType);
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
@@ -320,8 +322,8 @@
 				if ($CabangID != "0") {
 					$this->db->where(array("divisi.CabangID"=>$CabangID));
 				}
-				$this->db->order_by('divisi.id', 'ASC');
-				$this->db->order_by('jabatan.id', 'ASC');
+				$this->db->order_by('divisi.NamaDivisi', 'ASC');
+				// $this->db->order_by('jabatan.id', 'ASC');
 
 				$rs = $this->db->get();
 				if ($rs->num_rows() > 0) {
@@ -331,6 +333,34 @@
 			} catch (Exception $e) {
 				$data['message'] = $e->getMessage();
 			}
+			echo json_encode($data);
+		}
+
+		public function ReadIbadahTemplate()
+		{
+			$data = array('success'=>false, 'message'=>'', 'data'=>array());
+
+			$CabangID = $this->input->post('CabangID');
+			$Hari = $this->input->post('Hari');
+			$DivisiID = $this->input->post('DivisiID');
+
+			$this->db->select('jadwalibadah.id, jadwalibadah.NamaIbadah,jadwalibadah.Hari, templatepelayan.DivisiID, divisi.NamaDivisi, templatepelayan.JumlahPelayan');
+			$this->db->from('jadwalibadah');
+			$this->db->join('templatepelayan','jadwalibadah.id = templatepelayan.BaseReff and jadwalibadah.CabangID = templatepelayan.CabangID', 'left');
+			$this->db->join('divisi', 'templatepelayan.DivisiID = divisi.id', 'left');
+			$this->db->where('jadwalibadah.CabangID', $CabangID);
+			$this->db->where('jadwalibadah.Hari', $Hari);
+
+			if ($DivisiID != "") {
+				$this->db->where('templatepelayan.DivisiID', $DivisiID);
+			}
+
+			$this->db->order_by('jadwalibadah.MulaiJam', 'ASC');
+
+			$Jadwal = $this->db->get();
+
+			$data['data'] = $Jadwal->result();
+
 			echo json_encode($data);
 		}
 	}

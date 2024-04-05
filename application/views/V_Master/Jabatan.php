@@ -62,7 +62,7 @@
             </div>
           </div>
 
-          <div class="item form-group">
+          <div class="item form-group" style="display: none;">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Cabang <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">

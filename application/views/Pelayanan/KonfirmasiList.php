@@ -120,7 +120,7 @@
       var NikPersonel = "<?php echo $NIKPersonel; ?>";
       $.ajax({
         type: "post",
-        url: "<?=base_url()?>JadwalPelayananController/ReadKonfirmasiList",
+        url: "<?=base_url()?>PenugasanController/ReadKonfirmasiList",
         data: {
           'TglAwal':$('#TglAwal').val(),
           'TglAkhir':$('#TglAkhir').val(),
@@ -135,6 +135,10 @@
         }
       });
     }
+
+    $('#btn_Search').click(function () {
+      readData();
+    })
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
       $('#btn_Save').attr('disabled',true);
@@ -242,13 +246,13 @@
                     allowEditing:false
                 },
                 {
-                    dataField: "TglTransaksi",
+                    dataField: "Tanggal",
                     caption: "Tanggal",
                     allowEditing:false,
                 },
                 {
-                    dataField: "JenisJadwal",
-                    caption: "Jenis Jadwal",
+                    dataField: "NamaIbadah",
+                    caption: "Ibadah / Sesi",
                     allowEditing:false
                 },
                 {
@@ -273,11 +277,6 @@
                     allowEditing:false,
                 },
                 {
-                    dataField: "NamaJadwal",
-                    caption: "Nama Jadwal",
-                    allowEditing:false,
-                },
-                {
                     dataField: "JamMulai",
                     caption: "Mulai",
                     allowEditing:false,
@@ -294,7 +293,7 @@
                     visible: false
                 },
                 {
-                    dataField: "Konfirmasi",
+                    dataField: "diKonfirmasi",
                     caption: "Konfirmasi",
                     allowEditing:false,
                 },
@@ -314,7 +313,7 @@
 
                       console.log(cellInfo.data)
                       var LinkAccess = "";
-                      if (cellInfo.data.Konfirmasi == "N") {
+                      if (cellInfo.data.diKonfirmasi == "N") {
                         LinkAccess = "<button class='btn btn-warning' onClick='absenModals()'>Konfirmasi</button>";
                       }
                       // console.log();

@@ -202,25 +202,33 @@
         $('#CabangID').val(jadwalibadah[0]['CabangID']).trigger('change');
         $('#Keterangan').val(jadwalibadah[0]['Keterangan']);
 
-        // console.log($('#template').val())
-        if ($('#template').val() != "") {
+        console.log($('#template').val())
+        if ($('#template').val() != "" || $('#template').val() != "[]") {
           template = $.parseJSON($('#template').val());
           // console.log(template)
 
-          $.each(template,function (k,v) {
-            var item = {
-              'DivisiID' : v.DivisiID,
-              'JabatanID' : v.JabatanID,
-              'NamaDivisi' : v.NamaDivisi,
-              'NamaJabatan' : v.NamaJabatan,
-              'checked' : v.checked,
-              'JumlahPelayan' : v.JumlahPelayan
-            }
-            jsonObject.push(item);
-          })
-          bindGrid(jsonObject)
+          if (template.length > 0) {
+            jsonObject.length = 0;
+            var x = 0;
+            $.each(template,function (k,v) {
+              var item = {
+                'DivisiID' : v.DivisiID,
+                'JabatanID' : v.JabatanID,
+                'NamaDivisi' : v.NamaDivisi,
+                'NamaJabatan' : v.NamaJabatan,
+                'checked' : v.checked,
+                'JumlahPelayan' : v.JumlahPelayan
+              }
+              // console.log(x);
+              x += 1;
+              jsonObject.push(item);
+            });
+            // console.log(jsonObject);
+            bindGrid(jsonObject)
+          }
         }
       }
+      setEnableCommand();
     });
 
 
@@ -245,6 +253,7 @@
 
         // console.log(JSON.stringify(dataParam));
         $.ajax({
+            async:false,
             url: "<?=base_url()?>JadwalIbadahController/CRUDJson",
             type: 'POST',
             contentType: 'application/json',
@@ -282,9 +291,10 @@
 
     $('#CabangID').change(function () {
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>JadwalIbadahController/ReadTemplate",
-        data: {'CabangID':$('#CabangID').val(),'BaseType':'JADWALIBADAH'},
+        data: {'CabangID':"0",'BaseType':'JADWALIBADAH'},
         dataType: "json",
         success: function (response) {
           // console.log(template);
@@ -300,7 +310,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>DivisiController/Read",
-        data: {'id':'', 'CabangID': $('#CabangID').val() },
+        data: {'id':'', 'CabangID': "0" },
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
@@ -330,7 +340,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>JabatanController/Read",
-        data: {'DivisiID':$('#DivisiID').val(), 'CabangID': $('#CabangID').val() },
+        data: {'DivisiID':$('#DivisiID').val(), 'CabangID': "0" },
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
@@ -399,6 +409,7 @@
       var where_value = id;
       var table = 'users';
       $.ajax({
+        async:false,
         type: "post",
         url: "<?=base_url()?>JadwalIbadahController/Read",
         data: {'id':id, CabangID:CabangID},
@@ -429,7 +440,7 @@
       var dataGridInstance = $("#gridContainer").dxDataGrid({
         allowColumnResizing: true,
             dataSource: data,
-            keyExpr: "JabatanID",
+            keyExpr: "DivisiID",
             showBorders: true,
             allowColumnResizing: true,
             columnAutoWidth: true,
@@ -496,6 +507,7 @@
                     dataField: "NamaJabatan",
                     caption: "Jabatan",
                     allowEditing:false,
+                    visible:false
                 },
                 {
                     dataField: "JumlahPelayan",

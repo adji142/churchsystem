@@ -12,7 +12,13 @@
 		{
 			// var_dump($this->session);
 			$rs = $this->ModelsExecuteMaster->GetCabang();
+
+			$this->db->select('*');
+			$this->db->from('divisi');
+			$divisi = $this->db->get();
+
 			$data['Cabang'] = $rs->result();
+			$data['divisi'] = $divisi->result();
 			$this->load->view('Pelayanan/JadwalPelayanan',$data);
 		}
 		public function ReadHeader()
@@ -94,14 +100,27 @@
 			$this->db->from('areapelayanan');
 			$area = $this->db->get();
 
+			// Divisi
+
+			$this->db->select('*');
+			$this->db->from('divisi');
+			$divisi = $this->db->get();
+
+			// penugasan
+
+			$penugasan = $this->ModelsExecuteMaster->FindData(array('NoTransaksi'=>$NoTransaksi),'penugasanpelayan');
+
+
 			$data['Cabang'] = $cabang->result();
 			$data['header'] = $Header->result();
 			$data['detail'] = json_encode($Detail);
 			$data['Hari'] = $getHari->result();
 			$data['prov'] = $provinsi->result();
 			$data['Wilayah'] = $area->result();
+			$data['divisi'] = $divisi->result();
+			$data['penugasan'] = $penugasan->result();
 
-			$this->load->view('Pelayanan/JadwalPelayanan-input-2',$data);
+			$this->load->view('Pelayanan/JadwalPelayanan-input-3',$data);
 		}
 
 		public function formKonfirmasi()
@@ -211,7 +230,7 @@
 			// $data = array('success'=>false, 'message'=> "", 'data'=>array());
 
 			$this->db->select('*');
-			$this->db->from('penugasanjadwalpelayanan');
+			$this->db->from('penugasanpelayan');
 			$this->db->where('KonfirmasiID',$VerificationID);
 			// $this->db->where('Konfirmasi !=', '0');
 			$oData = $this->db->get();
@@ -245,7 +264,7 @@
 					'KonfirmasiTime' => date('Y-m-d h:i:s'),
 					'KonfirmasiKeterangan' => $KonfirmasiKeterangan
 				);
-				$this->db->update('penugasanjadwalpelayanan', $oObject, array('KonfirmasiID'=>$KonfirmasiID));
+				$this->db->update('penugasanpelayan', $oObject, array('KonfirmasiID'=>$KonfirmasiID));
 
 				$error = $this->db->error();
 

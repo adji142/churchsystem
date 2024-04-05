@@ -79,28 +79,28 @@
           <br>
           <div class="item form-group">
             <div class="col-md-12 col-sm-12 ">
-              <label></label>
+              <label>Nomor Induk Personel</label>
               <input type="text" name="NIK" id="NIK" required="" placeholder="<AUTO>" class="form-control " value="" readonly="">
               <input type="hidden" name="formtype" id="formtype" value="add">
             </div>
           </div>
           <div class="item form-group">
             <div class="col-md-3 col-sm-3 ">
-              <label></label>
+              <label>Gelar Depan</label>
               <input type="text" name="GelarDepan" id="GelarDepan" placeholder="Gelar Depan" class="form-control ">
             </div>
             <div class="col-md-6 col-sm-6 ">
-              <label></label>
+              <label>Nama</label>
               <input type="text" name="NamaLengkap" id="NamaLengkap" required="" placeholder="Nama Lengkap" class="form-control ">
             </div>
             <div class="col-md-3 col-sm-3 ">
-              <label></label>
+              <label>Gelar belakang</label>
               <input type="text" name="GelarBelakang" id="GelarBelakang" placeholder="Gelar Belakang" class="form-control ">
             </div>
           </div>
           <div class="item form-group">
-            <label ></label>
             <div class="col-md-3 col-sm-3 ">
+              <label >Provinsi</label>
               <select id="ProvID" name="ProvID" class="form-control">
                 <option value="-1">Pilih Provinsi</option>
                 <?php 
@@ -110,28 +110,28 @@
                 ?>
               </select>
             </div>
-            <label></label>
             <div class="col-md-3 col-sm-3 ">
+              <label>Kota</label>
               <select id="KotaID" name="KotaID" class="form-control">
                 <option value="-1">Pilih Kota</option>
               </select>
             </div>
-            <label></label>
             <div class="col-md-3 col-sm-3 ">
+              <label>Kecamatan</label>
               <select id="KecID" name="KecID" class="form-control">
                 <option value="-1">Pilih Kecamatan</option>
               </select>
             </div>
-            <label></label>
             <div class="col-md-3 col-sm-3 ">
+              <label>Kelurahan</label>
               <select id="KelID" name="KelID" class="form-control">
                 <option value="-1">Pilih Kelurahan</option>
               </select>
             </div>
           </div>
-          <label></label>
           <div class="item form-group">
             <div class="col-md-12 col-sm-12 ">
+              <label>Cabang</label>
               <select class="form-control col-md-12" id="CabangID" name="CabangID" >
                 <option value="0">Pilih Cabang</option>
                 
@@ -142,14 +142,14 @@
 
           <div class="item form-group">
             <div class="col-md-6 col-sm-6 ">
-              <label></label>
+              <label>Divisi</label>
               <select class="form-control col-md-12" id="DivisiID" name="DivisiID" >
                 <option value="0">Pilih Divisi</option>
               </select>
             </div>
             <label></label>
             <div class="col-md-6 col-sm-6 ">
-              <label></label>
+              <label>Jabatan</label>
               <select class="form-control col-md-12" id="JabatanID" name="JabatanID" >
                 <option value="0">Pilih Jabatan</option>
               </select>
@@ -157,8 +157,22 @@
           </div>
 
           <div class="item form-group">
-            <label></label>
-            <div class="col-md-6 col-sm-6 ">
+            <div class="col-md-12 col-sm-12 ">
+              <label>Posisi Pelayanan</label>
+              <select class="form-control col-md-12" id="PosisiPelayanan" name="PosisiPelayanan" >
+                <option value="0">Pilih Posisi Pelayanan</option>
+                <?php 
+                  foreach ($PosisiPelayanan as $key) {
+                    echo "<option value = '".$key->id."' >".$key->PosisiPelayanan."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-2 col-sm-2" for="TglLahir">Tanggal Lahir</label>
+            <div class="col-md-4 col-sm-4 ">
               <input type="text" name="TempatLahir" id="TempatLahir" required="" placeholder="Tempat Lahir" class="form-control ">
             </div>
             <label class="col-form-label col-md-2 col-sm-2" for="TglLahir">Tanggal Lahir</label>
@@ -169,7 +183,7 @@
 
           <div class="item form-group">
             <div class="col-md-4 col-sm-4 ">
-              <label></label>
+              <label>Agama</label>
               <select class="form-control col-md-12" id="Agama" name="Agama" >
                 <option value="">Pilih Agama</option>
                 <option value="Kristen">Kristen</option>
@@ -182,7 +196,7 @@
             </div>
             <label></label>
             <div class="col-md-4 col-sm-4 ">
-              <label></label>
+              <label>Jenis Kelamin</label>
               <select class="form-control col-md-12" id="JenisKelamin" name="JenisKelamin" >
                 <option value="">Pilih Jenis Kelamin</option>
                 <option value="L">Laki-Laki</option>
@@ -191,7 +205,7 @@
             </div>
             <label></label>
             <div class="col-md-4 col-sm-4 ">
-              <label></label>
+              <label>Rate PK</label>
               <select class="form-control col-md-12" id="RatePKCode" name="RatePKCode" >
                 <option value="">Pilih Rate PK</option>
               </select>
@@ -200,24 +214,25 @@
 
           <div class="item form-group">
             <div class="col-md-12 col-sm-12 ">
-              <label></label>
+              <label>Nomer Induk Pendudukan</label>
               <input type="text" name="NomorKependudukan" id="NomorKependudukan" required="" placeholder="Nomor Induk Kependudukan (KTP / SIM / PASPOR)" class="form-control ">
             </div>
           </div>
 
           <div class="item form-group">
-            <label></label>
             <div class="col-md-12 col-sm-12 ">
+              <label>Alamat</label>
               <textarea id="Alamat" name="Alamat" class="resizable_textarea form-control" placeholder="Alamat"></textarea>
             </div>
           </div>
 
           <div class="item form-group">
-            <label></label>
             <div class="col-md-6 col-sm-6 ">
+              <label>Email</label>
               <input type="mail" name="Email" id="Email" required="" placeholder="Email" class="form-control ">
             </div>
             <div class="col-md-6 col-sm-6 ">
+              <label>Nomor HP</label>
               <input type="number" name="NoHP" id="NoHP" required="" placeholder="6281325058258" class="form-control ">
             </div>
           </div>
@@ -271,7 +286,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>PersonelController/Read",
-        data: {'NIK':'', CabangID:CabangID,'Provinsi': -1},
+        data: {'NIK':'', CabangID:CabangID,'Provinsi': -1, "Wilayah":0},
         dataType: "json",
         success: function (response) {
           if (response.success == true) {
@@ -418,7 +433,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>DivisiController/Read",
-        data: {'id':'', 'CabangID': $('#CabangID').val() },
+        data: {'id':'', 'CabangID': "0" },
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
@@ -475,7 +490,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>JabatanController/Read",
-        data: {'DivisiID':$('#DivisiID').val(), 'CabangID': $('#CabangID').val() },
+        data: {'DivisiID':$('#DivisiID').val(), 'CabangID': "0" },
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
@@ -583,6 +598,7 @@
               $('#image_base64').val(v.Foto);
               $('#Email').val(v.Email);
               $('#NoHP').val(v.NoHP);
+              $('#PosisiPelayanan').val(v.PosisiPelayanan).change();
 
               $('#image_result').html("<img src ='"+v.Foto+"'> ");
               $('#modal_').modal('show');
@@ -636,6 +652,12 @@
                 fileName: "Personel"
             },
             columns: [
+                {
+                    type: "buttons",
+                    buttons: ["edit", "delete"],
+                    visible: true,
+                    fixed: true,
+                },
                 {
                     dataField: "NIK",
                     caption: "#",
@@ -772,9 +794,16 @@
             onRowRemoved: function(e) {
               // console.log(e);
             },
-        onEditorPrepared: function (e) {
-          // console.log(e);
-        }
+            onEditorPrepared: function (e) {
+              // console.log(e);
+            },
+            // onRowPrepared: function(e) {
+            //     // Check your condition here to disable edit and delete links
+            //     if (e.rowType === "data") {
+            //         e.rowElement.find(".dx-link-edit").addClass("dx-state-disabled");
+            //         e.rowElement.find(".dx-link-delete").addClass("dx-state-disabled");
+            //     }
+            // }
         });
         // add dx-toolbar-after
         // $('.dx-toolbar-after').append('Tambah Alat untuk di pinjam ');

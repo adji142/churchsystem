@@ -234,16 +234,19 @@
       readData();
     });
 
+    $('#btn_Search').click(function () {
+      readData();
+    })
     $('#CabangID').change(function () {
       $.ajax({
         async:false,
         type: "post",
         url: "<?=base_url()?>DivisiController/Read",
-        data: {'id':'', 'CabangID': $('#CabangID').val() },
+        data: {'id':'' ,'CabangID' : "0"},
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
-          // console.log(response);
+          console.log(response);
           $('#DivisiID').empty();
           var newOption = $('<option>', {
             value: -1,
@@ -268,7 +271,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>JabatanController/Read",
-        data: {'DivisiID':$('#DivisiID').val(), 'CabangID': $('#CabangID').val() },
+        data: {'DivisiID':$('#DivisiID').val(), 'CabangID' : "0"},
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
@@ -296,7 +299,7 @@
       var NikPersonel = "<?php echo $NIKPersonel; ?>";
       $.ajax({
         type: "post",
-        url: "<?=base_url()?>AbsensiController/Read",
+        url: "<?=base_url()?>AbsensiController/ReadPerDivisi",
         data: {
           'TglAwal':$('#TglAwal').val(),
           'TglAkhir':$('#TglAkhir').val(),
@@ -435,20 +438,9 @@
                     allowEditing:false
                 },
                 {
-                    dataField: "TglTransaksi",
+                    dataField: "Tanggal",
                     caption: "Tanggal",
                     allowEditing:false,
-                },
-                {
-                    dataField: "JenisJadwal",
-                    caption: "Jenis Jadwal",
-                    allowEditing:false
-                },
-                {
-                    dataField: "CabangID",
-                    caption: "CabangID",
-                    allowEditing:false,
-                    visible: false
                 },
                 {
                     dataField: "PIC",
@@ -466,8 +458,8 @@
                     allowEditing:false,
                 },
                 {
-                    dataField: "NamaJadwal",
-                    caption: "Nama Jadwal",
+                    dataField: "NamaIbadah",
+                    caption: "Ibadah / Sesi",
                     allowEditing:false,
                 },
                 {
@@ -595,7 +587,7 @@
       // alert(NikPersonel);
       $.ajax({
         type: "post",
-        url: "<?=base_url()?>AbsensiController/Read",
+        url: "<?=base_url()?>AbsensiController/ReadPerDivisi",
         data: {
           'TglAwal':$('#TglAwal').val(),
           'TglAkhir':$('#TglAkhir').val(),
@@ -607,7 +599,7 @@
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
-          // console.log(response.data);
+          console.log(response.data);
           $.each(response.data,function (k,v) {
             $('#CabangID').val(v.CabangID).trigger('change');
             $('#NIK').val(v.PIC);
@@ -615,9 +607,9 @@
             $('#DivisiID').val(v.DivisiID).trigger('change');
             $('#JabatanID').val(v.JabatanID).trigger('change');
             $('#ReffJadwal').val(SelectedNoJadwal);
-
-            $('#modal_').modal('show');
           });
+
+          $('#modal_').modal('show');
         }
       });
     }

@@ -71,6 +71,50 @@
 			}
 			echo json_encode($data);
 		}
+
+		public function ReadPerDivisi()
+		{
+			$TglAwal = $this->input->post('TglAwal');
+			$TglAkhir = $this->input->post('TglAkhir');
+			$NoTransaksi = $this->input->post('NoTransaksi');
+			$CabangID = $this->input->post('CabangID');
+			$NikPersonel = $this->input->post('NikPersonel');
+			$NoReff = $this->input->post('NoReff');
+
+
+			$this->db->select("penugasanpelayan.*, 
+				divisi.NamaDivisi,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap, ' ', personel.GelarBelakang) As NamaLengkap, 
+				CASE WHEN penugasanpelayan.Konfirmasi = 1 THEN 'Y' ELSE CASE WHEN penugasanpelayan.Konfirmasi = 2 THEN 'N' ELSE '' END END AS diKonfirmasi, 
+				penugasanpelayan.KonfirmasiKeterangan, cabang.CabangName, jadwalibadah.NamaIbadah, 
+				DATE_FORMAT(jadwalibadah.MulaiJam,'%T') AS JamMulai, 
+				DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') AS JamSelesai, absensi.TglTransaksi TglAbsen, COALESCE(absensi.NoTransaksi, '') NoAbsen, personel.JabatanID");
+			$this->db->from('penugasanpelayan');
+			$this->db->join('divisi', 'penugasanpelayan.DivisiID = divisi.id','left');
+			$this->db->join('defaulthari', 'penugasanpelayan.Hari = defaulthari.KodeHari','left');
+			$this->db->join('personel', 'penugasanpelayan.PIC = personel.NIK', 'LEFT');
+			$this->db->join('cabang', 'penugasanpelayan.CabangID = cabang.id', 'LEFT');
+			$this->db->join('jadwalibadah', 'penugasanpelayan.JadwalIbadahID = jadwalibadah.id', 'LEFT');
+			$this->db->join('absensi','penugasanpelayan.NoTransaksi = absensi.ReffJadwal AND penugasanpelayan.PIC = absensi.NIK','left');
+			$this->db->where('penugasanpelayan.Tanggal >=', $TglAwal);
+			$this->db->where('penugasanpelayan.Tanggal <=', $TglAkhir);
+
+			if ($NikPersonel != "") {
+				$this->db->where(array("penugasanpelayan.PIC"=>$NikPersonel));
+			}
+
+			if ($NoReff != "") {
+					$this->db->where(array("penugasanpelayan.NoTransaksi"=>$NoReff));
+				}
+
+
+			$rs = $this->db->get();
+			if ($rs->num_rows() > 0) {
+				$data['success'] = true;
+				$data['data'] = $rs->result();
+			}
+
+			echo json_encode($data);
+		}
 		public function CRUD()
 		{
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());

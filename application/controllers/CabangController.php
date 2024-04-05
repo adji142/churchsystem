@@ -20,7 +20,10 @@
 			$Area = $this->input->post('Area');
 			$ProvID = $this->input->post('ProvID');
 			$KotaID = $this->input->post('KotaID');
+			$Wilayah = $this->input->post('Wilayah');
 
+			$LevelAkses = ($this->session->userdata('UserName') == 'admin') ? "0" : $this->session->userdata('LevelAkses');
+			$roleData = $this->ModelsExecuteMaster->GetRoleData();
 			try {
 				$this->db->select('cabang.*,dem_provinsi.prov_name,dem_kota.city_name, dem_kelurahan.subdis_name, dem_kecamatan.dis_name, areapelayanan.NamaArea');
 				$this->db->from('cabang');
@@ -37,12 +40,14 @@
 
 				// var_dump("cabangdong". $this->session->userdata('CabangID'));
 
-				if ($this->session->userdata('CabangID') != "0") {
-					$this->db->where(array("cabang.id"=>$this->session->userdata('CabangID')));
-				}
+				// if ($this->session->userdata('CabangID') != "0") {
+				// 	$this->db->where(array("cabang.id"=>$this->session->userdata('CabangID')));
+				// }
 
 				if ($ProvID != "") {
-					$this->db->where('ProvID',$ProvID);
+					// $this->db->where('ProvID',$ProvID);
+					// $this->db->or_where('ProvID', '-1');
+					$this->db->where("(ProvID = '".$ProvID."' or 'ProvID' = '-1' )",NULL, FALSE);
 				}
 
 				if ($Area != "") {
@@ -51,6 +56,28 @@
 
 				if ($KotaID != "") {
 					$this->db->where('cabang.KotaID',$KotaID);
+				}
+
+				// var_dump($roleData->LevelAkses);
+				switch ($roleData->LevelAkses) {
+					case '5':
+						// $this->db->where("cabang.id",$id);
+						$this->db->where(array("cabang.id"=>$this->session->userdata('CabangID')));
+						break;
+					case '4':
+						$this->db->where("cabang.KotaID", $KotaID);
+						break;
+					case '3':
+						$this->db->where("cabang.ProvID",$ProvID);
+						break;
+					case '2':
+						$this->db->where("cabang.Area",$Area);
+					case '0' :
+						$this->db->where("jabatan.Level >=", $LevelAkses);
+						break;
+					default:
+
+						break;
 				}
 
 				$rs = $this->db->get();

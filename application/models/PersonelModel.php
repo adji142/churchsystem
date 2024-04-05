@@ -17,8 +17,8 @@ class PersonelModel extends CI_Model
 
         $this->db->select('personel.*, divisi.NamaDivisi, jabatan.NamaJabatan, jabatan.Level');
         $this->db->from('personel');
-        $this->db->join('divisi','personel.DivisiID = divisi.id and personel.CabangID = divisi.CabangID', 'LEFT');
-        $this->db->join('jabatan','personel.JabatanID = jabatan.id and personel.CabangID = divisi.CabangID', 'LEFT');
+        $this->db->join('divisi','personel.DivisiID = divisi.id', 'LEFT');
+        $this->db->join('jabatan','personel.JabatanID = jabatan.id', 'LEFT');
         $this->db->where('personel.NIK', $Nik);
 
         $oPersonel = $this->db->get();

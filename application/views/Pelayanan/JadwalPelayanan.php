@@ -22,12 +22,12 @@
             </div>
             <div class="col-md-3 col-sm-3 ">
               Cabang
-              <select class="form-control col-md-6" id="CabangIDFilter" name="CabangIDFilter" >
-                <option value="0">Pilih Cabang</option>
+              <select class="form-control col-md-6" id="DivisiIDFilter" name="DivisiIDFilter" >
+                <option value="">Pilih Divisi</option>
                 <?php
 
-                  foreach ($Cabang as $key) {
-                    echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
+                  foreach ($divisi as $key) {
+                    echo "<option value = '".$key->id."'>".$key->NamaDivisi."</option>";
                   }
                 ?>
               </select>
@@ -142,12 +142,13 @@
 <script type="text/javascript">
   $(function () {
     var CabangID = "<?php echo $CabangID; ?>"
+    var DivisiID = "<?php echo $this->session->userdata('DivisiID'); ?>";
     $(document).ready(function () {
       $('#CabangID').select2({
         width: '200px'
       });
 
-      $('#CabangIDFilter').select2({
+      $('#DivisiIDFilter').select2({
         width: '100%'
       });
 
@@ -156,7 +157,7 @@
         $('#CabangID').val(CabangID).trigger('change');
 
         // $('#CabangIDFilter').prop('disabled', true);
-        $('#CabangIDFilter').val(CabangID).trigger('change');
+        $('#DivisiIDFilter').val(DivisiID).trigger('change');
       }
 
       var now = new Date();
@@ -184,8 +185,11 @@
     function getHeader() {
       $.ajax({
         type: "post",
-        url: "<?=base_url()?>JadwalPelayananController/ReadHeader",
-        data: {'TglAwal':$('#TglAwal').val(),'TglAkhir' : $('#TglAkhir').val(),CabangID:$('#CabangIDFilter').val()},
+        url: "<?=base_url()?>PenugasanController/ReadHeader",
+        data: {
+          'TglAwal':$('#TglAwal').val(),
+          'TglAkhir' : $('#TglAkhir').val(),
+          DivisiID:$('#DivisiIDFilter').val()},
         dataType: "json",
         success: function (response) {
           if (response.success == true) {
@@ -214,8 +218,8 @@
     function getDetail(NoTransaksi, xCabangID) {
       $.ajax({
         type: "post",
-        url: "<?=base_url()?>JadwalPelayananController/ReadDetail",
-        data: {NoTransaksi:NoTransaksi,'CabangID':xCabangID},
+        url: "<?=base_url()?>PenugasanController/ReadDetail",
+        data: {NoTransaksi:NoTransaksi},
         dataType: "json",
         success: function (response) {
           if (response.success == true) {
@@ -325,8 +329,8 @@
         },
         editing: {
             mode: "row",
-            allowUpdating: canEdit,
-            allowDeleting: canDelete,
+            // allowUpdating: canEdit,
+            // allowDeleting: canDelete,
             texts: {
                 confirmDeleteMessage: ''  
             }
@@ -352,37 +356,6 @@
             {
                 dataField: "TglTransaksi",
                 caption: "Tanggal",
-                allowEditing:false,
-            },
-            {
-                dataField: "JenisJadwal",
-                caption: "Jenis Jadwal",
-                allowEditing:false
-            },
-            {
-                dataField: "CabangID",
-                caption: "CabangID",
-                allowEditing:false,
-                visible: false
-            },
-            {
-                dataField: "CabangName",
-                caption: "Cabang",
-                allowEditing:false,
-            },
-            {
-                dataField: "NamaJadwal",
-                caption: "Nama Jadwal",
-                allowEditing:false,
-            },
-            {
-                dataField: "JamMulai",
-                caption: "Mulai",
-                allowEditing:false,
-            },
-            {
-                dataField: "JamSelesai",
-                caption: "Selesai",
                 allowEditing:false,
             },
             {
@@ -476,7 +449,7 @@
       $("#gridContainerDetail").dxDataGrid({
         allowColumnResizing: true,
         dataSource: data,
-        keyExpr: "LineNumber",
+        keyExpr: "CabangName",
         showBorders: true,
         allowColumnReordering: true,
         allowColumnResizing: true,
@@ -496,9 +469,15 @@
         },
         columns: [
             {
-                dataField: "LineNum",
-                caption: "#",
-                allowEditing:false
+                dataField: "CabangName",
+                caption: "Cabang",
+                allowEditing:false,
+                groupIndex : 0
+            },
+            {
+                dataField: "NamaIbadah",
+                caption: "Ibadah / Sesi",
+                allowEditing:false,
             },
             {
                 dataField: "NamaLengkap",
@@ -506,19 +485,8 @@
                 allowEditing:false,
             },
             {
-                dataField: "CabangName",
-                caption: "Cabang",
-                allowEditing:false
-            },
-            {
                 dataField: "NamaDivisi",
                 caption: "Divisi",
-                allowEditing:false,
-                visible: false
-            },
-            {
-                dataField: "PosisiPelayanan",
-                caption: "Bidang Pelayanan",
                 allowEditing:false,
             },
             {

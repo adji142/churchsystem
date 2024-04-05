@@ -293,7 +293,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>PersonelController/Read",
-        data: {'NIK':'','CabangID':$('#CabangID').val(), 'Provinsi':'-1'},
+        data: {'NIK':'','CabangID':$('#CabangID').val(), 'Provinsi':'-1','Wilayah':"0"},
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
