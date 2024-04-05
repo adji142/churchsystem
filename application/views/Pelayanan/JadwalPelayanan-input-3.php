@@ -13,12 +13,12 @@
 					<div class="x_title">
 			            <?php 
 			              if ($penugasan) {
-			                echo "<h2>Edit Jadwal Pelayanan</h2>";
+			                echo "<h2 id='formtitle'>Edit Jadwal Pelayanan</h2>";
 			                echo "<input type='hidden' id='formtype' value = 'edit'>";
 			                echo '<textarea  id="headerData" style ="display:none;">'.json_encode($penugasan).'</textarea>';
 			              }
 			              else{
-			                echo "<h2>Tambah Jadwal Pelayanan</h2>";
+			                echo "<h2 id='formtitle'>Tambah Jadwal Pelayanan</h2>";
 			                echo "<input type='hidden' id='formtype' value = 'add'>";
 			                echo '<textarea  id="headerData" style ="display:none;"></textarea>';
 			              }
@@ -112,6 +112,20 @@
 	</div>
 </div>
 
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="LoadingBar">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+					<span class="sr-only">Loading...</span>
+				</div>
+				<div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+					<span class="sr-only">Loading...</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="modal_">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -237,28 +251,17 @@
 	    	$('#DivisiID').val(DivisiID).trigger('change');
 	    	// Trigger Click
 	    	// $('#headingOne').trigger('click');
+	    	$(document).ajaxStart(function() {
+				console.log('AJAX request started');
+				// $('#LoadingBar').modal('show');
+			});
 
-	    	if ($('#headerData').val() != "") {
-	    		var headerData = $.parseJSON($('#headerData').val());
-
-	    		if (headerData.length > 0) {
-	    			for (var i = 0; i < headerData.length; i++) {
-	    				// Things[i]
-	    				// console.log(i + " - " + headerData.length)
-	    				if (i+1 == headerData.length) {
-	    					$('#TglTransaksi').val(headerData[i]['Tanggal']);
-	    					$('#Hari').val(headerData[i]['Hari']).trigger('change');
-	    					$('#DivisiID').val(headerData[i]['DivisiID']).trigger('change');
-	    					$('#Keterangan').val(headerData[i]['Keterangan']);
-	    				}
-	    			}
-	    			// Show Data
-
-	    			for (var i = 0; i < headerData.length; i++) {
-	    				
-	    			}
-	    		}
-	    	}
+			$(document).ajaxStop(function() {
+				console.log('AJAX request stopped');
+				// Swal.close();
+				// $('#LoadingBar').modal('toggle');
+			});
+	    	showDataEdit();
 		});
 
 		// Hari Change
@@ -271,7 +274,30 @@
 	    	// console.log(dayName);
 	    	$('#Hari').val(dayName).trigger('change');
 
-	    	GenerateObject();
+	    	$.ajax({
+		        async:false,
+		        type: "post",
+		        url: "<?=base_url()?>PenugasanController/ReadIfExist",
+		        data: {
+		        	'Tanggal':$('#TglTransaksi').val(),
+		        	'Hari': $('#Hari').val(),
+		        	'DivisiID': $('#DivisiID').val(),
+		        },
+		        dataType: "json",
+		        success: function (response) {
+		        	if (response.data.length > 0) {
+		        		$('#formtitle').text('Edit Jadwal Pelayanan');
+		        		$('#headerData').val(JSON.stringify(response.data));
+		        		$('#formtype').val('edit');
+		        		GenerateObject();
+		        		showDataEdit();
+		        	}
+		        	else{
+		        		$('#formtitle').text('Tambah Jadwal Pelayanan');
+		        		GenerateObject();
+		        	}
+		      	}
+		    });
 	    	// getJadwal();
 	    	// getPersonel();
 	    });
@@ -345,6 +371,9 @@
 	    });
 
 	    $('#btSave').click(function () {
+	    	$('#btSave').text('Tunggu Sebentar.....');
+  			$('#btSave').attr('disabled',true);
+
 	    	var json_object = {
 	    		formtype : $('#formtype').val(),
 	    		detail : []
@@ -352,9 +381,10 @@
 
 	    	for (var i = 0; i < idObject.length; i++) {
 	    		for (var x = 0; x < idObject[i]['personel'].length; x++) {
+	    			console.log($('#prs'+idObject[i]['personel'][x]['ID']).val())
 	    			if ($('#prs'+idObject[i]['personel'][x]['ID']).val() != "") {
 	    				var item = {
-		    				'NoTransaksi'	: '',
+		    				'NoTransaksi'	: ($('#formtype').val() == 'add') ? '' : $('#NoTransaksi').val(),
 		    				'DivisiID'		: $('#DivisiID').val(),
 		    				'Tanggal'		: $('#TglTransaksi').val(),
 		    				'Hari'			: $('#Hari').val(),
@@ -369,52 +399,107 @@
 	    		}
 	    	}
 
-	    	// console.log(json_object);
-	    	$('#btSave').click(function () {
-	    		$('#btSave').text('Tunggu Sebentar.....');
-      			$('#btSave').attr('disabled',true);
-
-      			$.ajax({
-		        	async:false,
-		        	url: "<?=base_url()?>PenugasanController/CRUD",
-		        	type: 'POST',
-		        	contentType: 'application/json',
-		        	data: JSON.stringify(json_object),
-		        	success: function(response) {
-		        	    // Handle the response from the controller
-		        	    // console.log('Response from controller:', response);
-		        	    if (response.success == true) {
-		        	        Swal.fire({
-		        	          icon: "success",
-		        	          title: "Horray...",
-		        	          text: "Data berhasil disimpan!",
-		        	        }).then((result)=>{
-		        	          // location.reload();
-		        	          window.location.href = '<?=base_url()?>pelayanan/jadwal';
-		        	        });
-		        	    }
-		        	    else{
-		        	        Swal.fire({
-		        	          icon: "error",
-		        	          title: "Opps...",
-		        	          text: response.message,
-		        	        });
-		        	        $('#btSave').text('Save');
-		        	        $('#btSave').attr('disabled',false);
-		        	    }
-		        	},
-		        	error: function(xhr, status, error) {
-		        	    // Handle errors
-		        	    console.error('Error:', error);
-		        	}
-			    });
-
-	    	})
+  			$.ajax({
+	        	async:false,
+	        	url: "<?=base_url()?>PenugasanController/CRUD",
+	        	type: 'POST',
+	        	contentType: 'application/json',
+	        	data: JSON.stringify(json_object),
+	        	success: function(response) {
+	        	    // Handle the response from the controller
+	        	    // console.log('Response from controller:', response);
+	        	    if (response.success == true) {
+	        	        Swal.fire({
+	        	          icon: "success",
+	        	          title: "Horray...",
+	        	          text: "Data berhasil disimpan!",
+	        	        }).then((result)=>{
+	        	          // location.reload();
+	        	          window.location.href = '<?=base_url()?>pelayanan/jadwal';
+	        	        });
+	        	    }
+	        	    else{
+	        	        Swal.fire({
+	        	          icon: "error",
+	        	          title: "Opps...",
+	        	          text: response.message,
+	        	        });
+	        	        $('#btSave').text('Save');
+	        	        $('#btSave').attr('disabled',false);
+	        	    }
+	        	},
+	        	error: function(xhr, status, error) {
+	        	    // Handle errors
+	        	    console.error('Error:', error);
+	        	}
+		    });
 	    })
 
 	    // $('#btAdd').click(function () {
 	    // 	addPenugasanObject();
 	    // })
+
+	    function showDataEdit() {
+	    	if ($('#headerData').val() != "") {
+	    		var headerData = $.parseJSON($('#headerData').val());
+
+	    		if (headerData.length > 0) {
+	    			for (var i = 0; i < headerData.length; i++) {
+	    				// Things[i]
+	    				// console.log(i + " - " + headerData.length)
+	    				if (i+1 == headerData.length) {
+	    					$('#NoTransaksi').val(headerData[i]['NoTransaksi']);
+	    					$('#TglTransaksi').val(headerData[i]['Tanggal']);
+	    					$('#Hari').val(headerData[i]['Hari']).trigger('change');
+	    					$('#DivisiID').val(headerData[i]['DivisiID']).trigger('change');
+	    					$('#Keterangan').val(headerData[i]['Keterangan']);
+	    				}
+	    			}
+	    			// Show Data
+
+	    			console.log(idObject);
+	    			console.log(headerData);
+
+	    			for (var i = 0; i < idObject.length; i++) {
+	    				var Cabang = $('#cabang'+idObject[i]['ParentID']).val();
+	    				var Ibadah = $('#ibd'+idObject[i]['Detail']).val();
+	    				// console.log(idObject[i]['ParentID'] + " > " + idObject[i]['Detail'])
+	    				// console.log(Cabang + " >> " + Ibadah)
+	    				const PIC = headerData.filter(PIC => PIC.JadwalIbadahID === Ibadah)
+
+	    				for (var k = 0; k < PIC.length; k++) {
+	    					if (Ibadah == PIC[k]['JadwalIbadahID']) {
+	    						console.log(Ibadah + ">> " + PIC[k]['JadwalIbadahID'] + " >> " + idObject[i]['personel'][k]['ID'] + " >> " + PIC[k]['PIC'])
+	    						$('#prs'+idObject[i]['personel'][k]['ID']).val(PIC[k]['PIC']).trigger('change')
+	    					}
+	    				}
+	    			}
+
+	    			// for (var i = 0; i < idObject.length; i++) {
+	    			// 	for (var x = 0; x < idObject[i]['personel'].length; x++) {
+	    			// 		// Things[i]
+	    			// 		var Cabang = $('#cabang'+idObject[i]['ParentID']).val();
+    				// 		var Ibadah = $('#ibd'+idObject[i]['Detail']).val();
+
+    				// 		// console.log(Cabang +" >>>>" + headerData[y]['CabangID'])
+    				// 		const PIC = headerData.filter(PIC => PIC.JadwalIbadahID === Ibadah)
+
+    				// 		// console.log(PIC2)
+	    			// 		for (var y = 0; y < PIC.length; y++) {
+	    			// 			// Things[i]
+	    			// 			if (Cabang == PIC[y]['CabangID'] && Ibadah == PIC[y]['JadwalIbadahID']) {
+
+	    			// 				$('#prs'+idObject[i]['personel'][x]['ID']).val(PIC[y]['PIC']).trigger('change')
+	    			// 				console.log(idObject[i]['personel'][x]['ID'] + " > "+PIC[y]['PIC'])
+	    			// 			}
+
+
+	    			// 		}
+	    			// 	}
+	    			// }
+	    		}
+	    	}
+	    }
 
 	    function cekDuplicate(newValue) {
 		    var itemCount = 0;
@@ -628,6 +713,8 @@
 	        	    console.error('Error:', error);
 	        	}
 		    });
+		    // $('#LoadingBar').modal('toggle');
+		    // console.log('All Data Loaded');
 	    }
 
 	    function newGenerateDetail(parentID) {
@@ -827,6 +914,7 @@
 			          	else{
 			          		btDelete.disabled = false	
 			          	}
+			          	btDelete.disabled = true
 
 			          	// btAdd
 			          	btAdd.id = 'btAdd'+idText;
@@ -835,6 +923,8 @@
 			          	btAdd.customData = {
 						    rowIndex: RowData
 						};
+						btAdd.disabled = true
+						
 			          	// btSearch
 			          	btSearch.id = 'btSec'+idText;
 			          	btSearch.className = 'btn btn-warning';
@@ -989,11 +1079,13 @@
           	btDelete.customData = {
 			    rowIndex: rowIndex + 2
 			};
+			btDelete.disabled = true
 
           	// btAdd
           	btAdd.id = 'btAdd'+idText;
           	btAdd.className = 'btn btn-success';
           	btAdd.textContent = '+';
+          	btAdd.disabled = true
 
           	// btSearch
           	btSearch.id = 'btSec'+idText;
@@ -1122,6 +1214,18 @@
 		    }
 
 		    // console.log(idObject)
+		}
+
+		function showLoadingAlert() {
+		  Swal.fire({
+		    title: 'Loading',
+		    text: 'Please wait...',
+		    allowOutsideClick: false,
+		    showConfirmButton: false,
+		    onBeforeOpen: () => {
+		      Swal.showLoading();
+		    }
+		  });
 		}
 	})
 </script>

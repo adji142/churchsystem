@@ -329,7 +329,7 @@
         },
         editing: {
             mode: "row",
-            // allowUpdating: canEdit,
+            allowUpdating: canEdit,
             // allowDeleting: canDelete,
             texts: {
                 confirmDeleteMessage: ''  

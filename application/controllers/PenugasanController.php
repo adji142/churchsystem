@@ -110,6 +110,27 @@
 			$this->output->set_content_type('application/json')->set_output(json_encode($data));
 		}
 
+		public function ReadIfExist()
+		{
+			$data = array('success'=>false, 'message'=>'', 'data'=>array());
+
+			$TglTransaksi = $this->input->post('Tanggal');
+			$Hari = $this->input->post('Hari');
+			$DivisiID = $this->input->post('DivisiID');
+
+			$oWhere = array(
+				'Tanggal' => $TglTransaksi,
+				'Hari' => $Hari,
+				'DivisiID' => $DivisiID
+			);
+			$penugasan = $this->ModelsExecuteMaster->FindData($oWhere,'penugasanpelayan');
+
+			$data['success'] = true;
+			$data['data'] = $penugasan->result();
+
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
+		}
+
 		public function CRUD()
 		{
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());
@@ -183,10 +204,12 @@
 				elseif ($formtype == "edit") {
 
 					for ($i=0; $i < count($json_data['detail']) ; $i++) {
-						$oRowID = $this->uuid->v4();;
+						$oRowID = $this->uuid->v4();
 						// Delete Object
-						$this->db->where('NoTransaksi',$json_data['detail'][$i]['NoTransaksi']);
-						$this->db->delete();
+						if ($i == 0) {
+							$this->db->where('NoTransaksi',$json_data['detail'][$i]['NoTransaksi']);
+							$this->db->delete('penugasanpelayan');
+						}
 						// Add Object
 						$oObject = array(
 							'RowID' => $oRowID,
@@ -204,9 +227,9 @@
 						);
 
 
-						if ($formtype == 'add') {
-							$oObject['CreatedOn'] = $CreatedOn;
-							$oObject['CreatedBy'] = $CreatedBy;
+						if ($formtype == 'edit') {
+							$oObject['UpdatedOn'] = $UpdatedOn;
+							$oObject['UpdatedBy'] = $UpdatedBy;
 							$oSave = $this->db->insert('penugasanpelayan',$oObject);
 
 							if (!$oSave) {
