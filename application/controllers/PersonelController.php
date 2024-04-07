@@ -20,6 +20,19 @@
 			$data['PosisiPelayanan'] = $PosisiPelayanan->result();
 			$this->load->view('V_Master/Personel',$data);
 		}
+
+		public function editprofile()
+		{
+			$this->db->select('*');
+			$this->db->from('dem_provinsi');
+			$provinsi = $this->db->get();
+
+			$PosisiPelayanan= $this->ModelsExecuteMaster->GetData('posisipelayanan');
+
+			$data['prov'] = $provinsi->result();
+			$data['PosisiPelayanan'] = $PosisiPelayanan->result();
+			$this->load->view('profile',$data);
+		}
 		public function Read()
 		{
 			$data = array('success'=>true, 'message'=>'', 'data'=>array());
@@ -220,7 +233,7 @@
 				$this->db->select("*");
 				$this->db->from('personel');
 				$this->db->where(array("NIK"=>$NIK));
-				$this->db->where(array("CabangID"=>$CabangID));
+				// $this->db->where(array("CabangID"=>$CabangID));
 
 				$rs = $this->db->get();
 

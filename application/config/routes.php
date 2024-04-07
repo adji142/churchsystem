@@ -77,6 +77,7 @@ $route['divisi'] = 'DivisiController';
 $route['jabatan/(:any)/(:any)'] = 'JabatanController/index/$1/$2';
 $route['ratepk'] = 'RatePKController';
 $route['personel'] = 'PersonelController';
+$route['profile'] = 'PersonelController/editprofile';
 $route['jenisibadah'] = 'JenisIbadahController';
 $route['jenisevent'] = 'JenisEventController';
 $route['jadwalibadah'] = 'JadwalIbadahController';
