@@ -17,8 +17,118 @@
           <div class="x_content">
             <div class="row">
               <div class="col-md-12 col-sm-12">
-                <h2>Laporan Persembahan</h2>
-                <hr>
+                <div class="item form-group">
+                  <label class="col-form-label col-md-2 col-sm-2" for="first-name">No. Register <span class="required">*</span>
+                  </label>
+                  <div class="col-md-4 col-sm-4 ">
+                    <input type="text" name="NoTransaksi" id="NoTransaksi" required="" placeholder="<AUTO>" readonly="" class="form-control">
+                    <input type="hidden" name="formtype" id="formtype" value="add">
+                  </div>
+
+                  <label class="col-form-label col-md-2 col-sm-2" for="first-name">Tanggal <span class="required">*</span>
+                  </label>
+                  <div class="col-md-4 col-sm-4 ">
+                    <input type="date" name="TglTransaksi" id="TglTransaksi" required="" class="form-control ">
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-sm-12">
+                <div class="item form-group">
+                  <label class="col-form-label col-md-2 col-sm-2" for="first-name">Hari Ibadah <span class="required">*</span>
+                  </label>
+                  <div class="col-md-4 col-sm-4 ">
+                    <select class="form-control" id="Hari" name="Hari" disabled="">
+                      <option value="">Pilih Hari</option>
+                      <?php
+
+                          foreach ($Hari as $key) {
+                            echo "<option value = '".$key->KodeHari."'>".$key->NamaHari."</option>";
+                          }
+                      ?>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-sm-12">
+                <div class="item form-group">
+                  <label class="col-form-label col-md-2 col-sm-2" for="first-name">Cabang <span class="required">*</span>
+                  </label>
+                  <div class="col-md-10 col-sm-10 ">
+                    <select class="form-control" id="CabangID" name="CabangID" disabled="">
+                      <option value="0">Pilih Cabang</option>
+                      <?php
+
+                        foreach ($Cabang as $key) {
+                          echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
+                        }
+                      ?>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-sm-12">
+                <div class="item form-group">
+                  <label class="col-form-label col-md-2 col-sm-2" for="first-name">Sesi Ibadah <span class="required">*</span>
+                  </label>
+                  <div class="col-md-10 col-sm-10 ">
+                    <select class="form-control" id="JadwalIbadahID" name="JadwalIbadahID" disabled="">
+                      <option value="">Pilih Sesi Ibadah</option>
+                      <?php
+
+                        foreach ($jadwalibadah as $key) {
+                          echo "<option value = '".$key->id."'>".$key->NamaIbadah."</option>";
+                        }
+                      ?>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-sm-12">
+                <div class="item form-group">
+                  <label class="col-form-label col-md-2 col-sm-2" for="first-name">PIC Persembahan <span class="required">*</span>
+                  </label>
+                  <div class="col-md-4 col-sm-4 ">
+                    <select class="form-control" id="PICPerhitungan" name="PICPerhitungan">
+                      <option value="">Pilih PIC</option>
+                    </select>
+                  </div>
+
+                  <label class="col-form-label col-md-2 col-sm-2" for="first-name">Akun Kas <span class="required">*</span>
+                  </label>
+                  <div class="col-md-4 col-sm-4 ">
+                    <select class="form-control" id="KodeAkunKas" name="KodeAkunKas" >
+                      <option value="">Pilih Akun</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-sm-12">
+                <div class="item form-group">
+                  <label class="col-form-label col-md-2 col-sm-2" for="first-name">Keterangan <span class="required">*</span>
+                  </label>
+                  <div class="col-md-10 col-sm-10 ">
+                    <input type="text" name="Keterangan" id="Keterangan" class="form-control">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Realisasi PK</h2>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="x_content">
+            <div class="row">
+              <div class="col-md-12 col-sm-12">
                 <div class="dx-viewport demo-container">
                   <div id="data-grid-demo">
                     <div id="gridContainerPersembahan">
@@ -26,54 +136,55 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
 
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Sisa Persembahan</h2>
+            <div class="clearfix"></div>
+          </div>
+
+          <div class="x_content">
+            <div class="row">
               <div class="col-md-12 col-sm-12">
-                <h2>Sisa Persembahan</h2>
-                <div class="col-md-12 col-sm-12">
-                  <label class="col-form-label col-md-3 col-sm-3" for="first-name">Akun Kas <span class="required">*</span>
-                  </label>
-                  <div class="col-md-9 col-sm-9 ">
-                    <select class="form-control" id="KodeAkunKas" name="KodeAkunKas" >
-                      <option value="">Pilih Akun</option>
-                    </select>
-                    <input type="hidden" name="datapemasukan" id="datapemasukan">
-                    <input type="hidden" name="formtype" id="formtype" value="add">
-                    <input type="hidden" name="NoTransaksi" id="NoTransaksi" value="">
-                    <input type="hidden" name="NoTransaksiOther" id="NoTransaksiOther" value="">
+                <table class="table table-hover" id="DenomTable">
+                  <thead>
+                    <tr>
+                      <th>Denom</th>
+                      <th>Qty</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-12 col-sm-12">
+                <hr>
+                <div class="item form-group">
+                  <div class="col-md-4 col-sm-4 ">
+                    Total Persembahan
+                    <input type="text" name="0" id="PemasukanTotal" value="0" disabled="" class="form-control">
                   </div>
-                </div>
-                <div class="col-md-12 col-sm-12">
-                  <label></label>
-                </div>
-                <div class="col-md-12 col-sm-12">
-                  <table class="table table-hover" id="DenomTable">
-                    <thead>
-                      <tr>
-                        <th>Denom</th>
-                        <th>Qty</th>
-                        <th>Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
+
+                  <div class="col-md-4 col-sm-4 ">
+                    Pengeluaran PK
+                    <input type="text" name="0" id="PengeluaranTotal" value="0" disabled="" class="form-control">
+                  </div>
+
+                  <div class="col-md-4 col-sm-4 ">
+                    Saldo
+                    <input type="text" name="0" id="SaldoTotal" value="0" disabled="" class="form-control">
+                  </div>
                 </div>
               </div>
-              <!-- <div class="col-md-6 col-sm-6">
-                <h2>Pemasukan Lain Lain</h2>
-                <hr>
-                <div class="dx-viewport demo-container">
-                  <div id="data-grid-demo">
-                    <div id="gridContainer">
-                    </div>
-                  </div>
-                </div>
-              </div> -->
               <div class="col-md-12 col-sm-12">
                 <hr>
                 <button class="btn btn-success" id="bt_save" disabled="">Simpan Data Sisa Persembahan</button>
@@ -81,6 +192,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -137,8 +249,11 @@
   $(function () {
     var objectID = [];
     var jsonObject = [];
-    var CabangID = "<?php echo $parseCabangID; ?>";
-    var BaseReff = "<?php echo $NoTransaksi; ?>";
+    var ParseCabangID = "<?php echo $ParseCabangID; ?>";
+    var HariIbadah = "<?php echo $HariIbadah; ?>";
+    var TanggalIbadah = "<?php echo $TanggalIbadah; ?>";
+    var JadwalIbadahID = "<?php echo $JadwalIbadahID; ?>";
+
     var pemasukanlainlainsavemode = "add";
     var tableDataSource = [];
     $(document).ready(function () {
@@ -149,25 +264,75 @@
         width: '100%'
       });
 
+      $('#PICPerhitungan').select2({
+        width: '100%'
+      });
+
+      var now = new Date();
+      var day = ("0" + now.getDate()).slice(-2);
+      var month = ("0" + (now.getMonth() + 1)).slice(-2);
+      var today = now.getFullYear()+"-"+month+"-01";
+      var lastDayofYear = now.getFullYear()+"-"+month+"-"+day;
+
+      $('#TglTransaksi').val(lastDayofYear);
+      $('#Hari').val(HariIbadah).change();
+      $('#CabangID').val(ParseCabangID).change();
+      $('#JadwalIbadahID').val(JadwalIbadahID).change();
+
+      GetPersonel();
+      getAkunKas();
       console.log(CabangID);
 
-      bindGrid(jsonObject);
-      generateTextObject();
-      getAkunKas();
-      getSavedData();
-      SetEnableCommand();
       generateDefaultArray();
+      generateTextObject();
+      CalculateTotal();
+      // getSavedData();
+      SetEnableCommand();
+      // generateDefaultArray();
     });
+
+    function GetPersonel() {
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>PersonelController/Read",
+        data: {'NIK':'','CabangID': $('#CabangID').val(),'Wilayah': "0",'Provinsi' : "-1",'Kota': "",'DivisiID':"",'JabatanID':'','NIKIn': ''},
+        dataType: "json",
+        success: function (responsePersonel) {
+          $('#PICPerhitungan').empty();
+          var newOption = $('<option>', {
+            value: "",
+            text: "Pilih PIC Persembahan"
+          });
+
+          $('#PICPerhitungan').append(newOption); 
+          $.each(responsePersonel.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.NIK,
+              text: v.Nama
+            });
+
+            $('#PICPerhitungan').append(newOption);
+          });
+        }
+      });
+    }
 
     function generateDefaultArray() {
       $.ajax({
         async:false,
         type: "post",
-        url: "<?=base_url()?>PersembahanController/LoadDataPersembahan",
-        data: {'NoJadwal':BaseReff},
+        url: "<?=base_url()?>PersembahanController/ReadDataPK",
+        data: {
+          'Tanggal' : TanggalIbadah,
+          'Hari'    : $('#Hari').val(),
+          'JadwalIbadahID' : $('#JadwalIbadahID').val(),
+          'CabangID' : $('#CabangID').val()
+        },
         dataType: "json",
         success: function (response) {
-          console.log(response);
+          // console.log(response);
+          tableDataSource = response.data;
           bindGridHasilabsen(response.data)
         }
 
@@ -221,7 +386,7 @@
         async:false,
         type: "post",
         url: "<?=base_url()?>AkunKasController/Read",
-        data: {'KodeAkun':'', 'CabangID': CabangID },
+        data: {'KodeAkun':'', 'CabangID': $('#CabangID').val() },
         dataType: "json",
         success: function (response) {
           // bindGrid(response.data);
@@ -345,28 +510,6 @@
             var rowTotal = table.rows[xrow];
             var cellTotal = rowTotal.cells[2];
             cellTotal.appendChild(textBoxTotal);
-
-            $.ajax({
-              async:false,
-              type: "post",
-              url: "<?=base_url()?>PersembahanController/ReadPenerimaanUang",
-              data: {'BaseReff':BaseReff, 'CabangID': CabangID,'BaseType':'JDW','isDenom':'Y' },
-              dataType: "json",
-              success: function (responsedata) {
-                $.each(responsedata.data,function (z,y) {
-                  if (v.KodeDenom == y.KodeDenom) {
-                    // $('#qty'+y.ID).val(v.Qty);
-                    textBoxQty.value = y.Qty;
-                    textBoxTotal.value = (y.Qty * parseInt(y.KodeDenom)).toLocaleString('en-US')
-                    textBoxTotal.name = y.Qty * parseInt(y.KodeDenom);
-                    TotalPersembahan += (y.Qty * parseInt(y.KodeDenom));
-                    // console.log('masuk')
-                  }
-                })
-
-              }
-
-            });
             // Add event
             textBoxQty.addEventListener('change',handleTextBoxChange);
 
@@ -444,6 +587,7 @@
       ValueTotalTextBox.name = TotalValue;
       ValueTotalTextBox.value = TotalValue.toLocaleString('en-US');
 
+      CalculateTotal()
       SetEnableCommand();
     }
 
@@ -455,6 +599,45 @@
           result += characters.charAt(randomIndex);
       }
       return result;
+    }
+
+    function CalculateTotal() {
+      var dataGridInstance = $('#gridContainerPersembahan').dxDataGrid('instance');
+      var allRowsData  = dataGridInstance.getDataSource().items();
+
+      var totalPK = 0;
+      var TotalPersembahan = 0;
+
+      // console.log(tableDataSource)
+      // PK
+      for (var i = 0; i < tableDataSource.length; i++) {
+        totalPK += parseFloat(tableDataSource[i]['Rate']);
+      }
+
+      TotalPersembahan += totalPK;
+      // Persembahan
+
+      for (var i = 0; i < objectID.length; i++) {
+        TotalPersembahan += parseInt($('#Tot'+objectID[i]['ID']).attr('name'))
+
+      }
+
+      // Show Data
+
+      var PengeluaranTotal = document.getElementById('PengeluaranTotal');
+      var PemasukanTotal = document.getElementById('PemasukanTotal');
+      var SaldoTotal = document.getElementById('SaldoTotal');
+
+      console.log(totalPK)
+
+      PengeluaranTotal.name = totalPK;
+      PengeluaranTotal.value = totalPK.toLocaleString('en-US');
+
+      PemasukanTotal.name = TotalPersembahan;
+      PemasukanTotal.value = TotalPersembahan.toLocaleString('en-US');
+
+      SaldoTotal.name = TotalPersembahan - totalPK;
+      SaldoTotal.value = (TotalPersembahan - totalPK).toLocaleString('en-US');
     }
 
     $('#btn_SaveLainLain').click(function () {
@@ -523,6 +706,10 @@
       SetEnableCommand();
     })
 
+    $('#PICPerhitungan').change(function () {
+      SetEnableCommand();
+    })
+
     function SetEnableCommand() {
       var errorCount = 0;
 
@@ -530,7 +717,7 @@
         errorCount +=1;
       }
 
-      if ($('#TotalValue').val() == 0) {
+      if ($('#PICPerhitungan').val() == "") {
         errorCount +=1;
       }
 
@@ -548,57 +735,61 @@
       $('#bt_save').text('Tunggu Sebentar.....');
       $('#bt_save').attr('disabled',true);
 
-      var saveObject = [];
+      var objectPK = [];
+      var objectPersembahan = [];
+
+      var dataGridInstance = $('#gridContainerPersembahan').dxDataGrid('instance');
+      var allRowsData  = dataGridInstance.getDataSource().items();
+
+      for (var i = 0; i < allRowsData.length; i++) {
+
+        if (parseFloat(allRowsData[i]['Rate']) > 0) {
+          var item = {
+            'DivisiID'  : allRowsData[i]['DivisiID'],
+            'NIK'       : allRowsData[i]['NIK'],
+            'RatePKID'  : allRowsData[i]['RatePKID'],
+            'Rate'      : parseFloat(allRowsData[i]['Rate'])
+          }
+          objectPK.push(item);
+        }
+      }
 
       for (var i = 0; i < objectID.length; i++) {
         // Things[i]
-        item = {
-          'KodeAkunKas' : $('#KodeAkunKas').val(),
-          'KodeDenom'   : $('#den'+objectID[i]['ID']).attr('name'),
-          'Qty'         : $('#qty'+objectID[i]['ID']).val(),
-          'Jumlah'      : $('#Tot'+objectID[i]['ID']).attr('name'),
-          'BaseReff'    : BaseReff,
-          'Basetype'    : 'JDW',
-          'CabangID'    : CabangID,
-          'Keterangan'  : '',
-          'NoTransaksi' : $('#NoTransaksi').val()
-        }
+        if (parseFloat($('#qty'+objectID[i]['ID']).val()) > 0) {
+          var item = {
+            'Denominasi'      : parseFloat($('#den'+objectID[i]['ID']).attr('name')),
+            'Qty'             : parseFloat($('#qty'+objectID[i]['ID']).val()),
+            'Jumlah'          : parseFloat($('#Tot'+objectID[i]['ID']).attr('name')),
+            'PICPerhitungan'  : ''
+          }
 
-        saveObject.push(item);
+          objectPersembahan.push(item);
+        }
       }
 
-      var dataGridInstance = $('#gridContainer').dxDataGrid('instance');
-      var allRowsData  = dataGridInstance.getDataSource().items();
-
-      var otherData = [];
-      for (var i = 0; i < allRowsData.length; i++) {
-        // Things[i]
-        item = {
-          'KodeAkunKas' : allRowsData[i]['KodeAkun'],
-          'KodeDenom'   : '',
-          'Qty'         : 1,
-          'Jumlah'      : allRowsData[i]['Jumlah'],
-          'BaseReff'    : BaseReff,
-          'Basetype'    : 'JDW',
-          'CabangID'    : CabangID,
-          'Keterangan'  : allRowsData[i]['Keterangan'],
-          'NoTransaksi' : allRowsData[i]['NoTransaksi']
-        }
-
-        otherData.push(item);
-      }
-
-      console.log(saveObject);
+      var selectedOption = $('#JadwalIbadahID').find('option:selected');
 
       var obj = {
-        'CabangID' : CabangID,
+        'NoTransaksi' : '',
         'formtype' : $('#formtype').val(),
-        'detail' : saveObject,
-        'penerimaanlain' : otherData
+        'TglTransaksi' : $('#TglTransaksi').val(),
+        'PICPerhitungan' : $('#PICPerhitungan').val(),
+        'Keterangan' : $('#Keterangan').val(),
+        'JadwalIbadahID' : $('#JadwalIbadahID').val(),
+        'TglIbadah' : TanggalIbadah,
+        'CabangID' : $('#CabangID').val(),
+        'HariIbadah' : $('#Hari').val(),
+        'NamaIbadah' : selectedOption.text(),
+        'KodeAkunKas' : $('#KodeAkunKas').val(),
+        'PK' : objectPK,
+        'DenomPersembahan' : objectPersembahan
       }
+
+      console.log(obj)
       // Do Something shit
       $.ajax({
-        url: "<?=base_url()?>PersembahanController/CRUDPenerimaan",
+        url: "<?=base_url()?>PersembahanController/SavePersembahan",
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(obj),
@@ -704,7 +895,7 @@
       $("#gridContainerPersembahan").dxDataGrid({
         allowColumnResizing: true,
         dataSource: data,
-        keyExpr: "dataIndex",
+        keyExpr: "NamaDivisi",
         showBorders: true,
         allowColumnReordering: true,
         allowColumnResizing: true,
@@ -715,28 +906,24 @@
         },
         editing: {
             mode: "row",
-            allowAdding:true,
-            allowUpdating: true,
-            allowDeleting: true,
             texts: {
                 confirmDeleteMessage: ''  
             }
         },
         columns: [
           {
-            dataField: "Kelompok",
-            caption: "Keterangan",
-            allowEditing:false,
-            groupIndex: 0
-          },
-          {
-            dataField: "Deskripsi",
-            caption: "Deskripsi",
+            dataField: "NamaDivisi",
+            caption: "Nama Divisi",
             allowEditing:false
           },
           {
-            dataField: "JumlahAbsen",
-            caption: "Jumlah Absen",
+            dataField: "NIK",
+            caption: "No. Induk Anggota",
+            allowEditing:false,
+          },
+          {
+            dataField: "NamaLengkap",
+            caption: "Nama Lengkap",
             allowEditing:false
           },
           {
@@ -747,25 +934,71 @@
               format: { type: 'fixedPoint', precision: 2 }
           },
           {
-              dataField: "Debit",
-              caption: "Debit",
-              allowEditing:false,
-              dataType: 'number',
-              format: { type: 'fixedPoint', precision: 2 }
+            dataField: "TglAbsen",
+            caption: "Tanggal Absen",
+            allowEditing:false,
           },
           {
-              dataField: "Kredit",
-              caption: "Kredit",
-              allowEditing:false,
-              dataType: 'number',
-              format: { type: 'fixedPoint', precision: 2 }
+            dataField: "CabangID",
+            caption: "CabangID",
+            allowEditing:false,
+            visible: false
           },
           {
-            dataField: "Keterangan",
-            caption: "Keterangan",
-            allowEditing:false
+            dataField: "JadwalIbadahID",
+            caption: "JadwalIbadahID",
+            allowEditing:false,
+            visible: false
           },
+          {
+            dataField: "DivisiID",
+            caption: "DivisiID",
+            allowEditing:false,
+            visible: false
+          },
+          {
+            dataField: "RatePKID",
+            caption: "RatePKID",
+            allowEditing:false,
+            visible: false
+          },
+          {
+            dataField: "Foto",
+            caption: "Foto",
+            allowEditing:false,
+            visible: false
+          },
+          // {
+          //   dataField: "FileItem",
+          //   caption: "Action",
+          //   allowEditing:false,
+          //   cellTemplate: function(cellElement, cellInfo) {
+          //     SelectedCabangID = cellInfo.data.CabangID;
+          //     SelectedNoJadwal = cellInfo.data.NoTransaksi;
+          //     console.log(cellInfo.data)
+          //     var LinkAccess = "";
+          //     if (cellInfo.data.NoAbsen == "") {
+          //       LinkAccess = "<button class='btn btn-warning' onClick='absenModals()'>Hadir</button>";
+          //     }
+          //     // console.log();
+          //     cellElement.append(LinkAccess);
+          //   }
+          // }
         ],
+        summary: {
+          totalItems: [
+            { 
+              column: 'Rate', 
+              summaryType: 'sum',
+              customizeText: function(data) {
+                return "Total Rate: "+ data.value.toLocaleString('en-US');
+              }
+            } // Total price
+          ],
+          texts: {
+              sum: 'Total Rate: {0}'
+          }
+        },
         onInitNewRow: function(e) {
           pemasukanlainlainsavemode = "add";
           $('#modal_').modal('show');

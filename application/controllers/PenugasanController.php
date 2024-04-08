@@ -75,7 +75,7 @@
 
 			$this->db->select("penugasanpelayan.*, 
 				divisi.NamaDivisi,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap, ' ', personel.GelarBelakang) As NamaLengkap, 
-				CASE WHEN penugasanpelayan.Konfirmasi = 0 THEN 'N' ELSE 'Y' END AS diKonfirmasi, 
+				CASE WHEN COALESCE(penugasanpelayan.Konfirmasi,0) = 0 THEN 'N' ELSE 'Y' END AS diKonfirmasi, 
 				penugasanpelayan.KonfirmasiKeterangan, cabang.CabangName, jadwalibadah.NamaIbadah, 
 				DATE_FORMAT(jadwalibadah.MulaiJam,'%T') AS JamMulai, 
 				DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') AS JamSelesai");
@@ -87,13 +87,13 @@
 			$this->db->join('jadwalibadah', 'penugasanpelayan.JadwalIbadahID = jadwalibadah.id', 'LEFT');
 			$this->db->where('penugasanpelayan.Tanggal >= ',$TglAwal);
 			$this->db->where('penugasanpelayan.Tanggal <= ',$TglAkhir);
-			$this->db->where('penugasanpelayan.Konfirmasi', "0");
+			$this->db->where('COALESCE(penugasanpelayan.Konfirmasi,0)', "0");
 
 			if ($NoTransaksi != "") {
 				$this->db->where(array("penugasanpelayan.NoTransaksi"=>$NoTransaksi));
 			}
 
-			if ($CabangID != "") {
+			if ($CabangID != "0") {
 				$this->db->where(array("penugasanpelayan.CabangID"=>$CabangID));
 			}
 

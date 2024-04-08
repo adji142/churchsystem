@@ -37,29 +37,6 @@
 				                      <input type="hidden" name="formtype" id="formtype" value="add">
 				                    </div>
 
-				                    <label class="col-form-label col-md-2 col-sm-2" for="first-name">Tanggal <span class="required">*</span>
-				                    </label>
-				                    <div class="col-md-4 col-sm-4 ">
-				                      <input type="date" name="TglTransaksi" id="TglTransaksi" required="" class="form-control " value = "<?php echo ($header) ? $header[0]->TglTransaksi : '' ?>">
-				                    </div>
-				                </div>
-			        		</div>
-			        		<div class="col-md-12 col-sm-12">
-			        			<div class="item form-group">
-			        				<label class="col-form-label col-md-2 col-sm-2" for="first-name">Hari <span class="required">*</span>
-				                    </label>
-				                    <div class="col-md-4 col-sm-4 ">
-					                    <select class="form-control" id="Hari" name="Hari" disabled="">
-					                    	<option value="">Pilih Hari</option>
-					                    	<?php
-
-						                        foreach ($Hari as $key) {
-						                          echo "<option value = '".$key->KodeHari."'>".$key->NamaHari."</option>";
-						                        }
-						                    ?>
-					                    </select>
-				                    </div>
-
 				                    <label class="col-form-label col-md-2 col-sm-2" for="first-name">Divisi <span class="required">*</span>
 				                    </label>
 				                    <div class="col-md-4 col-sm-4 ">
@@ -69,6 +46,29 @@
 
 						                        foreach ($divisi as $key) {
 						                          echo "<option value = '".$key->id."'>".$key->NamaDivisi."</option>";
+						                        }
+						                    ?>
+					                    </select>
+				                    </div>
+				                </div>
+			        		</div>
+			        		<div class="col-md-12 col-sm-12">
+			        			<div class="item form-group">
+			        				<label class="col-form-label col-md-2 col-sm-2" for="first-name">Tanggal <span class="required">*</span>
+				                    </label>
+				                    <div class="col-md-4 col-sm-4 ">
+				                      <input type="date" name="TglTransaksi" id="TglTransaksi" required="" class="form-control " value = "<?php echo ($header) ? $header[0]->TglTransaksi : '' ?>">
+				                    </div>
+
+			        				<label class="col-form-label col-md-2 col-sm-2" for="first-name">Hari <span class="required">*</span>
+				                    </label>
+				                    <div class="col-md-4 col-sm-4 ">
+					                    <select class="form-control" id="Hari" name="Hari" disabled="">
+					                    	<option value="">Pilih Hari</option>
+					                    	<?php
+
+						                        foreach ($Hari as $key) {
+						                          echo "<option value = '".$key->KodeHari."'>".$key->NamaHari."</option>";
 						                        }
 						                    ?>
 					                    </select>
@@ -210,6 +210,8 @@
 		var PersonelFill = [];
 
 		var rowCount = 1;
+		let ajaxCount = 0;
+
 		$(document).ready(function () {
 			$('#Hari').select2({
 		        width: '100%'
@@ -251,15 +253,15 @@
 	    	$('#DivisiID').val(DivisiID).trigger('change');
 	    	// Trigger Click
 	    	// $('#headingOne').trigger('click');
-	    	$(document).ajaxStart(function() {
-				console.log('AJAX request started');
-				// $('#LoadingBar').modal('show');
-			});
+	    	$(document).on({
+			    ajaxStart: function () {
+			        console.log('Started')
+			        showLoadingAlert()
+			    },
+			    ajaxStop: function () {
+			        console.log('ended')
 
-			$(document).ajaxStop(function() {
-				console.log('AJAX request stopped');
-				// Swal.close();
-				// $('#LoadingBar').modal('toggle');
+			    }
 			});
 	    	showDataEdit();
 		});
@@ -284,6 +286,9 @@
 		        	'DivisiID': $('#DivisiID').val(),
 		        },
 		        dataType: "json",
+		        beforeSend: function( xhr ) {
+					showLoadingAlert("Generate Object");
+		        },
 		        success: function (response) {
 		        	if (response.data.length > 0) {
 		        		$('#formtitle').text('Edit Jadwal Pelayanan');
@@ -296,13 +301,46 @@
 		        		$('#formtitle').text('Tambah Jadwal Pelayanan');
 		        		GenerateObject();
 		        	}
-		      	}
+		      	},
+		      	complete:function(res){
+					Swal.close()
+				}
 		    });
 	    	// getJadwal();
 	    	// getPersonel();
 	    });
 
 	    $('#DivisiID').change(function () {
+
+	    	$.ajax({
+		        async:false,
+		        type: "post",
+		        url: "<?=base_url()?>PenugasanController/ReadIfExist",
+		        data: {
+		        	'Tanggal':$('#TglTransaksi').val(),
+		        	'Hari': $('#Hari').val(),
+		        	'DivisiID': $('#DivisiID').val(),
+		        },
+		        dataType: "json",
+		        beforeSend: function( xhr ) {
+					showLoadingAlert("Generate Object");
+		        },
+		        success: function (response) {
+		        	if (response.data.length > 0) {
+		        		$('#formtitle').text('Edit Jadwal Pelayanan');
+		        		$('#headerData').val(JSON.stringify(response.data));
+		        		$('#formtype').val('edit');
+		        	}
+		        	else{
+		        		$('#formtitle').text('Tambah Jadwal Pelayanan');
+		        		$('#formtype').val('add');
+		        		GenerateObject();
+		        	}
+		      	},
+		      	complete:function(res){
+					Swal.close()
+				}
+		    });
 	    	GenerateObject();
 	    	// GenerateObjectDetail();
 	    });
@@ -405,9 +443,13 @@
 	        	type: 'POST',
 	        	contentType: 'application/json',
 	        	data: JSON.stringify(json_object),
+	        	beforeSend: function( xhr ) {
+					showLoadingAlert("Saving Data");
+		        },
 	        	success: function(response) {
 	        	    // Handle the response from the controller
 	        	    // console.log('Response from controller:', response);
+	        	    Swal.close();
 	        	    if (response.success == true) {
 	        	        Swal.fire({
 	        	          icon: "success",
@@ -431,7 +473,10 @@
 	        	error: function(xhr, status, error) {
 	        	    // Handle errors
 	        	    console.error('Error:', error);
-	        	}
+	        	},
+	        	complete:function(res){
+					// Swal.close();
+				}
 		    });
 	    })
 
@@ -536,11 +581,17 @@
 		        	'JabatanID':''
 		        },
 		        dataType: "json",
+		        beforeSend: function( xhr ) {
+					showLoadingAlert('Generate Personel Lookup');
+		        },
 		        success: function (response) {
 		          // PIC Kegiatan
 		          // console.log(response.data)
 		          bindGridLookup(response.data)
-		      	}
+		      	},
+		      	complete:function(res){
+					Swal.close();
+				}
 		    });
 	    }
 
@@ -551,6 +602,9 @@
 		        url: "<?=base_url()?>DemografiController/ReadDemografi",
 		        data: {'demografilevel':'dem_kota', 'wherefield': 'prov_id', 'wherevalue': $('#ProvIDLookup').val() },
 		        dataType: "json",
+		        beforeSend: function( xhr ) {
+					showLoadingAlert('Generate Personel Lookup');
+		        },
 		        success: function (response) {
 		          $('#KotaIDLookup').empty();
 		          var newOption = $('<option>', {
@@ -567,7 +621,10 @@
 
 		            $('#KotaIDLookup').append(newOption);
 		          });
-		        }
+		        },
+		        complete:function(res){
+					Swal.close();
+				}
 		    });
 	    }
 
@@ -646,6 +703,9 @@
 	        		'KotaID' : Kota
 	        	},
 	        	dataType: "json",
+	        	beforeSend: function( xhr ) {
+					showLoadingAlert("Generate Cabang Object");
+		        },
 	        	success: function(response) {
 	        	    // console.log(response.data)
 	        	    var parentElement = document.querySelector('.accordion');
@@ -711,10 +771,11 @@
 	        	    // Handle errors
 	        	    console.log(error)
 	        	    console.error('Error:', error);
-	        	}
+	        	},
+	        	complete:function(res){
+					Swal.close();
+				}
 		    });
-		    // $('#LoadingBar').modal('toggle');
-		    // console.log('All Data Loaded');
 	    }
 
 	    function newGenerateDetail(parentID) {
@@ -729,6 +790,9 @@
 	        		'DivisiID' : $('#DivisiID').val()
 	        	},
 	        	dataType: "json",
+	        	beforeSend: function( xhr ) {
+					showLoadingAlert("Generate Ibadah Object");
+		        },
 	        	success: function(jadwalResponse) {
 	        		// console.log(jadwalResponse)
 	        		var table = document.getElementById('PenugasanTable'+parentID);
@@ -774,7 +838,10 @@
 	        			iliterateRow += 1;
 	        		});
 	        		// console.log("_________________________________")
-	        	}
+	        	},
+	        	complete:function(res){
+					Swal.close();
+				}
 	    	})
 	    }
 
@@ -845,10 +912,16 @@
 		        url: "<?=base_url()?>PersonelController/Read",
 		        data: {'NIK':'','CabangID': $('#cabang'+ParentID).val(),'Wilayah': Wilayah,'Provinsi' : Provinsi,'Kota': Kota,'DivisiID':$('#DivisiID').val(),'JabatanID':'','NIKIn': ''},
 		        dataType: "json",
+		        beforeSend: function( xhr ) {
+					showLoadingAlert("Generate Cabang Object");
+		        },
 		        success: function (responsePersonel) {
 		          	// PIC Kegiata
 		          	PersonelFill = responsePersonel.data
-		        }
+		        },
+		        complete:function(res){
+					Swal.close();
+				}
 		    });
 
 	    	var RowData = 1;
@@ -1216,10 +1289,10 @@
 		    // console.log(idObject)
 		}
 
-		function showLoadingAlert() {
+		function showLoadingAlert(LoadingTitle) {
 		  Swal.fire({
 		    title: 'Loading',
-		    text: 'Please wait...',
+		    text: 'Please wait, Loading ' + LoadingTitle,
 		    allowOutsideClick: false,
 		    showConfirmButton: false,
 		    onBeforeOpen: () => {

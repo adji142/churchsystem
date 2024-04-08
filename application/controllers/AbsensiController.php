@@ -74,6 +74,8 @@
 
 		public function ReadPerDivisi()
 		{
+			$data = array('success'=>false, 'message'=>'', 'data'=>array());
+
 			$TglAwal = $this->input->post('TglAwal');
 			$TglAkhir = $this->input->post('TglAkhir');
 			$NoTransaksi = $this->input->post('NoTransaksi');
@@ -97,14 +99,15 @@
 			$this->db->join('absensi','penugasanpelayan.NoTransaksi = absensi.ReffJadwal AND penugasanpelayan.PIC = absensi.NIK','left');
 			$this->db->where('penugasanpelayan.Tanggal >=', $TglAwal);
 			$this->db->where('penugasanpelayan.Tanggal <=', $TglAkhir);
+			$this->db->where('COALESCE(penugasanpelayan.Konfirmasi,0) <>', 0);
 
 			if ($NikPersonel != "") {
 				$this->db->where(array("penugasanpelayan.PIC"=>$NikPersonel));
 			}
 
 			if ($NoReff != "") {
-					$this->db->where(array("penugasanpelayan.NoTransaksi"=>$NoReff));
-				}
+				$this->db->where(array("penugasanpelayan.NoTransaksi"=>$NoReff));
+			}
 
 
 			$rs = $this->db->get();

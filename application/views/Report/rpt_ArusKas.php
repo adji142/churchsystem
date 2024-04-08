@@ -138,11 +138,12 @@
       var canEdit = "<?php echo $canEdit; ?>";
       var canDelete = "<?php echo $canDelete; ?>";
 
+      var xSaldo = 0;
       for (var i = 0; i < data.length; i++) {
         // Things[i]
-        if (data[i].TipeTransaksi == 1) {
-          data[i].Saldo += parseFloat(data[i].Saldo) + parseFloat(data[i].Debit) - parseFloat(data[i].Credit)
-        }
+        xSaldo += parseFloat(data[i].Saldo) + parseFloat(data[i].Debit) - parseFloat(data[i].Credit)
+        console.log(xSaldo)
+        data[i].Saldo = xSaldo
       }
 
       var dataGridInstance = $("#gridContainerHeader").dxDataGrid({

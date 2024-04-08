@@ -97,10 +97,10 @@
       });
 
       if (CabangID != 0) {
-        $('#CabangID').prop('disabled', true);
+        // $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
 
-        $('#CabangIDFilter').prop('disabled', true);
+        // $('#CabangIDFilter').prop('disabled', true);
         $('#CabangIDFilter').val(CabangID).trigger('change');
       }
 
@@ -125,7 +125,7 @@
           'TglAwal':$('#TglAwal').val(),
           'TglAkhir':$('#TglAkhir').val(),
           'NoTransaksi' : '',
-          'CabangID' : CabangID,
+          'CabangID' : $('#CabangIDFilter').val(),
           'NikPersonel' : NikPersonel,
           'NoReff' : ''
         },

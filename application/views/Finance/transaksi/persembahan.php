@@ -47,16 +47,12 @@
               <br>
               <button class="btn btn-primary" id="btn_Search">Cari Data</button>
             </div>
-            <div class="col-md-3 col-sm-3 ">
-              <br>
-              <button class="btn btn-danger" id="btn_Add">Tambah Data</button>
-            </div>
             <div class="clearfix"></div>
           </div>
           <div class="x_content">
             <div class="row">
               <div class="col-md-12 col-sm-12">
-                <h2>Jadwal Pelayanan</h2>
+                <h2>Persembahan Ibadah</h2>
                 <hr>
                 <div class="dx-viewport demo-container">
                   <div id="data-grid-demo">
@@ -194,29 +190,11 @@
     function getHeader() {
       $.ajax({
         type: "post",
-        url: "<?=base_url()?>PersembahanController/ReadIbadah",
-        data: {'TglAwal':$('#TglAwal').val(),'TglAkhir' : $('#TglAkhir').val(),CabangID:CabangID},
+        url: "<?=base_url()?>PersembahanController/ReadDataPersembahan",
+        data: {'TglAwal':$('#TglAwal').val(),'TglAkhir' : $('#TglAkhir').val(),CabangID:$('#CabangIDFilter').val()},
         dataType: "json",
         success: function (response) {
-          if (response.success == true) {
-            bindGridHeader(response.data);
-            if (response.message != '') {
-              Swal.fire({
-                type: 'error',
-                title: 'Woops...',
-                text: response.message,
-                // footer: '<a href>Why do I have this issue?</a>'
-              })
-            }
-          }
-          else{
-            Swal.fire({
-              type: 'error',
-              title: 'Woops...',
-              text: response.message,
-              // footer: '<a href>Why do I have this issue?</a>'
-            })
-          }
+          bindGridHeader(response.data);
         }
       });
     }
@@ -268,7 +246,7 @@
       var dataGridInstance = $("#gridContainerHeader").dxDataGrid({
         allowColumnResizing: true,
         dataSource: data,
-        keyExpr: "NoTransaksi",
+        keyExpr: "JadwalIbadahID",
         showBorders: true,
         allowColumnReordering: true,
         allowColumnResizing: true,
@@ -301,16 +279,44 @@
             {
                 dataField: "NoTransaksi",
                 caption: "No. Reg Jadwal",
-                allowEditing:false
+                allowEditing:false,
+                visible:false
             },
             {
-                dataField: "TglTransaksi",
+                dataField: "Tanggal",
                 caption: "Tanggal",
                 allowEditing:false,
             },
             {
-                dataField: "JenisJadwal",
-                caption: "Jenis Jadwal",
+                dataField: "NamaHari",
+                caption: "Hari",
+                allowEditing:false
+            },
+            {
+                dataField: "KodeHari",
+                caption: "hari",
+                allowEditing:false,
+                visible:false
+            },
+            {
+                dataField: "JadwalIbadahID",
+                caption: "JadwalIbadahID",
+                allowEditing:false,
+                visible:false
+            },
+            {
+                dataField: "NamaIbadah",
+                caption: "Sesi Ibadah",
+                allowEditing:false
+            },
+            {
+                dataField: "JamMulai",
+                caption: "Mulai",
+                allowEditing:false
+            },
+            {
+                dataField: "JamSelesai",
+                caption: "Selesai",
                 allowEditing:false
             },
             {
@@ -325,32 +331,17 @@
                 allowEditing:false,
             },
             {
-                dataField: "NamaJadwal",
-                caption: "Nama Jadwal",
-                allowEditing:false,
-            },
-            {
-                dataField: "JamMulai",
-                caption: "Mulai",
-                allowEditing:false,
-            },
-            {
-                dataField: "JamSelesai",
-                caption: "Selesai",
-                allowEditing:false,
-            },
-            {
-                dataField: "JumlahKonfirmasiHadir",
+                dataField: "JumlahPelayan",
                 caption: "Jumlah Petugas",
                 allowEditing:false,
             },
             {
-                dataField: "JumlahAbsen",
+                dataField: "JumlahHadir",
                 caption: "Jumlah Petugas Hadir",
                 allowEditing:false,
             },
             {
-                dataField: "Debit",
+                dataField: "Penerimaan",
                 caption: "Penerimaan",
                 allowEditing:false,
                 allowEditing:false,
@@ -358,7 +349,7 @@
                 format: { type: 'fixedPoint', precision: 2 }
             },
             {
-                dataField: "Kredit",
+                dataField: "Pengeluaran",
                 caption: "Pengeluaran",
                 allowEditing:false,
                 allowEditing:false,
@@ -373,7 +364,7 @@
                 dataType: 'number',
                 format: { type: 'fixedPoint', precision: 2 },
                 calculateCellValue: function(rowData) {
-                  return rowData.Debit - rowData.Kredit;
+                  return rowData.Penerimaan - rowData.Pengeluaran;
               }
             },
             {
@@ -382,23 +373,13 @@
                 allowEditing:false,
                 fixed: true,
                 cellTemplate: function(cellElement, cellInfo) {
-                  SelectedNoJadwal = cellInfo.data.NoTransaksi;
-                  SelectedCabang = cellInfo.data.CabangID;
-                  // console.log(cellInfo.data)
-                  var Sisa = parseFloat(cellInfo.data.Debit) - parseFloat(cellInfo.data.Kredit);
+                  var validasi = parseFloat(cellInfo.data.Pengeluaran) + parseFloat(cellInfo.data.Penerimaan);
 
-                  // LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-warning' id = 'btn-penerimaan'>Isi Persembahan</a>";
-
-                  LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/penerimaan/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-warning' id = 'btn-penerimaan'>Penerimaan</a>";
-                  LinkAccess += "<a href = '<?=base_url()?>finance/persembahan/pengeluaran/"+cellInfo.data.NoTransaksi+"/"+cellInfo.data.CabangID+"' class='btn btn-danger' id = 'btn-pengeluaran'>Pengeluaran</a>";
-
-                  if (Sisa > 0) {
-                    var oParam = "showSetorBank('"+cellInfo.data.NoTransaksi+"','"+cellInfo.data.CabangID+"','"+Sisa+"')";
-
-                    LinkAccess += "<button class='btn btn-default' id = 'btn-setor' onClick="+oParam+">Setor Bank</button>";
+                  if (validasi > 0) {
+                    LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning disabled' id = 'btn-penerimaan' disabled>Isi Persembahan</a>";
                   }
                   else{
-                    LinkAccess += "<button class='btn btn-default' id = 'btn-setor' disabled>Setor Bank</button>";
+                    LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning ' id = 'btn-penerimaan'>Isi Persembahan</a>";
                   }
                   cellElement.append(LinkAccess);
                 }

@@ -359,6 +359,11 @@
                 allowEditing:false,
             },
             {
+                dataField: "NamaDivisi",
+                caption: "Divisi",
+                allowEditing:false,
+            },
+            {
                 dataField: "JumlahPelayan",
                 caption: "Jumlah Pelayan",
                 allowEditing:false,
