@@ -217,7 +217,7 @@
             },
             export: {
                 enabled: true,
-                fileName: "Daftar Role"
+                fileName: "Daftar Jenis Event"
             },
             columns: [
                 {

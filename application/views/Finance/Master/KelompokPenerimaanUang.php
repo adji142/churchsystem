@@ -241,7 +241,7 @@
             },
             export: {
                 enabled: true,
-                fileName: "Daftar Role"
+                fileName: "Daftar Penerimaan Uang"
             },
             columns: [
                 {

@@ -165,7 +165,7 @@
         },
         export: {
             enabled: true,
-            fileName: "Laporan Jadwal Pelayanan"
+            fileName: "Laporan Arus Kas"
         },
         selection:{
             mode: "single"

@@ -377,7 +377,7 @@
             },
             export: {
                 enabled: true,
-                fileName: "Transaksi Kas"
+                fileName: "Transaksi Tarik Tunai"
             },
             columns: [
                 {

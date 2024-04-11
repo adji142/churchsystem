@@ -32,7 +32,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel">Modal Cabang</h4>
+        <h4 class="modal-title" id="myModalLabel">Modal Cabang Tiberias</h4>
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
         </button>
       </div>
@@ -115,10 +115,10 @@
           </div>
 
           <div class="item form-group">
-            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Alamat Saksi <span class="required">*</span>
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Alamat <span class="required">*</span>
             </label>
             <div class="col-md-6 col-sm-6 ">
-              <textarea id="Alamat" name="Alamat" class="resizable_textarea form-control" placeholder="Alamat Saksi"></textarea>
+              <textarea id="Alamat" name="Alamat" class="resizable_textarea form-control" placeholder="Alamat "></textarea>
             </div>
           </div>
 
@@ -370,7 +370,7 @@
             },
             export: {
                 enabled: true,
-                fileName: "Daftar Role"
+                fileName: "Daftar Cabang Tiberias"
             },
             columns: [
                 {

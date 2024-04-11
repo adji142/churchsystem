@@ -199,7 +199,7 @@
             },
             export: {
                 enabled: true,
-                fileName: "Daftar Role"
+                fileName: "Daftar Jenis Ibadah"
             },
             columns: [
                 {

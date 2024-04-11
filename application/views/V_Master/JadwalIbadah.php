@@ -301,7 +301,7 @@
             },
             export: {
                 enabled: true,
-                fileName: "Daftar Role"
+                fileName: "Daftar Jadwal Ibadah"
             },
             rowDragging: {
               allowReordering: true,

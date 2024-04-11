@@ -270,7 +270,7 @@
         },
         export: {
             enabled: true,
-            fileName: "Daftar Pelayanan"
+            fileName: "Daftar Persembahan"
         },
         selection:{
             mode: "single"
