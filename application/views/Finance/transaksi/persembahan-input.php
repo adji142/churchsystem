@@ -21,7 +21,7 @@
                   <label class="col-form-label col-md-2 col-sm-2" for="first-name">No. Register <span class="required">*</span>
                   </label>
                   <div class="col-md-4 col-sm-4 ">
-                    <input type="text" name="NoTransaksi" id="NoTransaksi" required="" placeholder="<AUTO>" readonly="" class="form-control">
+                    <input type="text" name="NoTransaksi" id="NoTransaksi" required="" placeholder="<AUTO>" readonly="" value="" class="form-control">
                     <input type="hidden" name="formtype" id="formtype" value="add">
                   </div>
 
@@ -510,6 +510,40 @@
             var rowTotal = table.rows[xrow];
             var cellTotal = rowTotal.cells[2];
             cellTotal.appendChild(textBoxTotal);
+
+            // Get Saved Data
+            $.ajax({
+              async:false,
+              type: "post",
+              url: "<?=base_url()?>PersembahanController/ReadPenerimaanUang",
+              data: {'TglIbadah':TanggalIbadah, 'CabangID': ParseCabangID,'JadwalIbadahID':JadwalIbadahID,'Hari':HariIbadah },
+              dataType: "json",
+              success: function (responsedata) {
+                console.log(responsedata.data[0].NoTransaksi);
+                if (responsedata.data.length > 0) {
+                  $('#NoTransaksi').val(responsedata.data[0].TRX);
+                  $('#TglTransaksi').val(responsedata.data[0].TglTransaksi);
+                  $('#PICPerhitungan').val(responsedata.data[0].PICHeader).trigger('change');
+                  $('#KodeAkunKas').val(responsedata.data[0].KodeAkun).trigger('change');
+                  $('#KodeAkunKas').prop('disabled', true);
+                  $('#formtype').val('edit');
+                  $.each(responsedata.data,function (z,y) {
+                    console.log(v.KodeDenom + ".00 >> " + y.Denominasi)
+                    if (v.KodeDenom+".00" == y.Denominasi) {
+                      // $('#qty'+y.ID).val(v.Qty);
+                      textBoxQty.value = y.Qty;
+                      textBoxTotal.value = (y.Qty * parseInt(y.Denominasi)).toLocaleString('en-US')
+                      textBoxTotal.name = y.Qty * parseInt(y.Denominasi);
+                      TotalPersembahan += (y.Qty * parseInt(y.Denominasi));
+                      // console.log('masuk')
+                    }
+                  })
+                }
+
+              }
+
+            });
+
             // Add event
             textBoxQty.addEventListener('change',handleTextBoxChange);
 
@@ -771,7 +805,7 @@
       var selectedOption = $('#JadwalIbadahID').find('option:selected');
 
       var obj = {
-        'NoTransaksi' : '',
+        'NoTransaksi' : $('#NoTransaksi').val(),
         'formtype' : $('#formtype').val(),
         'TglTransaksi' : $('#TglTransaksi').val(),
         'PICPerhitungan' : $('#PICPerhitungan').val(),

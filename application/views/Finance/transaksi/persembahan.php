@@ -376,7 +376,7 @@
                   var validasi = parseFloat(cellInfo.data.Pengeluaran) + parseFloat(cellInfo.data.Penerimaan);
 
                   if (validasi > 0) {
-                    LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning disabled' id = 'btn-penerimaan' disabled>Isi Persembahan</a>";
+                    LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning id = 'btn-penerimaan' disabled>Isi Persembahan</a>";
                   }
                   else{
                     LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning ' id = 'btn-penerimaan'>Isi Persembahan</a>";

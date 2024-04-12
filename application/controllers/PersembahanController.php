@@ -73,24 +73,18 @@
 		public function ReadPenerimaanUang()
 		{
 			$data = array('success'=>true, 'message'=>'', 'data'=>array());
-			$BaseReff = $this->input->post('BaseReff');
-			$BaseType = $this->input->post('BaseType');
+			$TglIbadah = $this->input->post('TglIbadah');
+			$Hari = $this->input->post('Hari');
+			$JadwalIbadahID = $this->input->post('JadwalIbadahID');
 			$CabangID = $this->input->post('CabangID');
-			$isDenom = $this->input->post('isDenom');
 
-			$this->db->select('penerimaanuang.*, akunkas.NamaAkun');
-			$this->db->from('penerimaanuang');
-			$this->db->join('akunkas', 'penerimaanuang.KodeAkunKas = akunkas.KodeAkun and penerimaanuang.CabangID = akunkas.CabangID', 'left');
-			$this->db->where('penerimaanuang.BaseReff',$BaseReff);
-			$this->db->where('penerimaanuang.BaseType',$BaseType);
-			$this->db->where('penerimaanuang.CabangID',$CabangID);
-
-			if ($isDenom == 'Y') {
-				$this->db->where('penerimaanuang.KodeDenom !=','');
-			}
-			else{
-				$this->db->where('penerimaanuang.KodeDenom','');
-			}
+			$this->db->select('perhitunganheader.NoTransaksi AS TRX, perhitunganheader.TglTransaksi,perhitunganheader.PICPerhitungan PICHeader,perhitunganheader.KodeAkun,perhitungandetailpersembahan.*');
+			$this->db->from('perhitunganheader');
+			$this->db->join('perhitungandetailpersembahan', 'perhitunganheader.NoTransaksi = perhitungandetailpersembahan.NoTransaksi','LEFT');
+			$this->db->where('perhitunganheader.TglIbadah', $TglIbadah);
+			$this->db->where('perhitunganheader.CabangID', $CabangID);
+			$this->db->where('perhitunganheader.JadwalIbadahID', $JadwalIbadahID);
+			$this->db->where('perhitunganheader.HariIbadah', $Hari);
 
 			$datapenerimaan = $this->db->get();
 
@@ -705,164 +699,260 @@
 
 				$formtype = $json_data['formtype'];
 
+				$prefix = 'PRS'.substr(date('Ymd'),2,4);
+				$this->db->select('NoTransaksi');
+				$this->db->distinct();
+				$this->db->from('perhitunganheader');
+				$this->db->where('LEFT(NoTransaksi,7)',$prefix);
+				$lastNoTrx = $this->db->count_all_results();
+				$NoTransaksi = $prefix.str_pad($lastNoTrx + 1, 4, '0', STR_PAD_LEFT);
+
+				$NoTransaksi = ($formtype == 'add') ? $NoTransaksi : $json_data['NoTransaksi'];
+
+
+
+				$TglTransaksi = $json_data['TglTransaksi'];
+				$PICPerhitungan = $json_data['PICPerhitungan'];
+				$Keterangan = $json_data['Keterangan'];
+				$JadwalIbadahID = $json_data['JadwalIbadahID'];
+				$TglIbadah = $json_data['TglIbadah'];
+				$CabangID = $json_data['CabangID'];
+				$HariIbadah = $json_data['HariIbadah'];
+
+				$oHeader = array(
+					'NoTransaksi' => $NoTransaksi,
+					'TglTransaksi' => $json_data['TglTransaksi'],
+					'PICPerhitungan' => $json_data['PICPerhitungan'],
+					'Keterangan' => $json_data['Keterangan'],
+					'JadwalIbadahID' => $json_data['JadwalIbadahID'],
+					'TglIbadah' => $json_data['TglIbadah'],
+					'CabangID' => $json_data['CabangID'],
+					'HariIbadah' => $json_data['HariIbadah'],
+					'KodeAkun' => $json_data['KodeAkunKas'],
+				);
+
 				if ($formtype == "add") {
-					$prefix = 'PRS'.substr(date('Ymd'),2,4);
-					$this->db->select('NoTransaksi');
-					$this->db->distinct();
-					$this->db->from('perhitunganheader');
-					$this->db->where('LEFT(NoTransaksi,7)',$prefix);
-					$lastNoTrx = $this->db->count_all_results();
-					$NoTransaksi = $prefix.str_pad($lastNoTrx + 1, 4, '0', STR_PAD_LEFT);
-
-
-
-					$TglTransaksi = $json_data['TglTransaksi'];
-					$PICPerhitungan = $json_data['PICPerhitungan'];
-					$Keterangan = $json_data['Keterangan'];
-					$JadwalIbadahID = $json_data['JadwalIbadahID'];
-					$TglIbadah = $json_data['TglIbadah'];
-					$CabangID = $json_data['CabangID'];
-					$HariIbadah = $json_data['HariIbadah'];
-
-					$oHeader = array(
-						'NoTransaksi' => $NoTransaksi,
-						'TglTransaksi' => $json_data['TglTransaksi'],
-						'PICPerhitungan' => $json_data['PICPerhitungan'],
-						'Keterangan' => $json_data['Keterangan'],
-						'JadwalIbadahID' => $json_data['JadwalIbadahID'],
-						'TglIbadah' => $json_data['TglIbadah'],
-						'CabangID' => $json_data['CabangID'],
-						'HariIbadah' => $json_data['HariIbadah'],
-					);
-
 					$oHeader['CreatedOn'] = $CreatedOn;
 					$oHeader['CreatedBy'] = $CreatedBy;	
 					$oSaveHeader = $this->db->insert('perhitunganheader',$oHeader);
+				}
+				else{
+					$oHeader['UpdatedOn'] = $UpdatedOn;
+					$oHeader['UpdatedBy'] = $UpdatedBy;	
+					// $oSaveHeader = $this->db->insert('perhitunganheader',$oHeader);
+					$owhere = array(
+						'NoTransaksi' => $NoTransaksi
+					);
+					$oSaveHeader = $this->ModelsExecuteMaster->ExecUpdate($oHeader, $owhere, 'perhitunganheader');
+				}
 
-					if (!$oSaveHeader) {
-						$data['message'] = "Gagal Simpan Persembahan";
-	                    $errorCount +=1;
-						goto jump;
-					}
-					// PK
-					$LineNumber = 0;
-					$TotalPK = 0;
-					foreach ($json_data['PK'] as $key) {
-						$oPK = array(
-							'NoTransaksi' => $NoTransaksi,
-							'LineNumber' => $LineNumber,
-							'DivisiID' => $key['DivisiID'],
-							'PIC' =>  $key['NIK'],
-							'RatePKID' => $key['RatePKID'],
-							'RatePK' => $key['Rate']
-						);
-						$TotalPK += $key['Rate'];
+				if (!$oSaveHeader) {
+					$data['message'] = "Gagal Simpan Persembahan";
+                    $errorCount +=1;
+					goto jump;
+				}
+				// PK
+				$LineNumber = 0;
+				$TotalPK = 0;
+				foreach ($json_data['PK'] as $key) {
+					$oPK = array(
+						'NoTransaksi' => $NoTransaksi,
+						'LineNumber' => $LineNumber,
+						'DivisiID' => $key['DivisiID'],
+						'PIC' =>  $key['NIK'],
+						'RatePKID' => $key['RatePKID'],
+						'RatePK' => $key['Rate']
+					);
+					$TotalPK += $key['Rate'];
 
+					$oWhere = array(
+						'NoTransaksi' => $NoTransaksi,
+						'PIC' => $key['NIK']
+					);
+
+					$oExist = $this->ModelsExecuteMaster->FindData($oWhere, 'perhitungandetailpk');
+
+					if ($oExist->num_rows() == 0) {
 						$oPK['CreatedOn'] = $CreatedOn;
 						$oPK['CreatedBy'] = $CreatedBy;
 						$oSave = $this->db->insert('perhitungandetailpk',$oPK);
+					}
+					else{
+						$oPK['UpdatedOn'] = $UpdatedOn;
+						$oPK['UpdatedBy'] = $UpdatedBy;
 
-						if (!$oSave) {
-							$data['message'] = "Gagal Simpan Realisasi PK";
-		                    $errorCount +=1;
-							goto jump;
-						}
-
-						$LineNumber +=1;
+						$oWhere = array(
+							'NoTransaksi' => $NoTransaksi,
+							'PIC' => $key['NIK']
+						);
+						$oSave = $this->ModelsExecuteMaster->ExecUpdate($oPK, $oWhere, 'perhitungandetailpk');
 					}
 
-					// Persembahan
-					$LineNumber = 0;
-					$TotalPersembahan = 0;
-					foreach ($json_data['DenomPersembahan'] as $key) {
-						$oPersembahan = array(
-							'NoTransaksi' => $NoTransaksi,
-							'LineNum' => $LineNumber,
-							'Denominasi' => $key['Denominasi'],
-							'Qty' => $key['Qty'],
-							'Jumlah' => $key['Jumlah'],
-							'PICPerhitungan' => $key['PICPerhitungan'],
-						);
+					if (!$oSave) {
+						$data['message'] = "Gagal Simpan Realisasi PK";
+	                    $errorCount +=1;
+						goto jump;
+					}
 
-						$TotalPersembahan += $key['Jumlah'];
+					$LineNumber +=1;
+				}
 
+				// Persembahan
+				$LineNumber = 0;
+				$TotalPersembahan = 0;
+				foreach ($json_data['DenomPersembahan'] as $key) {
+					$oPersembahan = array(
+						'NoTransaksi' => $NoTransaksi,
+						'LineNum' => $LineNumber,
+						'Denominasi' => $key['Denominasi'],
+						'Qty' => $key['Qty'],
+						'Jumlah' => $key['Jumlah'],
+						'PICPerhitungan' => $key['PICPerhitungan'],
+					);
+
+					$TotalPersembahan += $key['Jumlah'];
+
+					$oWhere = array(
+						'NoTransaksi' => $NoTransaksi,
+						'Denominasi' => $key['Denominasi'],
+					);
+					$oExist = $this->ModelsExecuteMaster->FindData($oWhere, 'perhitungandetailpersembahan');
+
+					if ($oExist->num_rows() == 0) {
 						$oPersembahan['CreatedOn'] = $CreatedOn;
 						$oPersembahan['CreatedBy'] = $CreatedBy;
 						$oSave = $this->db->insert('perhitungandetailpersembahan',$oPersembahan);
+					}
+					else{
+						$oPersembahan['UpdatedOn'] = $UpdatedOn;
+						$oPersembahan['UpdatedBy'] = $UpdatedBy;
 
-						if (!$oSave) {
-							$data['message'] = "Gagal Simpan Denominasi Persembahan";
-		                    $errorCount +=1;
-							goto jump;
-						}
+						$oWhere = array(
+							'NoTransaksi' => $NoTransaksi,
+							'Denominasi' => $key['Denominasi'],
+						);
 
-						$LineNumber +=1;
+						$oSave = $this->ModelsExecuteMaster->ExecUpdate($oPersembahan, $oWhere, 'perhitungandetailpersembahan');
 					}
 
-					// Kas -> Penerimaan Persembahan
+					if (!$oSave) {
+						$data['message'] = "Gagal Simpan Denominasi Persembahan";
+	                    $errorCount +=1;
+						goto jump;
+					}
 
-					if ($TotalPersembahan > 0) {
-						$prefix = 'KOL'.substr(date('Ymd'),2,4);
-						$this->db->select('NoTransaksi');
-						$this->db->distinct();
-						$this->db->from('transaksikas');
-						$this->db->where('LEFT(NoTransaksi,7)',$prefix);
-						$lastNoTrx = $this->db->count_all_results();
-						$NoKas = $prefix.str_pad($lastNoTrx + 1, 4, '0', STR_PAD_LEFT);
+					$LineNumber +=1;
+				}
 
-						$oObjectKas = array(
-							'NoTransaksi' => $NoKas,
-							'TipeTransaksi' => 1,
-							'KodeAkunKas' => $json_data['KodeAkunKas'],
-							'Total' => $TotalPersembahan,
-							'Keterangan' => 'Penerimaan Uang dari Ibadah : '.$json_data['NamaIbadah'] ,
-							'CabangID'	=> $json_data['CabangID'],
+				// Kas -> Penerimaan Persembahan
+
+				if ($TotalPersembahan > 0) {
+					$prefix = 'KOL'.substr(date('Ymd'),2,4);
+					$this->db->select('NoTransaksi');
+					$this->db->distinct();
+					$this->db->from('transaksikas');
+					$this->db->where('LEFT(NoTransaksi,7)',$prefix);
+					$lastNoTrx = $this->db->count_all_results();
+					$NoKas = $prefix.str_pad($lastNoTrx + 1, 4, '0', STR_PAD_LEFT);
+
+					$oObjectKas = array(
+						'NoTransaksi' => $NoKas,
+						'TipeTransaksi' => 1,
+						'KodeAkunKas' => $json_data['KodeAkunKas'],
+						'Total' => $TotalPersembahan,
+						'Keterangan' => 'Penerimaan Uang dari Ibadah : '.$json_data['NamaIbadah'] ,
+						'CabangID'	=> $json_data['CabangID'],
+						'BaseType' => 'KOL',
+						'StatusTransaksi' => 'OPEN',
+						'NoReff' => $NoTransaksi
+					);
+					$oObjectKas['TglTransaksi'] = $CreatedOn;
+
+					$oWhere = array(
+						'NoReff' => $NoTransaksi,
+						'BaseType' => 'KOL',
+					);
+
+					$oExist = $this->ModelsExecuteMaster->FindData($oWhere, 'transaksikas');
+
+					if ($oExist->num_rows() == 0) {
+						$oObjectKas['CreatedOn'] = $CreatedOn;
+						$oObjectKas['CreatedBy'] = $CreatedBy;
+						$oSave = $this->db->insert('transaksikas',$oObjectKas);
+					}
+					else{
+						$oObjectKas['UpdatedOn'] = $UpdatedOn;
+						$oObjectKas['UpdatedBy'] = $UpdatedBy;
+
+						$oWhere = array(
+							'NoReff' => $NoTransaksi,
 							'BaseType' => 'KOL',
-							'StatusTransaksi' => 'OPEN',
-							'NoReff' => $NoTransaksi
 						);
-						$oObjectKas['TglTransaksi'] = $CreatedOn;
-						$oSave = $this->db->insert('transaksikas',$oObjectKas);
 
-						if (!$oSave) {
-							$errorCount +=1;
-							$data['message'] = 'Error Simpan Penerimaan Kas';
-							goto jump;
-						}
+						$oSave = $this->ModelsExecuteMaster->ExecUpdate($oObjectKas, $oWhere, 'transaksikas');
 					}
 
-					// Kas -> Pengeluaran PK
+					if (!$oSave) {
+						$errorCount +=1;
+						$data['message'] = 'Error Simpan Penerimaan Kas';
+						goto jump;
+					}
+				}
 
-					if ($TotalPK > 0) {
-						$prefix = 'KOL'.substr(date('Ymd'),2,4);
-						$this->db->select('NoTransaksi');
-						$this->db->distinct();
-						$this->db->from('transaksikas');
-						$this->db->where('LEFT(NoTransaksi,7)',$prefix);
-						$lastNoTrx = $this->db->count_all_results();
-						$NoKas = $prefix.str_pad($lastNoTrx + 1, 4, '0', STR_PAD_LEFT);
+				// Kas -> Pengeluaran PK
 
-						$oObjectKas = array(
-							'NoTransaksi' => $NoKas,
-							'TipeTransaksi' => 2,
-							'KodeAkunKas' => $json_data['KodeAkunKas'],
-							'Total' => $TotalPK,
-							'Keterangan' => 'Pengeluaran PK Ibadah : '.$json_data['NamaIbadah'] ,
-							'CabangID'	=> $json_data['CabangID'],
+				if ($TotalPK > 0) {
+					$prefix = 'IPK'.substr(date('Ymd'),2,4);
+					$this->db->select('NoTransaksi');
+					$this->db->distinct();
+					$this->db->from('transaksikas');
+					$this->db->where('LEFT(NoTransaksi,7)',$prefix);
+					$lastNoTrx = $this->db->count_all_results();
+					$NoKas = $prefix.str_pad($lastNoTrx + 1, 4, '0', STR_PAD_LEFT);
+
+					$oObjectKas = array(
+						'NoTransaksi' => $NoKas,
+						'TipeTransaksi' => 2,
+						'KodeAkunKas' => $json_data['KodeAkunKas'],
+						'Total' => $TotalPK,
+						'Keterangan' => 'Pengeluaran PK Ibadah : '.$json_data['NamaIbadah'] ,
+						'CabangID'	=> $json_data['CabangID'],
+						'BaseType' => 'IPK',
+						'StatusTransaksi' => 'OPEN',
+						'NoReff' => $NoTransaksi
+					);
+					$oObjectKas['TglTransaksi'] = $CreatedOn;
+					// $oSave = $this->db->insert('transaksikas',$oObjectKas);
+
+					$oWhere = array(
+						'NoReff' => $NoTransaksi,
+						'BaseType' => 'IPK',
+					);
+
+					$oExist = $this->ModelsExecuteMaster->FindData($oWhere, 'transaksikas');
+
+					if ($oExist->num_rows() == 0) {
+						$oObjectKas['CreatedOn'] = $CreatedOn;
+						$oObjectKas['CreatedBy'] = $CreatedBy;
+						$oSave = $this->db->insert('transaksikas',$oObjectKas);
+					}
+					else{
+						$oObjectKas['UpdatedOn'] = $UpdatedOn;
+						$oObjectKas['UpdatedBy'] = $UpdatedBy;
+
+						$oWhere = array(
+							'NoReff' => $NoTransaksi,
 							'BaseType' => 'IPK',
-							'StatusTransaksi' => 'OPEN',
-							'NoReff' => $NoTransaksi
 						);
-						$oObjectKas['TglTransaksi'] = $CreatedOn;
-						$oSave = $this->db->insert('transaksikas',$oObjectKas);
 
-						if (!$oSave) {
-							$errorCount +=1;
-							$data['message'] = 'Error Simpan Pengeluaran Kas';
-							goto jump;
-						}
+						$oSave = $this->ModelsExecuteMaster->ExecUpdate($oObjectKas, $oWhere, 'transaksikas');
 					}
 
+					if (!$oSave) {
+						$errorCount +=1;
+						$data['message'] = 'Error Simpan Pengeluaran Kas';
+						goto jump;
+					}
 				}
 
 
