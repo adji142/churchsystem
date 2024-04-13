@@ -55,7 +55,7 @@
 				}
 
 				if ($KotaID != "") {
-					$this->db->where('cabang.KotaID',$KotaID);
+					// $this->db->where('cabang.KotaID',$KotaID);
 				}
 
 				// var_dump($roleData->LevelAkses);
