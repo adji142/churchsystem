@@ -97,7 +97,20 @@ class ModelsExecuteMaster extends CI_Model
 	}
 	public function GetStoreProcedure($Name, $Parameter)
 	{
-		return $this->db->query('CALL '.$Name.'('.$Parameter.')');
+		$sql = 'CALL '.$Name.'('.$Parameter.')';
+		// var_dump($sql);
+		return $this->db->query($sql);
+	}
+	public function getFromStoreProcedure($Name, $Parameter)
+	{
+		$tmpparam = "";
+		for ($i=0; $i < count($Parameter); $i++) { 
+			$tmpparam .= "?,";
+		}
+		// var_dump(count($tmpparam));
+		$param = substr($tmpparam, 0, count($tmpparam));
+		// var_dump($param);
+		return $this->db->query('CALL '.$Name.'('.$param.')', $Parameter);
 	}
 	function ExecUpdate($data,$where,$table)
 	{

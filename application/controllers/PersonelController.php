@@ -52,7 +52,13 @@
 			// var_dump($this->session->userdata('LevelAkses'));
 
 			try {
-				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END AS selectedPersonel, posisipelayanan.PosisiPelayanan " );
+				// Sub Query
+
+				$logQuery = $this->db->select("personel_log.NIK, COUNT(*) JumlahEdit")
+						->from('personel_log')
+						->group_by('personel_log.NIK')->get_compiled_select();
+
+				$this->db->select("personel.NIK,CONCAT(personel.GelarDepan,' ',personel.NamaLengkap,' ', personel.GelarBelakang) AS Nama, cabang.CabangName,divisi.NamaDivisi,jabatan.NamaJabatan, ratepk.NamaRate, ratepk.Rate, personel.TempatLahir, personel.TglLahir,CASE WHEN personel.JenisKelamin = 'L' THEN 'Laki-Laki' ELSE 'Permpuan' END JenisKelamin,personel.Alamat, personel.CabangID, personel.Email, personel.NoHP, personel.CabangID, personel.DivisiID, personel.JabatanID, CASE WHEN CONCAT(personel.DivisiID,personel.JabatanID) = '".$DivisiID.$JabatanID."' THEN 'A' ELSE 'B' END AS selectedPersonel, posisipelayanan.PosisiPelayanan,COALESCE(log.JumlahEdit, 0) JumlahEdit " );
 				$this->db->from('personel');
 				$this->db->join('cabang','personel.CabangID=cabang.id','left');
 				$this->db->join('divisi','personel.DivisiID=divisi.id','left');
@@ -63,6 +69,7 @@
 				$this->db->join('dem_kelurahan','personel.KelID = dem_kelurahan.subdis_id','left');
 				$this->db->join('dem_kecamatan','personel.KecID = dem_kecamatan.dis_id','left');
 				$this->db->join('posisipelayanan', 'posisipelayanan.id = personel.PosisiPelayanan','left');
+				$this->db->join("($logQuery) as log","personel.NIK = log.NIK",'left');
 				$this->db->where("personel.StatusAnggota", 1);
 
 				if ($NIK != "") {

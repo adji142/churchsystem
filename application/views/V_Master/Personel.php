@@ -718,6 +718,14 @@
                     dataField: "Alamat",
                     caption: "Alamat",
                     allowEditing:false
+                },
+                {
+                    dataField: "JumlahEdit",
+                    caption: "Edit Count",
+                    allowEditing:false,
+                    customizeText: function(data) {
+                      return data.value + " Times";
+                    }
                 }
             ],
             onEditingStart: function(e) {

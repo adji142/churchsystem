@@ -360,10 +360,10 @@
         			// console.log(idofObject)
 
         			if (idofObject == $('#objectID').val()) {
-        				if (cekDuplicate(selectedRowsData[0]['NIK'])) {
-		        			alert('Personel Sudah dipakai');
-		        			break;
-		        		}
+        				// if (cekDuplicate(selectedRowsData[0]['NIK'])) {
+		        		// 	alert('Personel Sudah dipakai');
+		        		// 	break;
+		        		// }
 
 		        		var newArray = PersonelFill.filter(function(item) {
 						    return item['NIK'] === selectedRowsData[0]['NIK'];

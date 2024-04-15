@@ -13,6 +13,9 @@
   #btn-setor{
     color: black !important;
   }
+  #btn-report{
+    color: white !important;
+  }
 </style>
 <!-- page content -->
 <div class="right_col" role="main">
@@ -368,19 +371,30 @@
               }
             },
             {
+                dataField: "NoPersembahan",
+                caption: "NoPersembahan",
+                allowEditing:false,
+                visible:false
+            },
+            {
                 dataField: "#",
                 caption: "Action",
                 allowEditing:false,
                 fixed: true,
                 cellTemplate: function(cellElement, cellInfo) {
                   var validasi = parseFloat(cellInfo.data.Pengeluaran) + parseFloat(cellInfo.data.Penerimaan);
+                  var NoTransaksi = cellInfo.data.NoTransaksi;
 
-                  if (validasi > 0) {
-                    LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning id = 'btn-penerimaan' disabled>Isi Persembahan</a>";
-                  }
-                  else{
-                    LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning ' id = 'btn-penerimaan'>Isi Persembahan</a>";
-                  }
+                  LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning id = 'btn-penerimaan' >Isi Persembahan</a>";
+
+                  LinkAccess += "<a href = '<?=base_url()?>finance/persembahan/report/"+cellInfo.data.NoPersembahan+"' class='btn btn-success id = 'btn-report' >Cetak Laporan</a>";
+
+                  // if (validasi > 0) {
+                  //   LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning id = 'btn-penerimaan' disabled>Isi Persembahan</a>";
+                  // }
+                  // else{
+                  //   LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning ' id = 'btn-penerimaan'>Isi Persembahan</a>";
+                  // }
                   cellElement.append(LinkAccess);
                 }
             },
