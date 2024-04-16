@@ -531,6 +531,7 @@
         data    : me.serialize(),
         dataType: 'json',
         success : function (response) {
+          console.log(response)
           if(response.success == true){
             $('#modal_').modal('toggle');
             Swal.fire({
