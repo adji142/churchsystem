@@ -303,8 +303,16 @@
 				$this->db->trans_start();
 				// 20240329
 				if ($formtype == "add") {
-					$prefix = substr(date('Ymd'),2,4).$CabangID;
-					$lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$CabangID), 'personel')->num_rows() +1;
+					$periode = substr(date('Ymd'),2,4);
+					$prefix = $periode.$CabangID;
+					// $lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$CabangID), 'personel')->num_rows() +1;
+					$this->db->select('*');
+					$this->db->from('personel');
+					$this->db->where('LEFT(NIK,4)', $periode);
+					$this->db->where('CabangID', $CabangID);
+					$rs = $this->db->get();
+					$lastNoTrx = $rs->num_rows() +1;
+
 					$NIK = $prefix.str_pad($lastNoTrx, 4, '0', STR_PAD_LEFT);
 				}
 				$oObject = array(
@@ -340,7 +348,7 @@
 
 					if (!$save) {
 						$error = $this->db->error();
-
+						$data['success'] = false;
 						if($error['code'] > 0) {
 				            $data['message'] =$error['code'] .' - ' .$error['message'];
 				        } else {
@@ -369,6 +377,7 @@
 					$saveUser = $this->db->insert('users',$oUser);
 
 					if (!$saveUser) {
+						$data['success'] = false;
 						$data['message'] = "Gagal Create User";
 						$errorCount += 0;
 						goto jump;
@@ -396,6 +405,7 @@
 					$this->db->update('personel', $oObject, $oWhere);
 				}
 				else{
+					$data['success'] = false;
 					$data['message'] = "invalid Form Type";
 				}
 
