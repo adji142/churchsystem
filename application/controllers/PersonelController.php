@@ -339,7 +339,15 @@
 					$save = $this->db->insert('personel',$oObject);
 
 					if (!$save) {
-						$data['message'] = "Gagal Create Personel";
+						$error = $this->db->error();
+
+						if($error['code'] > 0) {
+				            $data['message'] =$error['code'] .' - ' .$error['message'];
+				        } else {
+				            $data['message'] = "Gagal Create Personel";
+				        }
+
+						
 						$errorCount += 0;
 						goto jump;
 					}
@@ -395,6 +403,7 @@
 				$this->db->trans_complete();
 
 				if ($errorCount > 0) {
+					$data['success'] = false;
 					$error = $this->db->error();
 				    $this->db->trans_rollback();
 
