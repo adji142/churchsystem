@@ -77,7 +77,7 @@ use PHPMailer\PHPMailer\Exception;
 						}
 
 
-						$sender = "628895796938";
+						$sender = "6285291811663";
 
 
 						$ch = curl_init();
@@ -117,7 +117,7 @@ use PHPMailer\PHPMailer\Exception;
 
 					$this->ModelsExecuteMaster->ExecUpdate($oUpdateObject,array('id'=> $key->id),'blastmessage');
 
-					sleep(20);
+					sleep(60);
 					$row += 1;
 				}
 			}
