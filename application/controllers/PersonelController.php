@@ -306,12 +306,17 @@
 					$periode = substr(date('Ymd'),2,4);
 					$prefix = $periode.$CabangID;
 					// $lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$CabangID), 'personel')->num_rows() +1;
-					$this->db->select('*');
-					$this->db->from('personel');
-					$this->db->where('LEFT(NIK,4)', $periode);
-					$this->db->where('CabangID', $CabangID);
-					$rs = $this->db->get();
-					$lastNoTrx = $rs->num_rows() +1;
+					// $this->db->select('*');
+					// $this->db->from('personel');
+					// $this->db->where('LEFT(NIK,4)', $periode);
+					// $this->db->where('CabangID', $CabangID);
+					// $rs = $this->db->get();
+
+					$sql = "SELECT MAX(x.Total) Total FROM (
+								SELECT SUBSTRING(NIK, 0, 4),MAX(CAST(SUBSTRING(NIK, 6, 12) AS INTEGER)) Total FROM personel where LEFT(NIK,4) = '".$periode."' AND CABANGID = ".$CabangID." group by NIK HAVING LENGTH(CAST(SUBSTRING(NIK, 6, 12) AS INTEGER)) <=4
+							)x";
+					$rs = $this->db->query($sql)->row();
+					$lastNoTrx = intval($rs->Total)+1;
 
 					$NIK = $prefix.str_pad($lastNoTrx, 4, '0', STR_PAD_LEFT);
 				}
