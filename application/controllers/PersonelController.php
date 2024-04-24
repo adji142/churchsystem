@@ -304,7 +304,7 @@
 				// 20240329
 				if ($formtype == "add") {
 					$periode = substr(date('Ymd'),2,4);
-					$prefix = $periode.$CabangID;
+					$prefix = $periode;
 					// $lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$CabangID), 'personel')->num_rows() +1;
 					$this->db->select('*');
 					$this->db->from('personel');
