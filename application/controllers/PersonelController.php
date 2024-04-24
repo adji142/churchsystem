@@ -361,7 +361,7 @@
 				        }
 
 						
-						$errorCount += 0;
+						$errorCount += 1;
 						goto jump;
 					}
 
