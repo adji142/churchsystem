@@ -318,7 +318,7 @@
 					// $rs = $this->db->query($sql)->row();
 					$lastNoTrx = $rs->num_rows()+1;
 
-					$NIK = $prefix.str_pad($lastNoTrx, 4, '0', STR_PAD_LEFT);
+					$NIK = $prefix.str_pad($lastNoTrx, 5, '0', STR_PAD_LEFT);
 				}
 				$oObject = array(
 					'NIK' => $NIK,
