@@ -324,14 +324,14 @@
 
 					if ($key->NoHP != "") {
 $message = "
-Shalom *".rtrim($key->NamaLengkap)."* 
+Shalom *".ltrim(rtrim($key->NamaLengkap))."* 
 Anda Mendapat Jadwal Pelayanan Pada :
 
-*Hari 			: ".$key->NamaHari."*
-*Tanggal 			: ".$key->Tanggal."*
-*Jam 			: ".$key->JamMulai.' s/d '.$key->JamSelesai."*
+*Hari : ".$key->NamaHari."*
+*Tanggal : ".$key->Tanggal."*
+*Jam : ".$key->JamMulai.' s/d '.$key->JamSelesai."*
 *Posisi Pelayanan : ".$key->NamaDivisi."*
-*Lokasi 			: ".$key->CabangName."*
+*Lokasi : ".$key->CabangName."*
 
 Silahkan Kunjungi link berikut untuk Konfirmasi Kehadiran.
 ".base_url()."pelayanan/konfirmasi/".$key->KonfirmasiID."
