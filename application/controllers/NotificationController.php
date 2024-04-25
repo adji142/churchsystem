@@ -126,7 +126,7 @@ use PHPMailer\PHPMailer\Exception;
 
 					$this->ModelsExecuteMaster->ExecUpdate($oUpdateObject,array('id'=> $key->id),'blastmessage');
 
-					sleep(300);
+					sleep(120);
 					$row += 1;
 				}
 			}
