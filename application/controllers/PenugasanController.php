@@ -350,7 +350,16 @@ Tuhan Yesus memberkati
 							'CreatedOn' => date('Y-m-d h:i:s')
 	                	);
 
-	                	$this->ModelsExecuteMaster->ExecInsert($oParamEmail,'blastmessage');
+	                	$oWhereBlast = array(
+	                		'BaseEntry' => $lastTRX,
+	                		'Chanel' => 'whats'
+	                	);
+
+	                	$find = $this->ModelsExecuteMaster->FindData($oWhereBlast, 'blastmessage');
+
+	                	if ($find->num_rows() == 0) {
+	                		$this->ModelsExecuteMaster->ExecInsert($oParamEmail,'blastmessage');
+	                	}
 					}
 
                 	// $data = $this->ModelsExecuteMaster->SendEmail($oParamEmail);
