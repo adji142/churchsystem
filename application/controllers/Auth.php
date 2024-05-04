@@ -186,14 +186,39 @@ class Auth extends CI_Controller {
 		$NewPassword = $this->input->post('NewPassword');
 		$ReNewPassword = $this->input->post('ReNewPassword');
 
+		$getUser = $this->ModelsExecuteMaster->FindData(array('username'=>$KodeUser),'users');
+
+		if ($getUser->num_rows() == 0) {
+			$data['success'] = false;
+			$data['message'] = "User Tidak Valid";
+			goto jump;
+		}
+
 		if ($NewPassword != $ReNewPassword) {
 			$data['success'] = false;
 			$data['message'] = "Kombinasi Password berbeda";
 			goto jump;
 		}
 		else{
-			$getUser = $this->ModelsExecuteMaster->FindData(array('username'=>$KodeUser,'ChangePassword'=>'Y'),'users');
-			if ($getUser->num_rows() > 0) {
+
+			if ($this->input->post('formtype') == "initial") {
+				$getUser = $this->ModelsExecuteMaster->FindData(array('username'=>$KodeUser,'ChangePassword'=>'Y'),'users');
+				if ($getUser->num_rows() > 0) {
+					$call =$this->ModelsExecuteMaster->ExecUpdate(array('password'=>$this->encryption->encrypt($ReNewPassword),'ChangePassword'=>"N"),array('username'=>$KodeUser),'users');
+					if ($call) {
+						$data['success'] = true;
+					}
+					else{
+						$data['message'] = 'Gagal Update password';
+					}
+				}
+				else{
+					$data['success'] = false;
+					$data['message'] = "User sudah diverifikasi, Silahkan Login";
+					goto jump;
+				}
+			}
+			else{
 				$call =$this->ModelsExecuteMaster->ExecUpdate(array('password'=>$this->encryption->encrypt($ReNewPassword),'ChangePassword'=>"N"),array('username'=>$KodeUser),'users');
 				if ($call) {
 					$data['success'] = true;
@@ -201,11 +226,6 @@ class Auth extends CI_Controller {
 				else{
 					$data['message'] = 'Gagal Update password';
 				}
-			}
-			else{
-				$data['success'] = false;
-				$data['message'] = "User sudah diverifikasi, Silahkan Login";
-				goto jump;
 			}
 		}
 		jump:

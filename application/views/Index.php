@@ -110,9 +110,13 @@
 
             <input type="password" class="form-control" placeholder="Password" required="" id="password" name="password"/>
 
-            <button class="btn btn-success" id="btn_login">Log in</button>
+            <div>
+              <button class="btn btn-success" id="btn_login">Log in</button>
+              <button class="btn btn-danger" id="btn_lostPassword">Lupa Password?</button>
+            </div>
           </form>
         </section>
+
       </div>
       <!-- <div class="login_wrapper">
         <div class="animate form login_form">
@@ -168,6 +172,7 @@
                 </label>
                 <div class="col-md-9 col-sm-9 ">
                   <input type="text" name="KodeUser" id="KodeUser" required="" placeholder="Kode User" readonly="" class="form-control ">
+                  <input type="hidden" name="formtype" id="formtype" value="initial">
                 </div>
               </div>
 
@@ -198,6 +203,7 @@
         </div>
       </div>
     </div>
+
   </body>
 </html>
 <script type="text/javascript">
@@ -255,6 +261,8 @@
                             $('#btn_login').attr('disabled',false);
 
                             // Modals
+                            $('#formtype').val('initial');
+                            $('#KodeUser').attr('readonly',true);
                             $('#KodeUser').val($('#username').val());
                             $('#modal_').modal('show');
                         });
@@ -276,6 +284,15 @@
                 }
             });
         });
+
+        $('#btn_lostPassword').click(function () {
+          $('#KodeUser').attr('readonly',false);
+
+          // Modals
+          $('#formtype').val('changepass');
+          $('#KodeUser').val($('#username').val());
+          $('#modal_').modal('show');
+        })
 
         $('#post_').submit(function (e) {
           $('#btn_resetPassword').text('Tunggu Sebentar.....');
