@@ -109,7 +109,7 @@
                   </div>
                 </div>
                 <div class="item" form-group>
-                    <button class="btn btn-primary" id="btn_Save" disabled="">Save</button>
+                    <button class="btn btn-primary" id="btn_Save">Save</button>
                   </div>
               </div>
             </div>
@@ -584,6 +584,8 @@
       else{
         $('#btn_Save').prop('disabled', false);
       }
+
+       $('#btn_Save').prop('disabled', false);
     }
   });
 </script>

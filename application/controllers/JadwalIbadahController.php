@@ -174,12 +174,31 @@
 			$CreatedBy = $this->session->userdata('NamaUser');
 			$UpdatedBy = $this->session->userdata('NamaUser');
 
+
 			try {
 				$this->db->trans_start();
 
 				$errorCount = 0;
 				$formtype = $json_data['formtype'];
 
+				if ($json_data['NamaIbadah'] == "") {
+					$data['message'] = "Nama Ibadah Harus diisi";
+					$errorCount +=1;
+					goto jump;
+				}
+
+				if ($json_data['Hari'] == "") {
+					$data['message'] = "Hari Harus diisi";
+					$errorCount +=1;
+					goto jump;
+				}
+
+				if ($json_data['CabangID'] == "0") {
+					$data['message'] = "Cabang Harus diisi";
+					$errorCount +=1;
+					goto jump;
+				}
+			
 				$oObject = array(
 					'NamaIbadah' => $json_data['NamaIbadah'],
 					'Hari' => $json_data['Hari'],

@@ -709,7 +709,17 @@
 
 				$NoTransaksi = ($formtype == 'add') ? $NoTransaksi : $json_data['NoTransaksi'];
 
+				if ($json_data['PICPerhitungan'] == "") {
+					$data['message'] = "PIC Persembahan Harus diisi";
+					$errorCount +=1;
+					goto jump;
+				}
 
+				if ($json_data['KodeAkunKas'] == "") {
+					$data['message'] = "Akun Kas Harus diisi";
+					$errorCount +=1;
+					goto jump;
+				}
 
 				$TglTransaksi = $json_data['TglTransaksi'];
 				$PICPerhitungan = $json_data['PICPerhitungan'];
@@ -966,6 +976,7 @@
 
 			$this->db->trans_complete();
 			if ($errorCount > 0) {
+				$data['success'] = false;
 				$error = $this->db->error();
 			    $this->db->trans_rollback();
 

@@ -96,7 +96,17 @@
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Keterangan <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
-              <input type="text" name="Keterangan" id="Keterangan" required="" placeholder="Keterangan" class="form-control ">
+              <input type="text" name="Keterangan" id="Keterangan" placeholder="Keterangan" class="form-control ">
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">PIC Kas <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control" id="PICKas" name="PICKas">
+                <option value="">Pilih PIC Kas</option>
+              </select>
             </div>
           </div>
 
@@ -126,6 +136,10 @@
         width: '100%'
       });
 
+      $('#PICKas').select2({
+        width:'100%'
+      })
+
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
         $('#CabangID').val(CabangID).trigger('change');
@@ -134,8 +148,36 @@
         $('#CabangIDFilter').val(CabangID).trigger('change');
       }
 
+      GetPersonel()
       readData();
     });
+
+    function GetPersonel() {
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>PersonelController/Read",
+        data: {'NIK':'','CabangID': $('#CabangID').val(),'Wilayah': "0",'Provinsi' : "-1",'Kota': "",'DivisiID':"",'JabatanID':'','NIKIn': ''},
+        dataType: "json",
+        success: function (responsePersonel) {
+          $('#PICKas').empty();
+          var newOption = $('<option>', {
+            value: "",
+            text: "Pilih PIC Persembahan"
+          });
+
+          $('#PICKas').append(newOption); 
+          $.each(responsePersonel.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.NIK,
+              text: v.Nama
+            });
+
+            $('#PICKas').append(newOption);
+          });
+        }
+      });
+    }
 
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
@@ -198,6 +240,7 @@
             $('#KodeAkun').val(v.KodeAkun);
             $('#NamaAkun').val(v.NamaAkun);
             $('#Keterangan').val(v.Keterangan);
+            $('#PICKas').val(v.PIC).trigger('change');
 
             $('#KodeAkun').prop('readonly', true);
             $('#modal_').modal('show');

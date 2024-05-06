@@ -187,7 +187,7 @@
               </div>
               <div class="col-md-12 col-sm-12">
                 <hr>
-                <button class="btn btn-success" id="bt_save" disabled="">Simpan Data Sisa Persembahan</button>
+                <button class="btn btn-success" id="bt_save">Simpan Data Sisa Persembahan</button>
               </div>
             </div>
           </div>
@@ -519,7 +519,7 @@
               data: {'TglIbadah':TanggalIbadah, 'CabangID': ParseCabangID,'JadwalIbadahID':JadwalIbadahID,'Hari':HariIbadah },
               dataType: "json",
               success: function (responsedata) {
-                console.log(responsedata.data[0].NoTransaksi);
+                // console.log(responsedata.data[0].NoTransaksi);
                 if (responsedata.data.length > 0) {
                   $('#NoTransaksi').val(responsedata.data[0].TRX);
                   $('#TglTransaksi').val(responsedata.data[0].TglTransaksi);
@@ -762,6 +762,8 @@
       else{
         $('#bt_save').prop('disabled', false);
       }
+
+      $('#bt_save').prop('disabled', false);
 
     }
 

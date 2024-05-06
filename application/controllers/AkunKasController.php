@@ -54,6 +54,7 @@
 			$NamaAkun = $this->input->post('NamaAkun');
 			$Keterangan = $this->input->post('Keterangan');
 			$CabangID = $this->input->post('CabangID');
+			$PICKas = $this->input->post('PICKas');
 			$CreatedOn = date('Y-m-d h:i:s');
 			$UpdatedOn = date('Y-m-d h:i:s');
 			$CreatedBy = $this->session->userdata('NamaUser');
@@ -66,7 +67,8 @@
 					'KodeAkun' 	=> $KodeAkun,
 					'NamaAkun' 	=> $NamaAkun,
 					'Keterangan'=> $Keterangan,
-					'CabangID'	=> $CabangID
+					'CabangID'	=> $CabangID,
+					'PIC' 		=> $PICKas
 				);
 
 				if ($formtype == "add") {
