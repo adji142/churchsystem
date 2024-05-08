@@ -136,10 +136,30 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true" id="ModalBukti">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Modal Bukti Absen</h4>
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- <img src="" width="50%" id="ImageBukti"> -->
+        <div id="imageContainer"></div>
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div> -->
+    </div>
+  </div>
+</div>
 <?php
   require_once(APPPATH."views/parts/Footer.php");
 ?>
 <script type="text/javascript">
+  var SelectedImage = "";
   $(function () {
     var CabangID = "<?php echo $CabangID; ?>"
     var DivisiID = "<?php echo $this->session->userdata('DivisiID'); ?>";
@@ -440,7 +460,9 @@
 
       dataGridInstance.on('selectionChanged', function(e) {
         var selectedRows = e.selectedRowsData;
-        getDetail(selectedRows[0].NoTransaksi,selectedRows[0].CabangID)
+        if (selectedRows.length > 0) {
+          getDetail(selectedRows[0].NoTransaksi,selectedRows[0].CabangID)
+        }
       });
         // add dx-toolbar-after
         // $('.dx-toolbar-after').append('Tambah Alat untuk di pinjam ');
@@ -504,10 +526,73 @@
                 caption: "Keterangan",
                 allowEditing:false,
             },
+            {
+                dataField: "TglAbsen",
+                caption: "Absensi Masuk",
+                allowEditing:false,
+            },
+            {
+                dataField: "Foto",
+                caption: "#",
+                allowEditing:false,
+                visible:false
+            },
+            {
+                dataField: "Action",
+                caption: "Action",
+                allowEditing:false,
+                cellTemplate: function(cellElement, cellInfo) {
+                  SelectedImage = cellInfo.data.NamaLengkap;
+                    if(cellInfo.data.TglAbsen == "01/01/1999 00:00"){
+                      $("<button>")
+                      .addClass("dx-button")
+                      .text("Lihat Bukti Absensi")
+                      .on("click", function() {
+                          var rowData = cellInfo.data; 
+                          var parameterValue = rowData.Foto; 
+                          getImageData(parameterValue);
+                      })
+                      .appendTo(cellElement)
+                    }
+                    else{
+                      $("<button>")
+                      .addClass("dx-button")
+                      .text("Lihat Bukti Absensi")
+                      .on("click", function() {
+                          var rowData = cellInfo.data; 
+                          var parameterValue = rowData.Foto; 
+                          getImageData(parameterValue);
+                      })
+                      .appendTo(cellElement);
+                    }
+                }
+            },
         ],
+        onCellPrepared:function (cellInfo) {
+          if (cellInfo.rowType === "data") {
+            const TglAbsen = cellInfo.data.TglAbsen;
+
+            if (TglAbsen == "01/01/1999 00:00") {
+              cellInfo.cellElement.css("backgroundColor", "yellow");
+              cellInfo.cellElement.css("color", "black");
+            }
+          }
+        }
       });
         // add dx-toolbar-after
         // $('.dx-toolbar-after').append('Tambah Alat untuk di pinjam ');
     }
   });
+
+  function getImageData(Foto) {
+    // imageBukti
+    // ModalBukti
+    // console.log(Foto)
+    $('#ModalBukti').modal('show');
+    var imgElement = $("<img>");
+    imgElement.attr("src", Foto);
+    var container = $("#imageContainer");
+    container.empty()
+    container.append(imgElement);
+  }
 </script>

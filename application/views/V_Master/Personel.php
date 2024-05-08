@@ -77,6 +77,7 @@
           </div>
 
           <br>
+          <label><font color="red">Tanda (*) Harus di isi</font></label>
           <div class="item form-group">
             <div class="col-md-12 col-sm-12 ">
               <label>Nomor Induk Personel</label>
@@ -90,8 +91,8 @@
               <input type="text" name="GelarDepan" id="GelarDepan" placeholder="Gelar Depan" class="form-control ">
             </div>
             <div class="col-md-6 col-sm-6 ">
-              <label>Nama</label>
-              <input type="text" name="NamaLengkap" id="NamaLengkap" required="" placeholder="Nama Lengkap" class="form-control ">
+              <label>Nama (*)</label>
+              <input type="text" name="NamaLengkap" id="NamaLengkap" required="" placeholder="Nama Lengkap" class="form-control " required="">
             </div>
             <div class="col-md-3 col-sm-3 ">
               <label>Gelar belakang</label>
@@ -100,8 +101,8 @@
           </div>
           <div class="item form-group">
             <div class="col-md-3 col-sm-3 ">
-              <label >Provinsi</label>
-              <select id="ProvID" name="ProvID" class="form-control">
+              <label >Provinsi (*)</label>
+              <select id="ProvID" name="ProvID" class="form-control" required="">
                 <option value="-1">Pilih Provinsi</option>
                 <?php 
                   foreach ($prov as $key) {
@@ -131,8 +132,8 @@
           </div>
           <div class="item form-group">
             <div class="col-md-12 col-sm-12 ">
-              <label>Cabang</label>
-              <select class="form-control col-md-12" id="CabangID" name="CabangID" >
+              <label>Cabang (*)</label>
+              <select class="form-control col-md-12" id="CabangID" name="CabangID" required="">
                 <option value="0">Pilih Cabang</option>
                 
               </select>
@@ -142,15 +143,15 @@
 
           <div class="item form-group">
             <div class="col-md-6 col-sm-6 ">
-              <label>Divisi</label>
-              <select class="form-control col-md-12" id="DivisiID" name="DivisiID" >
+              <label>Divisi (*)</label>
+              <select class="form-control col-md-12" id="DivisiID" name="DivisiID" required="">
                 <option value="0">Pilih Divisi</option>
               </select>
             </div>
             <label></label>
             <div class="col-md-6 col-sm-6 ">
-              <label>Jabatan</label>
-              <select class="form-control col-md-12" id="JabatanID" name="JabatanID" >
+              <label>Jabatan (*)</label>
+              <select class="form-control col-md-12" id="JabatanID" name="JabatanID" required="">
                 <option value="0">Pilih Jabatan</option>
               </select>
             </div>
@@ -171,13 +172,13 @@
           </div>
 
           <div class="item form-group">
-            <label class="col-form-label col-md-2 col-sm-2" for="TglLahir">Tanggal Lahir</label>
+            <label class="col-form-label col-md-2 col-sm-2" for="TglLahir">Tanggal Lahir (*)</label>
             <div class="col-md-4 col-sm-4 ">
-              <input type="text" name="TempatLahir" id="TempatLahir" required="" placeholder="Tempat Lahir" class="form-control ">
+              <input type="text" name="TempatLahir" id="TempatLahir" required="" placeholder="Tempat Lahir" class="form-control " required="">
             </div>
-            <label class="col-form-label col-md-2 col-sm-2" for="TglLahir">Tanggal Lahir</label>
+            <label class="col-form-label col-md-2 col-sm-2" for="TglLahir">Tanggal Lahir (*)</label>
             <div class="col-md-4 col-sm-4 ">
-              <input type="date" name="TglLahir" id="TglLahir" required="" placeholder="Tempat Lahir" class="form-control ">
+              <input type="date" name="TglLahir" id="TglLahir" required="" placeholder="Tempat Lahir" class="form-control " required="">
             </div>
           </div>
 
@@ -196,8 +197,8 @@
             </div>
             <label></label>
             <div class="col-md-4 col-sm-4 ">
-              <label>Jenis Kelamin</label>
-              <select class="form-control col-md-12" id="JenisKelamin" name="JenisKelamin" >
+              <label>Jenis Kelamin (*)</label>
+              <select class="form-control col-md-12" id="JenisKelamin" name="JenisKelamin" required="">
                 <option value="">Pilih Jenis Kelamin</option>
                 <option value="L">Laki-Laki</option>
                 <option value="P">Perempuan</option>
@@ -214,8 +215,8 @@
 
           <div class="item form-group">
             <div class="col-md-12 col-sm-12 ">
-              <label>Nomer Induk Pendudukan</label>
-              <input type="text" name="NomorKependudukan" id="NomorKependudukan" required="" placeholder="Nomor Induk Kependudukan (KTP / SIM / PASPOR)" class="form-control ">
+              <label>Nomer Induk Pendudukan (*)</label>
+              <input type="text" name="NomorKependudukan" id="NomorKependudukan" required="" placeholder="Nomor Induk Kependudukan (KTP / SIM / PASPOR)" class="form-control " required="">
             </div>
           </div>
 
@@ -232,8 +233,8 @@
               <input type="mail" name="Email" id="Email" required="" placeholder="Email" class="form-control ">
             </div>
             <div class="col-md-6 col-sm-6 ">
-              <label>Nomor HP</label>
-              <input type="number" name="NoHP" id="NoHP" required="" placeholder="6281325058258" class="form-control ">
+              <label>Nomor HP (*)</label>
+              <input type="number" name="NoHP" id="NoHP" required="" placeholder="6281325058258" class="form-control " required="">
             </div>
           </div>
 

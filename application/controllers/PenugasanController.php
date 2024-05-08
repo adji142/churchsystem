@@ -47,13 +47,15 @@
 				CASE WHEN penugasanpelayan.Konfirmasi = 1 THEN 'Y' ELSE CASE WHEN penugasanpelayan.Konfirmasi = 2 THEN 'N' ELSE '' END END AS diKonfirmasi, 
 				penugasanpelayan.KonfirmasiKeterangan, cabang.CabangName, jadwalibadah.NamaIbadah, 
 				DATE_FORMAT(jadwalibadah.MulaiJam,'%T') AS JamMulai, 
-				DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') AS JamSelesai");
+				DATE_FORMAT(jadwalibadah.SelesaiJam,'%T') AS JamSelesai,
+				DATE_FORMAT(COALESCE(absensi.TglAbsen, '1999-01-01'), '%d/%m/%Y %H:%i') TglAbsen, COALESCE(absensi.Foto,'') Foto");
 			$this->db->from('penugasanpelayan');
 			$this->db->join('divisi', 'penugasanpelayan.DivisiID = divisi.id','left');
 			$this->db->join('defaulthari', 'penugasanpelayan.Hari = defaulthari.KodeHari','left');
 			$this->db->join('personel', 'penugasanpelayan.PIC = personel.NIK', 'LEFT');
 			$this->db->join('cabang', 'penugasanpelayan.CabangID = cabang.id', 'LEFT');
 			$this->db->join('jadwalibadah', 'penugasanpelayan.JadwalIbadahID = jadwalibadah.id', 'LEFT');
+			$this->db->join('absensi', 'penugasanpelayan.NoTransaksi = absensi.ReffJadwal AND penugasanpelayan.PIC = absensi.NIK AND penugasanpelayan.CabangID = absensi.CabangID','left');
 			$this->db->where('penugasanpelayan.NoTransaksi', $NoTransaksi);
 
 			$oData = $this->db->get();
