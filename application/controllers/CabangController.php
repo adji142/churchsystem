@@ -25,7 +25,7 @@
 			$LevelAkses = ($this->session->userdata('UserName') == 'admin') ? "0" : $this->session->userdata('LevelAkses');
 			$roleData = $this->ModelsExecuteMaster->GetRoleData();
 			try {
-				$this->db->select('cabang.*,dem_provinsi.prov_name,dem_kota.city_name, dem_kelurahan.subdis_name, dem_kecamatan.dis_name, areapelayanan.NamaArea');
+				$this->db->select("cabang.*,dem_provinsi.prov_name,dem_kota.city_name, dem_kelurahan.subdis_name, dem_kecamatan.dis_name, areapelayanan.NamaArea, REPLACE(cabang.CabangName,'TIBERIAS','') CabangNameFormated ");
 				$this->db->from('cabang');
 				$this->db->join('dem_provinsi','cabang.ProvID = dem_provinsi.prov_id','left');
 				$this->db->join('dem_kota','cabang.KotaID = dem_kota.city_id','left');

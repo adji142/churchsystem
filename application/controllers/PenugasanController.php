@@ -64,6 +64,63 @@
 
 		}
 
+		public function ReadHeader_V2()
+		{
+			$TglAwal = $this->input->post('TglAwal');
+			$TglAkhir = $this->input->post('TglAkhir');
+			$DivisiID = $this->input->post('DivisiID');
+			$CabangID = $this->input->post('CabangID');
+
+			$this->db->distinct();
+			$this->db->select("penugasanpelayan.NoTransaksi, penugasanpelayan.Tanggal AS TglTransaksi,CONCAT('Ibadah ', defaulthari.NamaHari ) AS NamaIbadah, REPLACE(cabang.CabangName,'TIBERIAS','') CabangName, penugasanpelayan.CabangID ");
+			$this->db->from('penugasanpelayan');
+			$this->db->join('divisi', 'penugasanpelayan.DivisiID = divisi.id','left');
+			$this->db->join('defaulthari', 'penugasanpelayan.Hari = defaulthari.KodeHari','left');
+			$this->db->join('cabang', 'penugasanpelayan.CabangID = cabang.id','left');
+			$this->db->where('penugasanpelayan.Tanggal >=', $TglAwal);
+			$this->db->where('penugasanpelayan.Tanggal <=', $TglAkhir);
+
+			if ($DivisiID != "") {
+				$this->db->where('penugasanpelayan.DivisiID', $DivisiID);
+			}
+			if ($CabangID != "0") {
+				$this->db->where('penugasanpelayan.CabangID', $CabangID);
+			}
+			$this->db->order_by('penugasanpelayan.Tanggal');
+			$oData = $this->db->get();
+
+			$data['success'] = true;
+			$data['data'] = $oData->result();
+
+
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
+		}
+		public function ReadDetail_V2()
+		{
+			$data = array('success'=>true, 'message'=>'', 'data'=>array());
+
+			$NoTransaksi = $this->input->post('NoTransaksi');
+			$CabangID = $this->input->post('CabangID');
+
+			$this->db->select("	REPLACE(jadwalibadah.NamaIbadah, 'MINGGU RAYA ','') NamaIbadah, LEFT(CONCAT(personel.GelarDepan,' ',personel.NamaLengkap, ' ', personel.GelarBelakang), 15) NamaLengkap,CASE WHEN penugasanpelayan.Konfirmasi = 1 THEN 'Y' ELSE CASE WHEN penugasanpelayan.Konfirmasi = 2 THEN 'N' ELSE '' END END AS diKonfirmasi, 
+				DATE_FORMAT(COALESCE(absensi.TglAbsen, '1999-01-01'), '%H:%i') JamAbsen");
+			$this->db->from('penugasanpelayan');
+			$this->db->join('divisi', 'penugasanpelayan.DivisiID = divisi.id','left');
+			$this->db->join('defaulthari', 'penugasanpelayan.Hari = defaulthari.KodeHari','left');
+			$this->db->join('personel', 'penugasanpelayan.PIC = personel.NIK', 'LEFT');
+			$this->db->join('cabang', 'penugasanpelayan.CabangID = cabang.id', 'LEFT');
+			$this->db->join('jadwalibadah', 'penugasanpelayan.JadwalIbadahID = jadwalibadah.id', 'LEFT');
+			$this->db->join('absensi', 'penugasanpelayan.NoTransaksi = absensi.ReffJadwal AND penugasanpelayan.PIC = absensi.NIK AND penugasanpelayan.CabangID = absensi.CabangID','left');
+			$this->db->where('penugasanpelayan.NoTransaksi', $NoTransaksi);
+			$this->db->where('penugasanpelayan.CabangID', $CabangID);
+			$this->db->order_by('jadwalibadah.NamaIbadah');
+
+			$oData = $this->db->get();
+			$data['data'] = $oData->result();
+			$this->output->set_content_type('application/json')->set_output(json_encode($data));
+
+		}
+
 		public function ReadKonfirmasiList()
 		{
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());

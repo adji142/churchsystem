@@ -28,11 +28,11 @@
             <!-- <h2>Jadwal Pelayanan</h2> -->
             <div class="col-md-3 col-sm-3  ">
               Tanggal Awal
-              <input type="date" name="TglAwal" id="TglAwal" class="form-control ">
+              <input type="date" name="TglAwal" id="TglAwal" class="form-control " >
             </div>
             <div class="col-md-3 col-sm-3  ">
               Tanggal Awal
-              <input type="date" name="TglAkhir" id="TglAkhir" class="form-control ">
+              <input type="date" name="TglAkhir" id="TglAkhir" class="form-control " >
             </div>
             <div class="col-md-3 col-sm-3 ">
               Cabang
@@ -179,7 +179,7 @@
       var today = now.getFullYear()+"-"+month+"-01";
       var lastDayofYear = now.getFullYear()+"-"+month+"-"+day;
 
-      $('#TglAwal').val(today);
+      $('#TglAwal').val(lastDayofYear);
       $('#TglAkhir').val(lastDayofYear);
       $('#TglSetor').val(lastDayofYear);
 
@@ -280,26 +280,45 @@
         },
         columns: [
             {
+              type: 'buttons',
+              fixed:true,
+              width: 50,
+              buttons: [
+                {
+                  hint: 'edit',
+                  icon: 'edit',
+                  onClick: function(e) {
+                      // e.component.editRow(e.row.rowIndex);
+                      var data = e.row.data;
+                      var Link = "<?=base_url()?>finance/persembahan/input/"+data.Tanggal+"/"+data.KodeHari+"/"+data.JadwalIbadahID+"/"+data.CabangID+"";
+                      window.location.href = Link;
+                  },
+                }
+              ]
+            },
+            {
                 dataField: "NoTransaksi",
                 caption: "No. Reg Jadwal",
                 allowEditing:false,
-                visible:false
+                visible:false,
             },
             {
                 dataField: "Tanggal",
                 caption: "Tanggal",
                 allowEditing:false,
+                visible:false
             },
             {
                 dataField: "NamaHari",
                 caption: "Hari",
-                allowEditing:false
+                allowEditing:false,
+                visible:false
             },
             {
                 dataField: "KodeHari",
                 caption: "hari",
                 allowEditing:false,
-                visible:false
+                visible:false,
             },
             {
                 dataField: "JadwalIbadahID",
@@ -315,12 +334,14 @@
             {
                 dataField: "JamMulai",
                 caption: "Mulai",
-                allowEditing:false
+                allowEditing:false,
+                visible:false
             },
             {
                 dataField: "JamSelesai",
                 caption: "Selesai",
-                allowEditing:false
+                allowEditing:false,
+                visible:false
             },
             {
                 dataField: "CabangID",
@@ -337,11 +358,13 @@
                 dataField: "JumlahPelayan",
                 caption: "Jumlah Petugas",
                 allowEditing:false,
+                visible:false
             },
             {
                 dataField: "JumlahHadir",
                 caption: "Jumlah Petugas Hadir",
                 allowEditing:false,
+                visible:false
             },
             {
                 dataField: "Penerimaan",
@@ -349,7 +372,8 @@
                 allowEditing:false,
                 allowEditing:false,
                 dataType: 'number',
-                format: { type: 'fixedPoint', precision: 2 }
+                format: { type: 'fixedPoint', precision: 2 },
+                visible:false
             },
             {
                 dataField: "Pengeluaran",
@@ -357,7 +381,8 @@
                 allowEditing:false,
                 allowEditing:false,
                 dataType: 'number',
-                format: { type: 'fixedPoint', precision: 2 }
+                format: { type: 'fixedPoint', precision: 2 },
+                visible:false
             },
             {
                 dataField: "Sisa",
@@ -365,6 +390,7 @@
                 allowEditing:false,
                 allowEditing:false,
                 dataType: 'number',
+                visible:false,
                 format: { type: 'fixedPoint', precision: 2 },
                 calculateCellValue: function(rowData) {
                   return rowData.Penerimaan - rowData.Pengeluaran;
@@ -374,30 +400,31 @@
                 dataField: "NoPersembahan",
                 caption: "NoPersembahan",
                 allowEditing:false,
+                visible:false,
                 visible:false
             },
-            {
-                dataField: "#",
-                caption: "Action",
-                allowEditing:false,
-                fixed: true,
-                cellTemplate: function(cellElement, cellInfo) {
-                  var validasi = parseFloat(cellInfo.data.Pengeluaran) + parseFloat(cellInfo.data.Penerimaan);
-                  var NoTransaksi = cellInfo.data.NoTransaksi;
+            // {
+            //     dataField: "#",
+            //     caption: "Action",
+            //     allowEditing:false,
+            //     // fixed: true,
+            //     cellTemplate: function(cellElement, cellInfo) {
+            //       var validasi = parseFloat(cellInfo.data.Pengeluaran) + parseFloat(cellInfo.data.Penerimaan);
+            //       var NoTransaksi = cellInfo.data.NoTransaksi;
 
-                  LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning id = 'btn-penerimaan' >Isi Persembahan</a>";
+            //       LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning id = 'btn-penerimaan' >Isi Persembahan</a>";
 
-                  LinkAccess += "<a href = '<?=base_url()?>finance/persembahan/report/"+cellInfo.data.NoPersembahan+"' class='btn btn-success id = 'btn-report' >Cetak Laporan</a>";
+            //       // LinkAccess += "<a href = '<?=base_url()?>finance/persembahan/report/"+cellInfo.data.NoPersembahan+"' class='btn btn-success id = 'btn-report' >Cetak Laporan</a>";
 
-                  // if (validasi > 0) {
-                  //   LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning id = 'btn-penerimaan' disabled>Isi Persembahan</a>";
-                  // }
-                  // else{
-                  //   LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning ' id = 'btn-penerimaan'>Isi Persembahan</a>";
-                  // }
-                  cellElement.append(LinkAccess);
-                }
-            },
+            //       // if (validasi > 0) {
+            //       //   LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning id = 'btn-penerimaan' disabled>Isi Persembahan</a>";
+            //       // }
+            //       // else{
+            //       //   LinkAccess = "<a href = '<?=base_url()?>finance/persembahan/input/"+cellInfo.data.Tanggal+"/"+cellInfo.data.KodeHari+"/"+cellInfo.data.JadwalIbadahID+"/"+cellInfo.data.CabangID+"' class='btn btn-warning ' id = 'btn-penerimaan'>Isi Persembahan</a>";
+            //       // }
+            //       cellElement.append(LinkAccess);
+            //     }
+            // },
         ],
       }).dxDataGrid('instance');
     }

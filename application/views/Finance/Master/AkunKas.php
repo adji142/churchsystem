@@ -4,6 +4,11 @@
     $active = 'dashboard';
 ?>
 <!-- page content -->
+<style>
+    .preserve-whitespace {
+        white-space: pre !important;
+    }
+</style>
 <div class="right_col" role="main">
   <div class="">
     <div class="clearfix"></div>
@@ -17,7 +22,7 @@
             </div>
             <div class="row">
               <div class="col-md-6 col-sm-6  ">
-                <select class="form-control col-md-6" id="CabangIDFilter" name="CabangIDFilter" >
+                <select class="form-control col-md-6 Select2Container" id="CabangIDFilter" name="CabangIDFilter" >
                   <option value="0">Pilih Cabang</option>
                   <?php
 
@@ -60,17 +65,52 @@
       <div class="modal-body">
         <form id="post_" data-parsley-validate class="form-horizontal form-label-left">
           <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Area <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control Select2Container" id="Area" name="Area" >
+                <option value="">Pilih Area</option>
+                <?php
+
+                  foreach ($area as $key) {
+                    echo "<option value = '".$key->id."'>".$key->NamaArea."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Provinsi <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control Select2Container" id="ProvID" name="ProvID" >
+                <option value="">Pilih Provinsi</option>
+                <?php 
+                  foreach ($prov as $key) {
+                    echo "<option value = '".$key->prov_id."' >".$key->prov_name."</option>";
+                  }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kota <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control Select2Container" id="KotaID" name="KotaID" >
+                <option value="">Pilih Kota</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Cabang <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
-              <select class="form-control col-md-6" id="CabangID" name="CabangID" >
+              <select class="form-control Select2Container" id="CabangID" name="CabangID" >
                 <option value="0">Pilih Cabang</option>
-                <?php
-
-                  foreach ($Cabang as $key) {
-                    echo "<option value = '".$key->id."'>".$key->CabangName."</option>";
-                  }
-                ?>
               </select>
             </div>
           </div>
@@ -93,6 +133,30 @@
           </div>
 
           <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Level <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control Select2Container" id="Level" name="Level" >
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Kode Akun Induk <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control Select2Container" id="KodeAkunInduk" name="KodeAkunInduk" >
+                <option value="">Pilih Kode Akun Induk</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Keterangan <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
@@ -104,8 +168,18 @@
             <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">PIC Kas <span class="required">*</span>
             </label>
             <div class="col-md-9 col-sm-9 ">
-              <select class="form-control" id="PICKas" name="PICKas">
+              <select class="form-control Select2Container" id="PICKas" name="PICKas">
                 <option value="">Pilih PIC Kas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="item form-group">
+            <label class="col-form-label col-md-3 col-sm-3 label-align" for="first-name">Ibadah <span class="required">*</span>
+            </label>
+            <div class="col-md-9 col-sm-9 ">
+              <select class="form-control Select2Container" id="JadwalIbadahID" name="JadwalIbadahID">
+                <option value="">Pilih Ibadah</option>
               </select>
             </div>
           </div>
@@ -132,13 +206,9 @@
         width: '100%'
       });
 
-      $('#CabangIDFilter').select2({
+      $('.Select2Container').select2({
         width: '100%'
       });
-
-      $('#PICKas').select2({
-        width:'100%'
-      })
 
       if (CabangID != 0) {
         $('#CabangID').prop('disabled', true);
@@ -178,6 +248,131 @@
         }
       });
     }
+
+    $('#ProvID').change(function () {
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>DemografiController/ReadDemografi",
+        data: {'demografilevel':'dem_kota', 'wherefield': 'prov_id', 'wherevalue': $('#ProvID').val() },
+        dataType: "json",
+        success: function (response) {
+          $('#KotaID').empty();
+          var newOption = $('<option>', {
+            value: "",
+            text: "Pilih Kota"
+          });
+
+          $('#KotaID').append(newOption); 
+          $.each(response.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.city_id,
+              text: v.city_name
+            });
+
+            $('#KotaID').append(newOption);
+          });
+        }
+      });
+
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>CabangController/Read",
+        data: {'id':'', 'ProvID': $('#ProvID').val()},
+        dataType: "json",
+        success: function (response) {
+          $('#CabangID').empty();
+          var newOption = $('<option>', {
+            value: 0,
+            text: "Pilih Cabang"
+          });
+
+          $('#CabangID').append(newOption); 
+          $.each(response.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.id,
+              text: v.CabangName
+            });
+
+            $('#CabangID').append(newOption);
+          });
+
+          // Fill Cabang
+
+        }
+      });
+
+    });
+
+    $('#Level').change(function () {
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>AkunKasController/ReadRaw",
+        data: {
+          'Area' : $('#Area').val(),
+          // 'ProvID' : $('#ProvID').val(),
+          // 'KotaID' : $('#KotaID').val(),
+          'CabangID' : "0",
+          'LevelKurang' : parseInt($('#Level').val())
+        },
+        dataType: "json",
+        success: function (response) {
+          $('#KodeAkunInduk').empty();
+          var newOption = $('<option>', {
+            value: "",
+            text: "Pilih Kode Akun Induk"
+          });
+
+          $('#KodeAkunInduk').append(newOption); 
+          $.each(response.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.KodeAkun,
+              text: v.NamaAkun
+            });
+
+            $('#KodeAkunInduk').append(newOption);
+          });
+
+          // Fill Cabang
+
+        }
+      });
+    });
+
+
+    $('#CabangID').change(function () {
+      $.ajax({
+        async:false,
+        type: "post",
+        url: "<?=base_url()?>JadwalIbadahController/Read",
+        data: {
+          'CabangID' : $('#CabangID').val(),
+        },
+        dataType: "json",
+        success: function (response) {
+          $('#JadwalIbadahID').empty();
+          var newOption = $('<option>', {
+            value: "",
+            text: "Pilih Jadwal Ibadah"
+          });
+
+          $('#JadwalIbadahID').append(newOption); 
+          $.each(response.data,function (k,v) {
+            var newOption = $('<option>', {
+              value: v.id,
+              text: v.NamaIbadah
+            });
+
+            $('#JadwalIbadahID').append(newOption);
+          });
+
+          // Fill Cabang
+
+        }
+      });
+    })
 
     $('#post_').submit(function (e) {
       $('#btn_Save').text('Tunggu Sebentar.....');
@@ -230,15 +425,21 @@
       var table = 'users';
       $.ajax({
         type: "post",
-        url: "<?=base_url()?>AkunKasController/Read",
-        data: {'id':id, CabangID:CabangID},
+        url: "<?=base_url()?>AkunKasController/ReadRaw",
+        data: {'KodeAkun':id, CabangID:CabangID},
         dataType: "json",
         success: function (response) {
           $.each(response.data,function (k,v) {
             $('#formtype').val("edit");
+            $('#Area').val(v.Area).trigger('change');
+            $('#ProvID').val(v.ProvID).trigger('change');
+            $('#KotaID').val(v.KotaID).trigger('change');
             $('#CabangID').val(v.CabangID).trigger('change');
+            $('#Level').val(v.Level).trigger('change');
+            $('#KodeAkunInduk').val(v.KodeAkunInduk).trigger('change');
+            $('#JadwalIbadahID').val(v.JadwalIbadahID).trigger('change');
             $('#KodeAkun').val(v.KodeAkun);
-            $('#NamaAkun').val(v.NamaAkun);
+            $('#NamaAkun').val(v.NamaAkun.trimStart());
             $('#Keterangan').val(v.Keterangan);
             $('#PICKas').val(v.PIC).trigger('change');
 
@@ -274,7 +475,7 @@
             columnAutoWidth: true,
             showBorders: true,
             paging: {
-                enabled: false
+                enabled: true
             },
             editing: {
                 mode: "row",
@@ -303,7 +504,13 @@
                 {
                     dataField: "NamaAkun",
                     caption: "Nama Akun",
-                    allowEditing:false
+                    allowEditing:false,
+                    cellTemplate: function(container, options) {
+                        $('<span>')
+                        .addClass('preserve-whitespace')
+                        .text(options.value)
+                        .appendTo(container);
+                    }
                 },
                 {
                     dataField: "Keterangan",

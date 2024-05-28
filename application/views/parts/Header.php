@@ -44,12 +44,12 @@
 <script src="<?php echo base_url();?>Assets/sweetalert2-8.8.0/package/dist/sweetalert2.min.js"></script>
 <link rel="stylesheet" href="<?php echo base_url();?>Assets/sweetalert2-8.8.0/package/dist/sweetalert2.min.css">
 
-<link rel="stylesheet" href="<?php echo base_url();?>Assets/devexpress/bootstrap-select.min.css" />
+<!-- <link rel="stylesheet" href="<?php echo base_url();?>Assets/devexpress/bootstrap-select.min.css" /> -->
 <!-- dev express -->
-
-    <script src="<?php echo base_url();?>Assets/devexpress/jquery.min.js"></script>
-    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>Assets/devexpress/dx.common.css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- <script src="<?php echo base_url();?>Assets/devexpress/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script> -->
+    <!-- <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>Assets/devexpress/dx.common.css" /> -->
     <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>Assets/devexpress/dx.light.css" />
     <script src="<?php echo base_url();?>Assets/devexpress/jszip.min.js"></script>
     <script src="<?php echo base_url();?>Assets/devexpress/dx.all.js"></script>

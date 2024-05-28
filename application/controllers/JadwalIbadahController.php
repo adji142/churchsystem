@@ -363,7 +363,7 @@
 			$Hari = $this->input->post('Hari');
 			$DivisiID = $this->input->post('DivisiID');
 
-			$this->db->select('jadwalibadah.id, jadwalibadah.NamaIbadah,jadwalibadah.Hari, templatepelayan.DivisiID, divisi.NamaDivisi, templatepelayan.JumlahPelayan');
+			$this->db->select("jadwalibadah.id, jadwalibadah.NamaIbadah,jadwalibadah.Hari, templatepelayan.DivisiID, divisi.NamaDivisi, templatepelayan.JumlahPelayan, REPLACE(jadwalibadah.NamaIbadah, 'MINGGU RAYA ','') NamaIbadahFormated");
 			$this->db->from('jadwalibadah');
 			$this->db->join('templatepelayan','jadwalibadah.id = templatepelayan.BaseReff and jadwalibadah.CabangID = templatepelayan.CabangID', 'left');
 			$this->db->join('divisi', 'templatepelayan.DivisiID = divisi.id', 'left');

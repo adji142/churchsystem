@@ -99,6 +99,7 @@ $route['pelayanan/konfirmasi'] = 'JadwalPelayananController/formKonfirmasi';
 $route['finance/akunkas'] = 'AkunKasController';
 $route['finance/kelompokpenerimaan'] = 'KelompokPenerimaanUangController';
 $route['finance/bank'] = 'BankController';
+$route['finance/posbiaya'] = 'BiayaController';
 $route['finance/mutasikas'] = 'TransaksiKasController';
 $route['finance/setortunai'] = 'SetorTunaiController';
 $route['finance/setortunai/add/(:any)'] = 'SetorTunaiController/Form/$1';
@@ -110,6 +111,10 @@ $route['finance/persembahan/pengeluaran/(:any)/(:any)'] = 'PersembahanController
 $route['finance/persembahan/input/(:any)/(:any)/(:any)/(:any)'] = 'PersembahanController/inputpersembahan/$1/$2/$3/$4';
 $route['finance/persembahan/report/(:any)'] = 'ReportController/rptPersembahan/$1';
 
+$route['finance/transferkas'] = 'TransferKasController';
+$route['finance/approvaltransferkas'] = 'TransferKasController/approval';
+
+$route['finance/transaksibiaya'] = 'TransaksiKasController/transaksibiaya';
 // Report
 $route['report/jadwalpelayanan'] = 'ReportController/rptJadwalPelayan';
 $route['report/aruskas'] = 'ReportController/rptArusKas';

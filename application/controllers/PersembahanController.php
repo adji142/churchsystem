@@ -42,6 +42,8 @@
 			$this->db->where('CabangID', $CabangID);
 			$jadwalibadah = $this->db->get();
 
+			
+
 			$data['Cabang'] = $cabang->result();
 			$data['Hari'] = $getHari->result();
 			$data['jadwalibadah'] = $jadwalibadah->result();
@@ -49,7 +51,7 @@
 			$data['HariIbadah'] = $Hari;
 			$data['JadwalIbadahID'] = $JadwalIbadahID;
 			$data['ParseCabangID'] = $CabangID;
-			$this->load->view('Finance/transaksi/persembahan-input',$data);
+			$this->load->view('Finance/transaksi/persembahan-input-2',$data);
 		}
 
 		public function LoadDataPersembahan()
@@ -641,7 +643,7 @@
 		{
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());
 
-			$Tglawal = $this->input->post('Tglawal');
+			$Tglawal = $this->input->post('TglAwal');
 			$TglAkhir = $this->input->post('TglAkhir');
 			$CabangID = $this->input->post('CabangID');
 
@@ -709,11 +711,11 @@
 
 				$NoTransaksi = ($formtype == 'add') ? $NoTransaksi : $json_data['NoTransaksi'];
 
-				if ($json_data['PICPerhitungan'] == "") {
-					$data['message'] = "PIC Persembahan Harus diisi";
-					$errorCount +=1;
-					goto jump;
-				}
+				// if ($json_data['PICPerhitungan'] == "") {
+				// 	$data['message'] = "PIC Persembahan Harus diisi";
+				// 	$errorCount +=1;
+				// 	goto jump;
+				// }
 
 				if ($json_data['KodeAkunKas'] == "") {
 					$data['message'] = "Akun Kas Harus diisi";
@@ -912,6 +914,61 @@
 				// Kas -> Pengeluaran PK
 
 				if ($TotalPK > 0) {
+					// Penerimaan persembahan PK
+
+					$prefix = 'KOLOUT'.substr(date('Ymd'),2,4);
+					$this->db->select('NoTransaksi');
+					$this->db->distinct();
+					$this->db->from('transaksikas');
+					$this->db->where('LEFT(NoTransaksi,10)',$prefix);
+					$lastNoTrx = $this->db->count_all_results();
+					$NoKas = $prefix.str_pad($lastNoTrx + 1, 4, '0', STR_PAD_LEFT);
+
+					$oObjectKas = array(
+						'NoTransaksi' => $NoKas,
+						'TipeTransaksi' => 1,
+						'KodeAkunKas' => $json_data['KodeAkunKas'],
+						'Total' => $TotalPK,
+						'Keterangan' => 'Pengeluaran PK Ibadah : '.$json_data['NamaIbadah'] ,
+						'CabangID'	=> $json_data['CabangID'],
+						'BaseType' => 'KOLOUT',
+						'StatusTransaksi' => 'OPEN',
+						'NoReff' => $NoTransaksi
+					);
+					$oObjectKas['TglTransaksi'] = $CreatedOn;
+					// $oSave = $this->db->insert('transaksikas',$oObjectKas);
+
+					$oWhere = array(
+						'NoReff' => $NoTransaksi,
+						'BaseType' => 'KOLOUT',
+					);
+
+					$oExist = $this->ModelsExecuteMaster->FindData($oWhere, 'transaksikas');
+
+					if ($oExist->num_rows() == 0) {
+						$oObjectKas['CreatedOn'] = $CreatedOn;
+						$oObjectKas['CreatedBy'] = $CreatedBy;
+						$oSave = $this->db->insert('transaksikas',$oObjectKas);
+					}
+					else{
+						$oObjectKas['UpdatedOn'] = $UpdatedOn;
+						$oObjectKas['UpdatedBy'] = $UpdatedBy;
+
+						$oWhere = array(
+							'NoReff' => $NoTransaksi,
+							'BaseType' => 'KOLOUT',
+						);
+
+						$oSave = $this->ModelsExecuteMaster->ExecUpdate($oObjectKas, $oWhere, 'transaksikas');
+					}
+
+					if (!$oSave) {
+						$errorCount +=1;
+						$data['message'] = 'Error Simpan Pengeluaran Kas';
+						goto jump;
+					}
+
+					// Pengeluaran PK
 					$prefix = 'IPK'.substr(date('Ymd'),2,4);
 					$this->db->select('NoTransaksi');
 					$this->db->distinct();
@@ -963,6 +1020,7 @@
 						$data['message'] = 'Error Simpan Pengeluaran Kas';
 						goto jump;
 					}
+
 				}
 
 

@@ -15,6 +15,13 @@
 			$data['Cabang'] = $cabang->result();
 			$this->load->view('Finance/transaksi/mutasikas',$data);
 		}
+		public function transaksibiaya()
+		{
+			$cabang = $this->ModelsExecuteMaster->GetCabang();
+
+			$data['Cabang'] = $cabang->result();
+			$this->load->view('Finance/transaksi/TransaksiBiaya',$data);
+		}
 		public function Read()
 		{
 			$data = array('success'=>false, 'message'=>'', 'data'=>array());
@@ -82,12 +89,39 @@
 			$UpdatedBy = $this->session->userdata('NamaUser');
 			$formtype = $this->input->post('formtype');
 
+			if ($BaseType == "") {
+				$BaseType = "KAS";
+			}
+
+			if ($TipeTransaksi == 2) {
+				$this->db->select('*');
+				$this->db->from('akunkas');
+				$this->db->where('KodeAkun', $KodeAkunKas);
+				$this->db->where('CabangID', $CabangID);
+
+				$rs = $this->db->get();
+				$oValidation = $rs->row();
+				if (doubleval($oValidation->Saldo) < doubleval($Total)) {
+					$data['message'] = "Transaksi ini berpotensi menyebabkan saldo kas Akun ". $oValidation->NamaAkun." Menjadi Minus, Transaksi Tidak Dapat Dilanjutkan";
+					// $errorCount+=1;
+					goto jump;
+				}
+			}
 
 			try {
 				if ($formtype == 'add') {
-					$prefix = 'KAS'.$CabangID.substr(date('Ymd'),2,8);
-					$lastNoTrx = $this->ModelsExecuteMaster->FindData(array('CabangID'=>$CabangID), 'transaksikas')->num_rows() +1;
-					$NoTransaksi = $prefix.str_pad($lastNoTrx, 6, '0', STR_PAD_LEFT);
+					$prefix = $BaseType.substr(date('Ymd'),2,4);
+
+					$prefixLength = count($prefix);
+
+					$this->db->select('NoTransaksi');
+					$this->db->distinct();
+					$this->db->from('transaksikas');
+					$this->db->where('LEFT(NoTransaksi,'. $prefixLength .')',$prefix);
+
+					$lastNoTrx = $this->db->count_all_results();
+
+					$NoTransaksi = $prefix.str_pad($lastNoTrx+1, 6, '0', STR_PAD_LEFT);
 				}
 				$oObject = array(
 					'NoTransaksi' => $NoTransaksi,
@@ -132,6 +166,7 @@
 			} catch (\Exception $e) {
 				$data['message'] = $e->message;
 			}
+			jump:
 
 			echo json_encode($data);
 		}

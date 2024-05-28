@@ -20,7 +20,7 @@
 
 			$data['Cabang'] = $rs->result();
 			$data['divisi'] = $divisi->result();
-			$this->load->view('Pelayanan/JadwalPelayanan',$data);
+			$this->load->view('Pelayanan/JadwalPelayanan-2',$data);
 		}
 		public function ReadHeader()
 		{
@@ -122,7 +122,7 @@
 			$data['divisi'] = $divisi->result();
 			$data['penugasan'] = $penugasan->result();
 
-			$this->load->view('Pelayanan/JadwalPelayanan-input-3',$data);
+			$this->load->view('Pelayanan/JadwalPelayanan-input-4',$data);
 		}
 
 		public function formKonfirmasi()
@@ -130,7 +130,7 @@
 			$cabang = $this->ModelsExecuteMaster->GetCabang();
 
 			$data['Cabang'] = $cabang->result();
-			$this->load->view('Pelayanan/KonfirmasiList',$data);
+			$this->load->view('Pelayanan/KonfirmasiList-2',$data);
 		}
 
 		public function ReadDetail()

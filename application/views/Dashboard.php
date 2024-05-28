@@ -145,6 +145,12 @@
     var CabangID = "<?php echo $CabangID; ?>";
     var AllowFinanceDashboard = "<?php echo $AllowFinanceDashboard; ?>";
     $(document).ready(function () {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobile = /mobile|android|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(userAgent);
+
+      if (isMobile) {
+        $('#menu_toggle').click(); // This will programmatically click the link
+      }
       var HideObject = document.getElementById('DashboardSection');
       console.log(AllowFinanceDashboard)
       if (AllowFinanceDashboard == 1) {
