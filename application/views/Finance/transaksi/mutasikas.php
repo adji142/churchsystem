@@ -21,7 +21,7 @@
                 <input type="date" name="TglAwal" id="TglAwal" class="form-control ">
               </div>
               <div class="col-md-3 col-sm-3  ">
-                Tanggal Awal
+                Tanggal Akhir
                 <input type="date" name="TglAkhir" id="TglAkhir" class="form-control ">
               </div>
               <div class="col-md-3 col-sm-3 ">
